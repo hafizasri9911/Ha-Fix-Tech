@@ -10,23 +10,27 @@
         :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: radial-gradient(circle at top left, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
+        
         .blob { position: absolute; filter: blur(90px); z-index: -1; opacity: 0.5; }
         .blob.blue { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--accent-blue); }
         .blob.purple { bottom: -10%; right: -10%; width: 300px; height: 300px; background: var(--accent-purple); }
         
-        .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; }
+        /* SIDEBAR BASE */
+        .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; z-index: 2500; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .company-info h2 { font-size: 1.2rem; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
         .company-info p { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 10px; }
         .nav-menu li a { text-decoration: none; color: var(--text-muted); padding: 12px 16px; border-radius: 12px; display: block; transition: 0.3s; font-weight: 600; font-size: 0.9rem; }
         .nav-menu li a:hover, .nav-menu li a.active { background: rgba(59, 130, 246, 0.15); color: var(--text-main); border: 1px solid rgba(59, 130, 246, 0.3); }
         
-        .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; }
+        /* MAIN CONTENT */
+        .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; width: 100%; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .header h1 { font-size: 2rem; font-weight: 700; }
 
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; }
         
+        /* TABLE & FILTERS */
         .filter-section { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
         .search-box { flex: 1; min-width: 200px; }
         .filter-box { width: 150px; }
@@ -35,53 +39,45 @@
         .glass-table th, .glass-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: top; }
         .glass-table th { color: var(--text-muted); font-size: 0.9rem; }
         
-        .badge-online { background: rgba(139, 92, 246, 0.2); color: #c4b5fd; padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-        .badge-manual { background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-        
+        /* STATUS & BUTTONS */
         .status-baru { color: #fbbf24; font-weight: bold; }
         .status-sebutharga { color: #60a5fa; font-weight: bold; }
-        .status-batal { color: #f87171; font-weight: bold; text-decoration: line-through; }
         .status-proceed { color: #34d399; font-weight: bold; }
-
         .action-group { display: flex; flex-direction: column; gap: 5px; }
-        .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.8rem; font-weight: bold; text-align: center; }
-        .btn-action:hover { background: var(--accent-blue); border-color: var(--accent-blue); }
-        .btn-proceed { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #34d399; }
-        .btn-proceed:hover { background: #10b981; color: white; }
-        .btn-cancel { background: rgba(248, 113, 113, 0.2); border-color: #f87171; color: #f87171; }
-        .btn-cancel:hover { background: #f87171; color: white; }
-        .btn-whatsapp { background: rgba(37, 211, 102, 0.2); border-color: #25D366; color: #25D366; }
-        .btn-whatsapp:hover { background: #25D366; color: white; }
-        .btn-export { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-print { background: rgba(139, 92, 246, 0.2); border-color: #8b5cf6; color: #c4b5fd; }
-        .btn-print:hover { background: #8b5cf6; color: white; }
-
-        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; transition: 0.3s; margin-bottom: 15px; }
-        .glass-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.1); }
+        .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.8rem; font-weight: bold; text-align: center; }
         .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
-        
-        textarea.glass-input { resize: vertical; min-height: 80px; }
+        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; margin-bottom: 15px; }
 
-        /* A4 PRINT PREVIEW STYLING */
-        #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; overflow-y: auto; padding: 40px 20px; justify-content: center; }
-        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; font-family: 'Plus Jakarta Sans', Arial, sans-serif; position: relative; box-sizing: border-box; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
-        #previewControls { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 2001; }
+        /* MOBILE FIXES */
+        .menu-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 3000; background: var(--accent-blue); border: none; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2400; }
+
+        @media (max-width: 900px) {
+            .menu-toggle { display: block; }
+            body { flex-direction: column; }
+            .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; width: 280px; box-shadow: 15px 0 30px rgba(0,0,0,0.5); }
+            .sidebar.active { left: 0; }
+            .sidebar-overlay.active { display: block; }
+            .main-content { padding: 1.5rem; padding-top: 4.5rem; }
+            .header h1 { font-size: 1.5rem; }
+            .glass-panel { padding: 1.2rem; overflow-x: auto; }
+            .glass-table { min-width: 800px; } /* Ensure table info is readable by horizontal scroll */
+            .filter-section { flex-direction: column; align-items: stretch; }
+            .filter-box { width: 100%; }
+            .search-box { width: 100%; }
+        }
+
+        /* PRINT PREVIEW (HIDDEN BY DEFAULT) */
+        #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 4000; overflow-y: auto; padding: 20px; justify-content: center; }
+        #invoice-template { width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; margin: 0 auto; }
     </style>
-
-<style>
-    .glass-panel { overflow-x: auto; } /* Benarkan scroll kiri kanan dalam panel */
-    
-    @media (max-width: 768px) {
-        .glass-table { min-width: 700px; } /* Paksa table ada lebar minimum supaya tak kemek */
-        .header h1 { font-size: 1.5rem; }
-        .btn-action { padding: 10px; font-size: 0.75rem; }
-    }
-</style>
-
 </head>
 <body>
     <div class="blob blue"></div>
     <div class="blob purple"></div>
+
+    <button class="menu-toggle" id="menuBtn">☰ MENU</button>
+    <div class="sidebar-overlay" id="overlay"></div>
 
     <aside class="sidebar">
         <div class="company-info">
@@ -94,7 +90,7 @@
             <li><a href="services.html">Active Repairs</a></li>
             <li><a href="inventory.html">Inventory</a></li>
             <li><a href="finance.html">Finance</a></li>
-            <li style="margin-top: 20px;"><a href="#" onclick="logoutAdmin()" style="color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3);">Logout</a></li>
+            <li style="margin-top: 20px;"><a href="#" onclick="logoutAdmin()" style="color: #f87171;">Logout</a></li>
         </ul>
     </aside>
 
@@ -105,22 +101,20 @@
 
         <div class="glass-panel">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2 style="margin: 0;">Customer Inquiries</h2>
+                <h2 style="margin: 0; font-size: 1.1rem;">Customer Inquiries</h2>
                 <button class="btn-action" onclick="document.getElementById('custModal').style.display='flex'">+ Manual Lead</button>
             </div>
             
             <div class="filter-section">
                 <input type="text" id="searchInput" class="glass-input search-box" placeholder="Search name or phone..." style="margin-bottom:0;">
-                
-                <select id="statusFilter" class="glass-input filter-box" style="margin-bottom:0; background-color: #172033;">
+                <select id="statusFilter" class="glass-input filter-box" style="margin-bottom:0; background-color: #172033; color: white;">
                     <option value="All">All Statuses</option>
                     <option value="Baru">New</option>
                     <option value="Sebut Harga">Quoted</option>
                     <option value="Proceed">Proceeded</option>
                     <option value="Batal">Cancelled</option>
                 </select>
-
-                <button onclick="exportCSV()" class="btn-export">📥 Export CSV</button>
+                <button onclick="exportCSV()" class="btn-action" style="background: #10b981; border:none; height: 45px;">📥 Export CSV</button>
             </div>
 
             <table class="glass-table">
@@ -129,7 +123,7 @@
                         <th width="15%">Date</th>
                         <th width="25%">Customer Info</th>
                         <th width="25%">Device & Issue</th>
-                        <th width="20%">Quotation Status</th>
+                        <th width="20%">Status</th>
                         <th width="15%">Action</th>
                     </tr>
                 </thead>
@@ -140,10 +134,10 @@
         </div>
     </main>
 
-    <div id="custModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center;">
-        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
+    <div id="custModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3500; justify-content: center; align-items: center; padding: 20px;">
+        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative; margin-bottom: 0;">
             <button onclick="document.getElementById('custModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 style="margin-bottom: 20px;">Register Walk-in Lead</h2>
+            <h2 style="margin-bottom: 20px;">Manual Lead</h2>
             <form id="newCustForm">
                 <input type="text" id="cName" class="glass-input" placeholder="Customer Name" required>
                 <input type="tel" id="cPhone" class="glass-input" placeholder="Phone Number" required>
@@ -154,361 +148,82 @@
         </div>
     </div>
 
-    <div id="quoteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center;">
-        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
-            <button onclick="document.getElementById('quoteModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 style="margin-bottom: 20px;">Provide Quick Quote</h2>
-            <form id="updateQuoteForm">
-                <input type="hidden" id="qCustId"><input type="hidden" id="qCustPhone"><input type="hidden" id="qCustName"><input type="hidden" id="qCustDevice">
-                <label style="font-size: 0.8rem; color: var(--text-muted);">Total Estimated Price (RM)</label>
-                <input type="number" id="qPrice" class="glass-input" step="0.01" required>
-                <label style="font-size: 0.8rem; color: var(--text-muted);">Parts / Service Details</label>
-                <textarea id="qRemarks" class="glass-input" placeholder="E.g., Screen LCD Replacement (RM150)" required></textarea>
-                <button type="submit" class="btn-primary">Save Quotation</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto;">
-        <div class="glass-panel" style="width: 100%; max-width: 600px; position: relative; margin: 20px auto;">
-            <button onclick="document.getElementById('receiptModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 style="margin-bottom: 20px; color: var(--accent-purple);">Confirm Document Data</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Please verify this information before generating the A4 document.</p>
-
-            <form id="generateReceiptForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px;">
-                <div style="grid-column: span 2; background: rgba(59, 130, 246, 0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3);">
-                    <label style="font-size: 0.85rem; color: #93c5fd; font-weight: bold; margin-bottom: 5px; display: block;">Select Document Type:</label>
-                    <select id="docType" class="glass-input" style="margin-bottom: 0; background-color: #172033; cursor: pointer; font-size: 1rem; color: white;">
-                        <option value="QUOTATION">Quotation</option>
-                        <option value="INVOICE">Invoice</option>
-                        <option value="OFFICIAL RECEIPT">Official Receipt</option>
-                    </select>
-                </div>
-
-                <div style="grid-column: span 2; margin-top: 10px;">
-                    <label style="font-size: 0.85rem; color: var(--text-muted);">Parts / Service Details:</label>
-                    <textarea id="rPartsList" class="glass-input" rows="4" placeholder="List of services and parts..."></textarea>
-                </div>
-                <div><label style="font-size: 0.85rem; color: var(--text-muted);">Parts Cost (RM):</label><input type="number" id="rPartsCost" class="glass-input cost-input" placeholder="0.00" step="0.01" required></div>
-                <div><label style="font-size: 0.85rem; color: var(--text-muted);">Labor / Service Fee (RM):</label><input type="number" id="rLaborCost" class="glass-input cost-input" value="0.00" step="0.01" required></div>
-                <div><label style="font-size: 0.85rem; color: var(--text-muted);">Delivery Charge (RM):</label><input type="number" id="rDeliveryCost" class="glass-input cost-input" value="0.00" step="0.01" required></div>
-                <div><label style="font-size: 0.85rem; color: #fbbf24; font-weight:bold;">Deposit Paid (RM):</label><input type="number" id="rDeposit" class="glass-input cost-input" value="0.00" step="0.01" style="border-color: rgba(251, 191, 36, 0.5);" required></div>
-                <div style="grid-column: span 2;">
-                    <label style="font-size: 0.85rem; color: var(--text-muted);">Payment Method:</label>
-                    <select id="rPaymentMethod" class="glass-input" required style="background-color: #172033; cursor: pointer;">
-                        <option value="Unpaid">Unpaid</option>
-                        <option value="Cash">Cash</option>
-                        <option value="QR Pay">QR Pay</option>
-                        <option value="Online Transfer">Online Transfer</option>
-                    </select>
-                </div>
-                <div style="grid-column: span 2; margin-top: 10px;">
-                    <button type="button" onclick="openA4Preview()" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));">🔍 View A4 Preview</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="previewBackdrop">
-        <div id="previewControls">
-            <button onclick="closeA4Preview()" class="btn-action btn-cancel">❌ Close Preview</button>
-            <button onclick="generatePDF()" class="btn-action btn-proceed" style="background: #10b981; border-color: #10b981; color: white; font-weight: bold;">📄 Confirm & Download</button>
-        </div>
-
-        <div id="invoice-template">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 65px; height: 65px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #64748b; border-radius: 6px; font-weight: 700; letter-spacing: 1px;">LOGO</div>
-                    <div style="font-weight: 800; font-size: 28px; color: #000; letter-spacing: 0.5px;">HA-FIX TECH</div>
-                </div>
-                <div style="text-align: right; font-size: 12px; color: #1e293b; line-height: 1.5;">
-                    <strong style="font-size: 13px; color: #000;">HA-FIX TECH & REPAIR</strong><br>
-                    SSM: 202503246898 (003772792-K)<br>
-                    10697-G, Jalan Masjid Kg Bukit Kandis,<br>
-                    21200 Kuala Nerus, Terengganu, Malaysia
-                </div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
-                <div style="width: 45%; font-size: 14px; color: #000; line-height: 1.6;">
-                    <p style="margin: 0 0 8px 0; font-weight: 700; font-size: 15px;">Prepared For:</p>
-                    <p style="margin: 0;" id="pdfName"></p>
-                    <p style="margin: 0;">Phone: <span id="pdfPhone"></span></p>
-                </div>
-                <div style="width: 45%;">
-                    <h2 id="pdfDocTitle" style="margin: 0 0 15px 0; font-size: 32px; font-weight: 800; color: #000; text-align: right; text-transform: uppercase;">QUOTATION</h2>
-                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #000;">
-                        <span style="text-align: left;">Ref No:</span> <span id="pdfTicket" style="font-weight: 400; text-align: right;"></span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #000;">
-                        <span style="text-align: left;">Date:</span> <span id="pdfDate" style="font-weight: 400; text-align: right;"></span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #000;">
-                        <span style="text-align: left;">Time:</span> <span id="pdfTime" style="font-weight: 400; text-align: right;"></span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: #000;">
-                        <span style="text-align: left;">Payment Mode:</span> <span id="pdfMethod" style="font-weight: 400; text-align: right;"></span>
-                    </div>
-                </div>
-            </div>
-            
-            <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 30px; color: #000;">
-                <thead>
-                    <tr style="border-top: 2px solid #000; border-bottom: 2px solid #000;">
-                        <th style="padding: 12px 5px; text-align: left; width: 8%;">SNO</th>
-                        <th style="padding: 12px 5px; text-align: left; width: 8%;">Qty</th>
-                        <th style="padding: 12px 5px; text-align: left; width: 44%;">Description</th>
-                        <th style="padding: 12px 5px; text-align: right; width: 15%;">Unit (MYR)</th>
-                        <th style="padding: 12px 5px; text-align: right; width: 10%;">Tax (MYR)</th>
-                        <th style="padding: 12px 5px; text-align: right; width: 15%;">Total (MYR)</th>
-                    </tr>
-                </thead>
-                <tbody id="pdfTableBody" style="border-bottom: 2px solid #000;"></tbody>
-            </table>
-            
-            <div style="display: flex; justify-content: space-between; font-size: 14px; color: #000;">
-                <div style="width: 50%;">
-                    <p style="margin: 0 0 20px 0; font-weight: 700; font-size: 15px;">Total Item: <span id="pdfTotalItem" style="font-weight: 400;"></span></p>
-                    <div style="border: 1px solid #cbd5e1; padding: 15px; width: 90%; background: #ffffff;">
-                        <p style="margin: 0 0 5px 0; font-weight: 700; color: #000;">Remark:</p>
-                        <p style="margin: 0; font-size: 12px; color: #334155; line-height: 1.5;">This document serves as proof of transaction. Please retain it for any warranty claims.</p>
-                    </div>
-                </div>
-                <div style="width: 40%;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span>Total Amt (MYR)</span> <span id="pdfTotalAmt"></span></div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; color: #334155;"><span>Deposit Paid</span> <span id="pdfDeposit"></span></div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; padding: 10px 0;">
-                        <span style="font-weight: 800; font-size: 18px;">Balance Due</span> <span id="pdfFinalTotal" style="font-weight: 800; font-size: 18px;"></span>
-                    </div>
-                    <div style="margin-top: 20px;">
-                        <p style="margin: 0 0 5px 0; font-size: 13px; color: #334155;">Payments Status:</p>
-                        <p style="margin: 0; font-size: 13px; border-bottom: 1px dotted #cbd5e1; padding-bottom: 5px; text-align: right;"><span id="pdfMethod2"></span></p>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="position: absolute; bottom: 20mm; left: 20mm; right: 20mm; font-size: 10px; color: #475569; line-height: 1.5;">
-                <p style="margin: 0 0 5px 0; font-weight: 700; color: #0f172a;">Transaction Terms & Conditions:</p>
-                1) Warranty period is 30 days from the date of device collection.<br>
-                2) Warranty covers only parts replaced and services detailed above.<br>
-                3) Warranty void if device shows signs of abuse, liquid damage, or third-party disassembly.<br>
-                4) Amendments to the 'Customer' details will not be allowed after the date of transaction.<br>
-                5) Prices in this document are final once agreed. No returns, no refunds.
-            </div>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, getDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, addDoc, updateDoc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs", authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com", projectId: "ha-fix-tech-repair-8d27f", storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app", messagingSenderId: "630965976099", appId: "1:630965976099:web:9ff830cd7f5f624b060596", measurementId: "G-KJRGT6LQ43" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
         onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
-        
-        window.logoutAdmin = function() {
-            if(confirm("Logout from the system?")) signOut(auth).then(() => window.location.replace("login.html"));
-        };
+        window.logoutAdmin = () => { if(confirm("Logout?")) signOut(auth).then(() => window.location.replace("login.html")); };
+
+        // MOBILE MENU LOGIC
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('overlay');
+        function toggleMenu() { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); menuBtn.innerText = sidebar.classList.contains('active') ? '✕ CLOSE' : '☰ MENU'; }
+        menuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
 
         let allCustomers = [];
-        const tbody = document.getElementById('customersTableBody');
-
-        onSnapshot(query(collection(db, "customers"), orderBy("createdAt", "desc")), (snapshot) => {
-            allCustomers = []; snapshot.forEach((doc) => { allCustomers.push({ id: doc.id, ...doc.data() }); });
+        onSnapshot(query(collection(db, "customers"), orderBy("createdAt", "desc")), (snap) => {
+            allCustomers = []; snap.forEach(d => allCustomers.push({ id: d.id, ...d.data() }));
             renderTable();
         });
 
         function renderTable() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-            tbody.innerHTML = ""; 
-            const filteredData = allCustomers.filter(cust => {
-                return ((cust.name && cust.name.toLowerCase().includes(searchTerm)) || (cust.phone && cust.phone.includes(searchTerm))) && 
-                       (statusFilter === "All" ? true : (cust.status || "Baru") === statusFilter);
-            });
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filter = document.getElementById('statusFilter').value;
+            const tbody = document.getElementById('customersTableBody');
+            tbody.innerHTML = "";
             
-            if (filteredData.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No records found.</td></tr>`; return; }
+            const filtered = allCustomers.filter(c => 
+                ((c.name && c.name.toLowerCase().includes(search)) || (c.phone && c.phone.includes(search))) && 
+                (filter === "All" ? true : (c.status || "Baru") === filter)
+            );
 
-            filteredData.forEach(data => {
-                const d = new Date(data.createdAt);
-                const dateStr = d.toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' }) + "<br><span style='font-size:0.75rem; color:var(--text-muted);'>" + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) + "</span>";
-                const sourceBadge = data.source === "Online" ? `<span class="badge-online">🌐 Online</span>` : `<span class="badge-manual">👤 Manual</span>`;
-                
-                const deviceText = data.device || "-";
-                const issueText = data.issue || "-";
-                const dbStatus = data.status || "Baru";
+            if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No records.</td></tr>`; return; }
 
-                const displayRemarksRaw = data.partsList || data.quoteRemarks || "-";
-                const displayRemarks = displayRemarksRaw.replace(/\{\{.*?\}\}\s*/g, '');
-
-                let quoteHTML = ""; 
-                let statusClass = "status-baru";
-                let displayStatus = "New";
-
-                if(dbStatus === "Sebut Harga") {
-                    statusClass = "status-sebutharga";
-                    displayStatus = "Quoted";
-                    quoteHTML = `<div style="background: rgba(59,130,246,0.1); padding: 8px; border-radius: 8px; margin-top: 5px; border: 1px solid rgba(59,130,246,0.3);"><span style="font-size: 0.75rem; color: var(--text-muted);">Estimated Total:</span> <strong>RM ${data.quotePrice || '0.00'}</strong><br><span style="font-size: 0.75rem; white-space: pre-line;">${displayRemarks}</span></div>`;
-                } else if(dbStatus === "Proceed") { 
-                    statusClass = "status-proceed"; 
-                    displayStatus = "Proceeded";
-                    quoteHTML = `<div style="margin-top:5px; font-size:0.8rem; color:#34d399;">Confirmed. Ticket: <strong>${data.ticketId}</strong></div>`; 
-                } else if(dbStatus === "Batal") { 
-                    statusClass = "status-batal"; 
-                    displayStatus = "Cancelled";
-                }
-
-                const safeName = (data.name || "").replace(/'/g, "\\'").replace(/"/g, "&quot;"); const safePhone = (data.phone || "").replace(/'/g, "\\'").replace(/"/g, "&quot;"); const safeDevice = (data.device || "").replace(/'/g, "\\'").replace(/"/g, "&quot;");
-                const safePartsList = displayRemarksRaw.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\r?\n/g, "\\n");
-
-                let actionBtns = `<div class="action-group">`;
-                actionBtns += `<button class="btn-action" style="background: rgba(139, 92, 246, 0.2); border-color: #8b5cf6; color: #c4b5fd;" onclick="window.location.href='customer-details.html?id=${data.id}'">🔍 Full Details</button>`;
-
-                if(dbStatus === "Baru" || dbStatus === "Sebut Harga") {
-                    actionBtns += `<button class="btn-action" onclick="openQuoteModal('${data.id}', '${data.quotePrice || ''}', '${safePartsList}', '${safePhone}', '${safeName}', '${safeDevice}')">💰 Quick Quote</button>`;
-                    actionBtns += `<button class="btn-action btn-print" onclick="confirmReceiptData('${data.id}', '${safeName}', '${safePhone}', '${safeDevice}', '${data.quotePrice || 0}')">📄 Print Document</button>`;
-                }
-                if(dbStatus === "Sebut Harga") { actionBtns += `<button class="btn-action btn-whatsapp" onclick="sendQuoteWhatsApp('${safePhone}', '${safeName}', '${safeDevice}', '${data.quotePrice}', '${safePartsList}')">💬 WA Quote</button>`; }
-                if(dbStatus === "Baru" || dbStatus === "Sebut Harga") { actionBtns += `<button class="btn-action btn-proceed" onclick="proceedToRepair('${data.id}', '${safeName}', '${safePhone}', '${safeDevice}', '${data.issue || ""}', '${data.quotePrice || 0}')">✅ Proceed</button>`; }
-                if(dbStatus !== "Proceed" && dbStatus !== "Batal") { actionBtns += `<button class="btn-action btn-cancel" onclick="cancelLead('${data.id}')">❌ Cancel</button>`; }
-                if(dbStatus === "Batal") { actionBtns += `<button class="btn-action btn-cancel" onclick="deleteCustomer('${data.id}')">🗑️ Delete</button>`; }
-
-                actionBtns += `</div>`;
-
+            filtered.forEach(data => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${dateStr}</td><td><strong style="color:var(--accent-blue);">${data.name}</strong><br><span style="font-size:0.85rem;">${data.phone}</span><br><div style="margin-top:5px;">${sourceBadge}</div></td><td><strong>${deviceText}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${issueText}</span></td><td><span class="${statusClass}">${displayStatus}</span>${quoteHTML}</td><td>${actionBtns}</td>`;
+                const dbStatus = data.status || "Baru";
+                let statusText = "New", statusClass = "status-baru";
+                if(dbStatus === "Sebut Harga") { statusText = "Quoted"; statusClass = "status-sebutharga"; }
+                else if(dbStatus === "Proceed") { statusText = "Proceeded"; statusClass = "status-proceed"; }
+                else if(dbStatus === "Batal") { statusText = "Cancelled"; statusClass = ""; }
+
+                const actionBtns = `<div class="action-group">
+                    <button class="btn-action" onclick="window.location.href='customer-details.html?id=${data.id}'">🔍 Details</button>
+                    ${dbStatus !== 'Proceed' ? `<button class="btn-action" style="color:#fbbf24;" onclick="cancelLead('${data.id}')">❌ Cancel</button>` : ''}
+                </div>`;
+
+                tr.innerHTML = `
+                    <td>${new Date(data.createdAt).toLocaleDateString('en-MY')}</td>
+                    <td><strong>${data.name}</strong><br><small>${data.phone}</small></td>
+                    <td>${data.device}<br><small>${data.issue}</small></td>
+                    <td><span class="${statusClass}">${statusText}</span></td>
+                    <td>${actionBtns}</td>
+                `;
                 tbody.appendChild(tr);
             });
         }
-        document.getElementById('searchInput').addEventListener('input', renderTable); document.getElementById('statusFilter').addEventListener('change', renderTable);
+        document.getElementById('searchInput').oninput = renderTable;
+        document.getElementById('statusFilter').onchange = renderTable;
 
-        let currentTicketId = ""; let currentCustData = {};
+        window.cancelLead = async (id) => { if(confirm("Cancel lead?")) await updateDoc(doc(db, "customers", id), { status: "Batal" }); };
 
-        window.confirmReceiptData = async function(custId, name, phone, device, agreedPrice) {
-            currentTicketId = "LD-" + custId.substring(0, 6).toUpperCase(); 
-            currentCustData = { name, phone, device };
-            let pTotal = parseFloat(agreedPrice).toFixed(2); let sCharge = "0.00"; let dCharge = "0.00"; let depositAmt = "0.00"; let pList = "";
-
-            try {
-                const docSnap = await getDoc(doc(db, "customers", custId));
-                if (docSnap.exists()) {
-                    const custData = docSnap.data();
-                    pTotal = custData.partsTotal || pTotal; sCharge = custData.serviceCharge || "0.00"; dCharge = custData.deliveryCharge || "0.00"; depositAmt = custData.deposit || "0.00"; pList = custData.partsList || pList;
-                }
-            } catch (error) {}
-
-            document.getElementById('rPartsList').value = pList;
-            document.getElementById('rPartsCost').value = parseFloat(pTotal).toFixed(2); document.getElementById('rLaborCost').value = parseFloat(sCharge).toFixed(2);
-            document.getElementById('rDeliveryCost').value = parseFloat(dCharge).toFixed(2); document.getElementById('rDeposit').value = parseFloat(depositAmt).toFixed(2);
-            document.getElementById('receiptModal').style.display = 'flex';
-        };
-
-        window.openA4Preview = function() {
-            const partsCost = parseFloat(document.getElementById('rPartsCost').value) || 0; const laborCost = parseFloat(document.getElementById('rLaborCost').value) || 0;
-            const deliveryCost = parseFloat(document.getElementById('rDeliveryCost').value) || 0; const depositAmount = parseFloat(document.getElementById('rDeposit').value) || 0;
-            const total = partsCost + laborCost + deliveryCost; const balance = total - depositAmount;
-            
-            const partsListText = document.getElementById('rPartsList').value.replace(/\{\{.*?\}\}\s*/g, '').replace(/\n/g, '<br>');
-
-            document.getElementById('pdfDocTitle').innerText = document.getElementById('docType').value;
-            document.getElementById('receiptModal').style.display = 'none'; document.getElementById('previewBackdrop').style.display = 'flex'; document.getElementById('invoice-template').style.display = 'block';
-
-            document.getElementById('pdfName').innerText = currentCustData.name; document.getElementById('pdfPhone').innerText = currentCustData.phone; document.getElementById('pdfTicket').innerText = currentTicketId; 
-            const now = new Date(); document.getElementById('pdfDate').innerText = now.toLocaleDateString('en-MY'); document.getElementById('pdfTime').innerText = now.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', second:'2-digit', hour12: true});
-            
-            const pMethod = document.getElementById('rPaymentMethod').value; document.getElementById('pdfMethod').innerText = pMethod; document.getElementById('pdfMethod2').innerText = pMethod;
-            
-            const tbody = document.getElementById('pdfTableBody'); tbody.innerHTML = ""; let SNO = 1;
-            
-            if (partsCost > 0 || partsListText.trim() !== "") {
-                let desc = `<b>Device: ${currentCustData.device}</b>`; if(partsListText) desc += `<br><span style="color:#475569; font-size:11px;">${partsListText}</span>`;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="padding: 12px 5px; vertical-align: top;">${SNO}</td><td style="padding: 12px 5px; vertical-align: top;">1</td><td style="padding: 12px 5px; vertical-align: top;">${desc}</td><td style="padding: 12px 5px; text-align: right; vertical-align: top;">${partsCost.toFixed(2)}</td><td style="padding: 12px 5px; text-align: right; vertical-align: top;">0.00</td><td style="padding: 12px 5px; text-align: right; vertical-align: top;">${partsCost.toFixed(2)}</td>`;
-                tbody.appendChild(tr); SNO++;
-            }
-            if (laborCost > 0) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="padding: 12px 5px; vertical-align: top;">${SNO}</td><td style="padding: 12px 5px; vertical-align: top;">1</td><td style="padding: 12px 5px; vertical-align: top;">Service Fee / Labor Charge</td><td style="padding: 12px 5px; text-align: right; vertical-align: top;">${laborCost.toFixed(2)}</td><td style="padding: 12px 5px; text-align: right; vertical-align: top;">0.00</td><td style="padding: 12px 5px; text-align: right; vertical-align: top;">${laborCost.toFixed(2)}</td>`;
-                tbody.appendChild(tr); SNO++;
-            }
-            if (deliveryCost > 0) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="padding: 12px 5px; vertical-align: top;">${SNO}</td><td style="padding: 12px 5px; vertical-align: top;">1</td><td style="padding: 12px 5px; vertical-align: top;">Delivery / Transportation Charge</td><td style="padding: 12px 5px; text-align: right; vertical-align: top;">${deliveryCost.toFixed(2)}</td><td style="padding: 12px 5px; text-align: right; vertical-align: top;">0.00</td><td style="padding: 12px 5px; text-align: right; vertical-align: top;">${deliveryCost.toFixed(2)}</td>`;
-                tbody.appendChild(tr); SNO++;
-            }
-            document.getElementById('pdfTotalItem').innerText = (SNO - 1); document.getElementById('pdfTotalAmt').innerText = total.toFixed(2);
-            document.getElementById('pdfDeposit').innerText = depositAmount.toFixed(2); document.getElementById('pdfFinalTotal').innerText = balance.toFixed(2);    
-        };
-
-        window.closeA4Preview = function() { document.getElementById('previewBackdrop').style.display = 'none'; document.getElementById('invoice-template').style.display = 'none'; document.getElementById('receiptModal').style.display = 'flex'; };
-
-        window.generatePDF = function() {
-            document.getElementById('previewControls').style.display = 'none';
-            const element = document.getElementById('invoice-template');
-            const docTypeStr = document.getElementById('docType').value; let fileNamePrefix = "Resit";
-            if (docTypeStr.includes("QUOTATION")) fileNamePrefix = "Quotation"; if (docTypeStr.includes("INVOICE")) fileNamePrefix = "Invoice";
-            
-            html2pdf().set({ margin: [0, 0, 0, 0], filename: `${fileNamePrefix}_${currentTicketId}.pdf`, image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2, useCORS: true, letterRendering: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => { 
-                document.getElementById('previewControls').style.display = 'flex'; document.getElementById('previewBackdrop').style.display = 'none'; document.getElementById('invoice-template').style.display = 'none';
+        document.getElementById('newCustForm').onsubmit = async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, "customers"), {
+                name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value,
+                device: document.getElementById('cDevice').value, issue: document.getElementById('cIssue').value,
+                status: "Baru", createdAt: new Date().toISOString()
             });
+            document.getElementById('custModal').style.display = 'none';
+            document.getElementById('newCustForm').reset();
         };
-
-        window.sendQuoteWhatsApp = function(phone, name, device, price, remarks) {
-            let cleanPhone = phone.replace(/\D/g, ''); if(cleanPhone.startsWith('0')) cleanPhone = '60' + cleanPhone.substring(1);
-            const cleanRemarks = remarks.replace(/\{\{.*?\}\}\s*/g, '');
-            const message = `Hi Mr/Ms ${name}. Thank you for contacting HA-FIX Tech.\n\nThe quotation for your *${device}* repair is *RM ${price}*.\n\nRemarks/Parts:\n${cleanRemarks.replace(/\\n/g, '\n')}\n\nShall we proceed with this repair?`;
-            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
-        };
-
-        window.proceedToRepair = async function(custId, name, phone, device, issue, price) {
-            if(confirm(`Agree to proceed repair for ${name}? The system will auto-generate a ticket.`)) {
-                try {
-                    const ticketId = `HF-${Math.floor(1000 + Math.random() * 9000)}`;
-                    await setDoc(doc(db, "tickets", ticketId), { name: name, phone: phone, device: device, issue: issue, agreedPrice: price || "0.00", status: "Menunggu Alat Ganti", createdAt: new Date().toISOString() });
-                    await updateDoc(doc(db, "customers", custId), { status: "Proceed", ticketId: ticketId });
-                    alert(`Success! Ticket ${ticketId} created.`);
-                } catch (error) { alert("Error processing request: " + error.message); }
-            }
-        };
-
-        window.openQuoteModal = function(id, currentPrice, currentRemarks, phone, name, device) {
-            document.getElementById('qCustId').value = id; document.getElementById('qCustPhone').value = phone; document.getElementById('qCustName').value = name; document.getElementById('qCustDevice').value = device;
-            document.getElementById('qPrice').value = currentPrice !== 'undefined' ? currentPrice : '';
-            document.getElementById('qRemarks').value = currentRemarks !== 'undefined' ? currentRemarks.replace(/\\n/g, '\n') : '';
-            document.getElementById('quoteModal').style.display = 'flex';
-        };
-
-        document.getElementById('updateQuoteForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('qCustId').value; const price = parseFloat(document.getElementById('qPrice').value).toFixed(2); const remarks = document.getElementById('qRemarks').value;
-            const phone = document.getElementById('qCustPhone').value; const name = document.getElementById('qCustName').value; const device = document.getElementById('qCustDevice').value;
-            try {
-                await updateDoc(doc(db, "customers", id), { quotePrice: price, serviceCharge: price, partsList: remarks, status: "Sebut Harga" });
-                document.getElementById('quoteModal').style.display = 'none';
-                if(confirm("Quotation saved. Would you like to send a WhatsApp message to the customer?")) { sendQuoteWhatsApp(phone, name, device, price, remarks); }
-            } catch (error) { alert("Error: " + error.message); }
-        });
-        window.cancelLead = async function(id) { if(confirm("Are you sure you want to cancel this lead?")) await updateDoc(doc(db, "customers", id), { status: "Batal" }); };
-        window.deleteCustomer = async function(id) { if(confirm("PERMANENTLY delete this record?")) await deleteDoc(doc(db, "customers", id)); };
-        
-        document.getElementById('newCustForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const saveBtn = document.getElementById('saveCustBtn');
-            saveBtn.innerText = "Saving..."; saveBtn.style.opacity = "0.7";
-            try {
-                await addDoc(collection(db, "customers"), {
-                    name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value,
-                    device: document.getElementById('cDevice').value, issue: document.getElementById('cIssue').value,
-                    source: "Manual", status: "Baru", createdAt: new Date().toISOString()
-                });
-                alert("Customer registered successfully!");
-                document.getElementById('newCustForm').reset();
-                document.getElementById('custModal').style.display = 'none'; 
-            } catch (error) { alert("Error: " + error.message); } 
-            finally { saveBtn.innerText = "Save Customer"; saveBtn.style.opacity = "1"; }
-        });
     </script>
 </body>
 </html>
