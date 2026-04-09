@@ -58,6 +58,28 @@
         .cost-row .form-group { flex: 1; min-width: 150px; margin-bottom: 0; }
         
         .quick-select { padding: 8px; font-size: 0.8rem; background-color: #172033; margin-bottom: 8px; cursor: pointer; }
+
+        @media (max-width: 900px) {
+        .details-grid { 
+            grid-template-columns: 1fr !important; /* Form jadi satu baris panjang ke bawah */
+            gap: 1.5rem;
+        }
+
+        .cost-row { 
+            display: grid;
+            grid-template-columns: 1fr !important; /* Breakdown harga tak senget */
+            gap: 10px;
+        }
+
+        .main-content { padding: 1rem; padding-top: 5rem; }
+        .glass-panel { padding: 1.2rem; }
+        
+        /* Jadikan dropdown input besar sikit supaya senang jari tekan */
+        .glass-input, .btn-primary, .quick-select {
+            height: 50px;
+            font-size: 1rem;
+        }
+        }
     </style>
 
     <style>
