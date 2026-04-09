@@ -50,8 +50,32 @@
         .glass-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.1); }
         .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
 
-        /* Sembunyikan Resit pada asalnya */
-        #invoice-template { display: none; }
+        textarea.glass-input { resize: vertical; min-height: 80px; }
+
+        /* --------------------------------------------------------------------------
+           A4 PRINT PREVIEW STYLING (THE PERFECT FIX)
+           Ini adalah reka bentuk khas untuk PDF A4. Ia tersorok pada asalnya.
+        -------------------------------------------------------------------------- */
+        #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; overflow-y: auto; padding: 40px 20px; justify-content: center; }
+        
+        /* Bekas A4 yang nampak seperti sehelai kertas di skrin */
+        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 20mm; background: #ffffff; color: #000000; font-family: 'Arial', sans-serif; box-shadow: 0 0 30px rgba(0,0,0,0.5); border-radius: 0; position: relative; box-sizing: border-box; }
+        
+        .inv-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+        .inv-header h1 { color: #0b1121; margin-bottom: 5px; font-size: 28px; font-weight: bold; text-transform: uppercase;}
+        .inv-header p { font-size: 14px; color: #555; margin-bottom: 2px; }
+        .inv-details { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px; color: #000; }
+        .inv-details p { margin: 3px 0; }
+        
+        /* Jadual A4 yang kemas, table-layout fixed memaksa teks turun bawah */
+        .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 14px; table-layout: fixed; }
+        .inv-table th, .inv-table td { border: 1px solid #ccc; padding: 12px; text-align: left; word-wrap: break-word; vertical-align: top; }
+        .inv-table th { background-color: #f4f4f4; color: #333; font-weight: bold; }
+        .inv-total { text-align: right; font-size: 20px; font-weight: bold; margin-top: 20px; color: #0b1121; border-top: 2px solid #333; padding-top: 15px; }
+        .inv-footer { text-align: center; font-size: 12px; color: #777; margin-top: 50px; border-top: 1px solid #ddd; padding-top: 15px; }
+
+        /* Butang kawalan di atas preview A4 */
+        #previewControls { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 2001; }
     </style>
 </head>
 <body>
@@ -141,14 +165,14 @@
     <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto;">
         <div class="glass-panel" style="width: 100%; max-width: 600px; position: relative; margin: 20px auto;">
             <button onclick="document.getElementById('receiptModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 class="lang" data-en="Generate Official Receipt" data-ms="Jana Resit Rasmi" style="margin-bottom: 20px; color: var(--accent-purple);">Generate Official Receipt</h2>
+            <h2 class="lang" data-en="Confirm Receipt Data" data-ms="Sahkan Data Resit" style="margin-bottom: 20px; color: var(--accent-purple);">Confirm Receipt Data</h2>
             
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Maklumat di bawah ditarik secara automatik. Anda boleh mengubahnya sebelum mencetak.</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Sila semak data quotation di bawah sebelum melihat preview A4.</p>
 
             <form id="generateReceiptForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px;">
                 <div style="grid-column: span 2;">
-                    <label style="font-size: 0.85rem; color: var(--text-muted);">Senarai Perkara / Alat Ganti:</label>
-                    <textarea id="rPartsList" class="glass-input" rows="3" placeholder="Senarai servis & alat ganti akan dipaparkan di sini..."></textarea>
+                    <label style="font-size: 0.85rem; color: var(--text-muted);">Senarai Perkara / Alat Ganti (Tarik dari Quotation):</label>
+                    <textarea id="rPartsList" class="glass-input" rows="4" placeholder="Senarai servis & alat ganti ditarik dari Leads..."></textarea>
                 </div>
                 <div>
                     <label style="font-size: 0.85rem; color: var(--text-muted);">Kos Alat Ganti (RM):</label>
@@ -164,7 +188,7 @@
                 </div>
                 <div>
                     <label style="font-size: 0.85rem; color: var(--text-muted);">Kaedah Pembayaran:</label>
-                    <select id="rPaymentMethod" class="glass-input" required style="background-color: #172033;">
+                    <select id="rPaymentMethod" class="glass-input" required style="background-color: #172033; cursor: pointer;">
                         <option value="Tunai">Tunai / Cash</option>
                         <option value="QR Pay">QR Pay</option>
                         <option value="Online Transfer">Online Transfer</option>
@@ -172,66 +196,72 @@
                 </div>
                 
                 <div style="grid-column: span 2; margin-top: 10px;">
-                    <button type="button" id="generatePdfBtn" onclick="generatePDF()" class="btn-primary" style="background: linear-gradient(135deg, #10b981, #059669);">📄 Muat Turun PDF</button>
+                    <button type="button" onclick="openA4Preview()" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));">🔍 Lihat Preview A4</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="invoice-template" style="width: 750px; padding: 40px; background: #ffffff; color: #000000; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box;">
-        
-        <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
-            <h1 style="margin: 0 0 5px 0; font-size: 26px; font-weight: bold; text-transform: uppercase;">HA-FIX TECH & REPAIR</h1>
-            <p style="margin: 0 0 2px 0; font-size: 12px; color: #555;">SSM: 202503246898 (003772792-K)</p>
-            <p style="margin: 0 0 2px 0; font-size: 12px; color: #555;">10697-G, Jalan Masjid Kg Bukit Kandis, 21200 Kuala Nerus, Terengganu</p>
+    <div id="previewBackdrop">
+        <div id="previewControls">
+            <button onclick="closeA4Preview()" class="btn-action btn-cancel">❌ Tutup Preview</button>
+            <button onclick="generatePDF()" class="btn-action btn-proceed" style="background: #10b981; border-color: #10b981; color: white;">📄 Sahkan & Muat Turun A4 PDF</button>
         </div>
-        
-        <div style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px;">
-            <div>
-                <p style="margin: 3px 0;"><strong>Kepada:</strong> <span id="pdfName"></span></p>
-                <p style="margin: 3px 0;"><strong>No. Telefon:</strong> <span id="pdfPhone"></span></p>
+
+        <div id="invoice-template">
+            <div class="inv-header">
+                <h1>HA-FIX TECH & REPAIR</h1>
+                <p>SSM: 202503246898 (003772792-K)</p>
+                <p>10697-G, Jalan Masjid Kg Bukit Kandis, 21200 Kuala Nerus, Terengganu</p>
             </div>
-            <div style="text-align: right;">
-                <p style="margin: 3px 0;"><strong>No. Resit:</strong> <span id="pdfTicket"></span></p>
-                <p style="margin: 3px 0;"><strong>Tarikh:</strong> <span id="pdfDate"></span></p>
-                <p style="margin: 3px 0;"><strong>Bayaran:</strong> <span id="pdfMethod"></span></p>
+            
+            <div class="inv-details">
+                <div>
+                    <p><strong>Kepada:</strong> <span id="pdfName"></span></p>
+                    <p><strong>No. Telefon:</strong> <span id="pdfPhone"></span></p>
+                </div>
+                <div style="text-align: right;">
+                    <p><strong>No. Resit:</strong> <span id="pdfTicket"></span></p>
+                    <p><strong>Tarikh:</strong> <span id="pdfDate"></span></p>
+                    <p><strong>Bayaran:</strong> <span id="pdfMethod"></span></p>
+                </div>
             </div>
-        </div>
-        
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; table-layout: fixed; font-size: 14px;">
-            <thead>
-                <tr>
-                    <th style="width: 75%; border: 1px solid #ccc; padding: 12px; background: #f4f4f4; text-align: left; color: #333;">Perkara / Deskripsi (Peranti: <span id="pdfDevice"></span>)</th>
-                    <th style="width: 25%; border: 1px solid #ccc; padding: 12px; background: #f4f4f4; text-align: right; color: #333;">Jumlah (RM)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td id="pdfPartsList" style="border: 1px solid #ccc; padding: 12px; white-space: pre-wrap; word-break: break-word; vertical-align: top; color: #444; line-height: 1.5;"></td>
-                    <td style="border: 1px solid #ccc; padding: 12px; text-align: right; vertical-align: top;"></td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #ccc; padding: 12px;">Kos Alat Ganti (Sila Rujuk Waranti Jika Berkaitan)</td>
-                    <td style="border: 1px solid #ccc; padding: 12px; text-align: right;" id="pdfParts">0.00</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #ccc; padding: 12px;">Caj Servis / Upah Pembaikan</td>
-                    <td style="border: 1px solid #ccc; padding: 12px; text-align: right;" id="pdfLabor">0.00</td>
-                </tr>
-                <tr id="trDelivery" style="display: none;">
-                    <td style="border: 1px solid #ccc; padding: 12px;">Caj Perjalanan / Penghantaran</td>
-                    <td style="border: 1px solid #ccc; padding: 12px; text-align: right;" id="pdfDelivery">0.00</td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <div style="text-align: right; font-size: 18px; font-weight: bold; margin-top: 20px; padding-top: 15px; border-top: 2px solid #333; color: #0b1121;">
-            Jumlah Keseluruhan: RM <span id="pdfTotal">0.00</span>
-        </div>
-        
-        <div style="text-align: center; font-size: 12px; color: #777; margin-top: 50px; border-top: 1px solid #eee; padding-top: 15px;">
-            <p style="margin: 3px 0;">Terima kasih kerana menggunakan perkhidmatan HA-FIX Tech & Repair.</p>
-            <p style="margin: 3px 0;">Sila simpan resit ini sebagai bukti pembayaran dan rujukan waranti (jika ada).</p>
+            
+            <table class="inv-table">
+                <thead>
+                    <tr>
+                        <th style="width: 75%; text-align: left;">Perkara / Deskripsi (Peranti: <span id="pdfDevice"></span>)</th>
+                        <th style="width: 25%; text-align: right;">Jumlah (RM)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="pdfPartsList" style="word-wrap: break-word; color: #000; line-height: 1.5;"></td>
+                        <td style="text-align: right;"></td>
+                    </tr>
+                    <tr>
+                        <td>Kos Alat Ganti (Sila Rujuk Waranti Jika Berkaitan)</td>
+                        <td style="text-align: right;" id="pdfParts">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Caj Servis / Upah Pembaikan</td>
+                        <td style="text-align: right;" id="pdfLabor">0.00</td>
+                    </tr>
+                    <tr id="trDelivery" style="display: none;">
+                        <td>Caj Perjalanan / Penghantaran</td>
+                        <td style="text-align: right;" id="pdfDelivery">0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="inv-total">
+                Jumlah Keseluruhan: RM <span id="pdfTotal">0.00</span>
+            </div>
+            
+            <div class="inv-footer">
+                <p>Terima kasih kerana menggunakan perkhidmatan HA-FIX Tech & Repair.</p>
+                <p>Sila simpan resit ini sebagai bukti pembayaran dan rujukan waranti (jika ada).</p>
+            </div>
         </div>
     </div>
 
@@ -332,7 +362,7 @@
                     <button class="btn-action" onclick="openStatusModal('${ticketId}', '${data.status}', '${safePhone}', '${safeName}', '${safeDevice}')">🔄 Tukar Status</button>
                 `;
                 if(data.status === "Siap") {
-                    actionBtns += `<button class="btn-action btn-receipt" onclick="openReceiptModal('${ticketId}', '${safeName}', '${safePhone}', '${safeDevice}', '${data.agreedPrice || 0}')">📄 Cetak Resit</button>`;
+                    actionBtns += `<button class="btn-action btn-receipt" onclick="confirmReceiptData('${ticketId}', '${safeName}', '${safePhone}', '${safeDevice}', '${data.agreedPrice || 0}')">📄 Cetak Resit</button>`;
                 }
                 actionBtns += `</div>`;
 
@@ -349,104 +379,132 @@
             });
         });
 
-        let currentReceiptData = {};
-        
-        window.openReceiptModal = async function(ticketId, name, phone, device, agreedPrice) {
-            currentReceiptData = { ticketId, name, phone, device };
+        // ==============================================================================
+        // FUNGSI PENGESAHAN DATA RESIT (STEP 1)
+        // Menarik data leads dan membuka modal untuk pengesahan / edit last minit
+        // ==============================================================================
+        let currentTicketId = "";
+        let currentCustData = {};
+
+        window.confirmReceiptData = async function(ticketId, name, phone, device, agreedPrice) {
+            currentTicketId = ticketId;
+            currentCustData = { name, phone, device };
             
+            // Default values
             let pTotal = parseFloat(agreedPrice).toFixed(2);
             let sCharge = "0.00";
             let dCharge = "0.00";
             let pList = `Pembaikan peranti ${device}`;
 
+            // PENTING: Pergi cari fail "customers" yang sepadan dengan tiket ni
             try {
                 const q = query(collection(db, "customers"), where("ticketId", "==", ticketId));
                 const querySnapshot = await getDocs(q);
                 if (!querySnapshot.empty) {
                     const custData = querySnapshot.docs[0].data();
+                    
+                    // Tarik pecahan harga dan nota (jika ada di Leads)
                     pTotal = custData.partsTotal || pTotal;
                     sCharge = custData.serviceCharge || "0.00";
                     dCharge = custData.deliveryCharge || "0.00";
                     pList = custData.partsList || pList;
                 }
             } catch (error) {
-                console.error("Gagal menarik data quotation", error);
+                console.error("Gagal menarik data quotation pelanggan", error);
             }
 
+            // Suapkan ke dalam Borang Pengesahan Resit
             document.getElementById('rPartsList').value = pList;
             document.getElementById('rPartsCost').value = pTotal;
             document.getElementById('rLaborCost').value = sCharge;
             document.getElementById('rDeliveryCost').value = dCharge;
             
-            document.getElementById('generatePdfBtn').innerText = "📄 Muat Turun PDF";
             document.getElementById('receiptModal').style.display = 'flex';
         };
 
         // ==============================================================================
-        // FUNGSI JANA PDF (DIKEMASKINI DENGAN DOM FIZIKAL & Z-INDEX)
-        // Kita paparkan template sekejap di belakang skrin sebelum 'snap' PDF
+        // FUNGSI MEMBUKA PREVIEW A4 (STEP 2)
+        // Mengisi template A4 fizikak dengan data dari form pengesahan
         // ==============================================================================
-        window.generatePDF = function() {
-            const btn = document.getElementById('generatePdfBtn');
-            btn.innerText = "⏳ Sedang Menjana...";
-
+        window.openA4Preview = function() {
             const partsCost = parseFloat(document.getElementById('rPartsCost').value) || 0;
             const laborCost = parseFloat(document.getElementById('rLaborCost').value) || 0;
             const deliveryCost = parseFloat(document.getElementById('rDeliveryCost').value) || 0;
             const total = partsCost + laborCost + deliveryCost;
             
-            if (total === 0) { 
-                alert("Sila pastikan jumlah harga tidak sifar (0)."); 
-                btn.innerText = "📄 Muat Turun PDF";
-                return; 
-            }
+            if (total === 0) { alert("Sila pastikan jumlah harga tidak sifar (0)."); return; }
 
-            const element = document.getElementById('invoice-template');
+            // Tutup modal pengesahan, buka preview A4
+            document.getElementById('receiptModal').style.display = 'none';
+            document.getElementById('previewBackdrop').style.display = 'flex';
+            document.getElementById('invoice-template').style.display = 'block';
 
-            // 1. Masukkan data
-            document.getElementById('pdfName').innerText = currentReceiptData.name; 
-            document.getElementById('pdfPhone').innerText = currentReceiptData.phone;
-            document.getElementById('pdfTicket').innerText = currentReceiptData.ticketId; 
+            // Mengisi data ke dalam template A4
+            document.getElementById('pdfName').innerText = currentCustData.name; 
+            document.getElementById('pdfPhone').innerText = currentCustData.phone;
+            document.getElementById('pdfTicket').innerText = currentTicketId; 
             document.getElementById('pdfDate').innerText = new Date().toLocaleDateString('ms-MY');
             document.getElementById('pdfMethod').innerText = document.getElementById('rPaymentMethod').value; 
-            document.getElementById('pdfDevice').innerText = currentReceiptData.device;
-            document.getElementById('pdfPartsList').innerText = document.getElementById('rPartsList').value;
+            document.getElementById('pdfDevice').innerText = currentCustData.device;
             
+            // Mengisi Senarai Barang (Tukar Enter kepada <br> tag)
+            const partsListText = document.getElementById('rPartsList').value.replace(/\n/g, '<br>');
+            document.getElementById('pdfPartsList').innerHTML = partsListText;
+            
+            // Mengisi Harga
             document.getElementById('pdfParts').innerText = partsCost.toFixed(2); 
             document.getElementById('pdfLabor').innerText = laborCost.toFixed(2); 
             
+            // Tunjuk / Sorok Caj Perjalanan
             if(deliveryCost > 0) {
                 document.getElementById('trDelivery').style.display = 'table-row';
                 document.getElementById('pdfDelivery').innerText = deliveryCost.toFixed(2);
             } else {
                 document.getElementById('trDelivery').style.display = 'none';
             }
+            
             document.getElementById('pdfTotal').innerText = total.toFixed(2);
+        };
 
-            // 2. Munculkan template secara fizikal tetapi di 'belakang' layer (z-index negatif)
-            element.style.display = 'block';
-            element.style.position = 'absolute';
-            element.style.top = '0';
-            element.style.left = '0';
-            element.style.zIndex = '-1000';
+        // ==============================================================================
+        // FUNGSI MENUTUP PREVIEW A4
+        // ==============================================================================
+        window.closeA4Preview = function() {
+            document.getElementById('previewBackdrop').style.display = 'none';
+            document.getElementById('invoice-template').style.display = 'none';
+            // Buka balik modal data, incase nak edit
+            document.getElementById('receiptModal').style.display = 'flex';
+        };
 
-            // 3. Arahkan html2pdf untuk proses elemen tersebut
+        // ==============================================================================
+        // FUNGSI JANA PDF (FINAL STEP)
+        // Tangkap preview A4 yang sempurna tanpa cropping
+        // ==============================================================================
+        window.generatePDF = function() {
+            // Sembunyikan butang kawalan preview sebelum snap!
+            document.getElementById('previewControls').style.display = 'none';
+            
+            const element = document.getElementById('invoice-template');
+            
             const opt = { 
-                margin:       10, 
-                filename:     `Resit_${currentReceiptData.ticketId}.pdf`, 
-                image:        { type: 'jpeg', quality: 0.98 }, 
-                html2canvas:  { scale: 2, scrollX: 0, scrollY: 0, useCORS: true }, 
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+                margin: 10, // Margin keliling 10mm
+                filename: `Resit_${currentTicketId}.pdf`, 
+                image: { type: 'jpeg', quality: 0.98 }, 
+                html2canvas: { scale: 2, useCORS: true }, 
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
             };
 
+            // Print ke PDF!
             html2pdf().set(opt).from(element).save().then(() => { 
-                // 4. Selepas siap, sembunyikan kembali template
-                element.style.display = 'none';
-                document.getElementById('receiptModal').style.display = 'none'; 
-                btn.innerText = "📄 Muat Turun PDF";
+                // Tunjuk balik butang kawalan
+                document.getElementById('previewControls').style.display = 'flex';
+                // Tutup semua
+                document.getElementById('previewBackdrop').style.display = 'none';
+                document.getElementById('invoice-template').style.display = 'none';
             });
         };
 
+        // Fast Track Ticket
         document.getElementById('newTicketForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const ticketId = `HF-${Math.floor(1000 + Math.random() * 9000)}`;
