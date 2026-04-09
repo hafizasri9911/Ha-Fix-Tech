@@ -84,6 +84,21 @@
     .dashboard-row { grid-template-columns: 1fr !important; }
 }
     </style>
+
+<button class="menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
+
+<script>
+    function toggleSidebar() {
+        document.querySelector('.sidebar').classList.toggle('active');
+    }
+    // Tutup sidebar bila klik menu link (untuk mobile)
+    document.querySelectorAll('.nav-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            if(window.innerWidth <= 768) toggleSidebar();
+        });
+    });
+</script>
+
 </head>
 <body>
     <div class="blob blue"></div>
