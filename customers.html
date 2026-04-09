@@ -11,11 +11,11 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: radial-gradient(circle at top left, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
         
-        .blob { position: absolute; filter: blur(90px); z-index: -1; opacity: 0.5; }
-        .blob.blue { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--accent-blue); }
-        .blob.purple { bottom: -10%; right: -10%; width: 300px; height: 300px; background: var(--accent-purple); }
-        
-        /* SIDEBAR BASE */
+        /* MOBILE MENU & OVERLAY */
+        .menu-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 3000; background: var(--accent-blue); border: none; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2400; }
+        .sidebar-overlay.active { display: block; }
+
         .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; z-index: 2500; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .company-info h2 { font-size: 1.2rem; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
         .company-info p { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
@@ -23,66 +23,65 @@
         .nav-menu li a { text-decoration: none; color: var(--text-muted); padding: 12px 16px; border-radius: 12px; display: block; transition: 0.3s; font-weight: 600; font-size: 0.9rem; }
         .nav-menu li a:hover, .nav-menu li a.active { background: rgba(59, 130, 246, 0.15); color: var(--text-main); border: 1px solid rgba(59, 130, 246, 0.3); }
         
-        /* MAIN CONTENT */
         .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; width: 100%; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .header h1 { font-size: 2rem; font-weight: 700; }
 
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; }
         
-        /* TABLE & FILTERS */
         .filter-section { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
         .search-box { flex: 1; min-width: 200px; }
         .filter-box { width: 150px; }
         
-        .glass-table { width: 100%; border-collapse: collapse; }
+        /* TABLE RESPONSIVE */
+        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
+        .glass-table { width: 100%; border-collapse: collapse; min-width: 900px; }
         .glass-table th, .glass-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: top; }
         .glass-table th { color: var(--text-muted); font-size: 0.9rem; }
         
-        /* STATUS & BUTTONS */
         .status-baru { color: #fbbf24; font-weight: bold; }
         .status-sebutharga { color: #60a5fa; font-weight: bold; }
+        .status-batal { color: #f87171; font-weight: bold; text-decoration: line-through; }
         .status-proceed { color: #34d399; font-weight: bold; }
-        .action-group { display: flex; flex-direction: column; gap: 5px; }
-        .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.8rem; font-weight: bold; text-align: center; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
-        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; margin-bottom: 15px; }
 
-        /* MOBILE FIXES */
-        .menu-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 3000; background: var(--accent-blue); border: none; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2400; }
+        /* ACTION BUTTONS */
+        .action-group { display: flex; flex-direction: column; gap: 5px; }
+        .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.8rem; font-weight: bold; text-align: center; }
+        .btn-action:hover { background: var(--accent-blue); border-color: var(--accent-blue); }
+        .btn-proceed { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #34d399; }
+        .btn-proceed:hover { background: #10b981; color: white; }
+        .btn-cancel { background: rgba(248, 113, 113, 0.2); border-color: #f87171; color: #f87171; }
+        .btn-cancel:hover { background: #f87171; color: white; }
+        .btn-whatsapp { background: rgba(37, 211, 102, 0.2); border-color: #25D366; color: #25D366; }
+        .btn-whatsapp:hover { background: #25D366; color: white; }
+
+        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; margin-bottom: 15px; }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; }
+
+        /* A4 PREVIEW */
+        #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 4000; overflow-y: auto; padding: 40px 20px; justify-content: center; }
+        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; position: relative; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
 
         @media (max-width: 900px) {
             .menu-toggle { display: block; }
             body { flex-direction: column; }
-            .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; width: 280px; box-shadow: 15px 0 30px rgba(0,0,0,0.5); }
+            .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; }
             .sidebar.active { left: 0; }
-            .sidebar-overlay.active { display: block; }
-            .main-content { padding: 1.5rem; padding-top: 4.5rem; }
-            .header h1 { font-size: 1.5rem; }
-            .glass-panel { padding: 1.2rem; overflow-x: auto; }
-            .glass-table { min-width: 800px; } /* Ensure table info is readable by horizontal scroll */
+            .main-content { padding: 1rem; padding-top: 5rem; }
+            .header { flex-direction: column; align-items: flex-start; gap: 15px; }
             .filter-section { flex-direction: column; align-items: stretch; }
             .filter-box { width: 100%; }
-            .search-box { width: 100%; }
         }
-
-        /* PRINT PREVIEW (HIDDEN BY DEFAULT) */
-        #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 4000; overflow-y: auto; padding: 20px; justify-content: center; }
-        #invoice-template { width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; margin: 0 auto; }
     </style>
 </head>
 <body>
-    <div class="blob blue"></div>
-    <div class="blob purple"></div>
-
     <button class="menu-toggle" id="menuBtn">☰ MENU</button>
     <div class="sidebar-overlay" id="overlay"></div>
 
     <aside class="sidebar">
         <div class="company-info">
             <h2>HA-FIX TECH</h2>
-            <p>202503246898 (003772792-K)<br>Kuala Nerus, Terengganu</p>
+            <p>202503246898 (003772792-K)<br>Management System</p>
         </div>
         <ul class="nav-menu">
             <li><a href="dashboard.html">Dashboard</a></li>
@@ -97,53 +96,64 @@
     <main class="main-content">
         <header class="header">
             <h1>Leads & Quotations</h1>
+            <button class="btn-action" style="padding:12px 20px;" onclick="document.getElementById('custModal').style.display='flex'">+ Manual Lead</button>
         </header>
 
         <div class="glass-panel">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2 style="margin: 0; font-size: 1.1rem;">Customer Inquiries</h2>
-                <button class="btn-action" onclick="document.getElementById('custModal').style.display='flex'">+ Manual Lead</button>
-            </div>
-            
             <div class="filter-section">
                 <input type="text" id="searchInput" class="glass-input search-box" placeholder="Search name or phone..." style="margin-bottom:0;">
-                <select id="statusFilter" class="glass-input filter-box" style="margin-bottom:0; background-color: #172033; color: white;">
+                <select id="statusFilter" class="glass-input filter-box" style="margin-bottom:0; background-color: #172033;">
                     <option value="All">All Statuses</option>
                     <option value="Baru">New</option>
                     <option value="Sebut Harga">Quoted</option>
                     <option value="Proceed">Proceeded</option>
                     <option value="Batal">Cancelled</option>
                 </select>
-                <button onclick="exportCSV()" class="btn-action" style="background: #10b981; border:none; height: 45px;">📥 Export CSV</button>
+                <button onclick="exportCSV()" class="btn-export" style="background:#10b981; color:white; border:none; padding:12px 20px; border-radius:10px; cursor:pointer; font-weight:bold;">📥 Export CSV</button>
             </div>
 
-            <table class="glass-table">
-                <thead>
-                    <tr>
-                        <th width="15%">Date</th>
-                        <th width="25%">Customer Info</th>
-                        <th width="25%">Device & Issue</th>
-                        <th width="20%">Status</th>
-                        <th width="15%">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="customersTableBody">
-                    <tr><td colspan="5" style="text-align:center;">Loading data...</td></tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th width="15%">Date</th>
+                            <th width="25%">Customer Info</th>
+                            <th width="25%">Device & Issue</th>
+                            <th width="20%">Status</th>
+                            <th width="15%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTableBody">
+                        <tr><td colspan="5" style="text-align:center;">Loading data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 
-    <div id="custModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3500; justify-content: center; align-items: center; padding: 20px;">
-        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative; margin-bottom: 0;">
+    <div id="custModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center; padding: 20px;">
+        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
             <button onclick="document.getElementById('custModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 style="margin-bottom: 20px;">Manual Lead</h2>
+            <h2 style="margin-bottom: 20px;">Manual Registration</h2>
             <form id="newCustForm">
-                <input type="text" id="cName" class="glass-input" placeholder="Customer Name" required>
-                <input type="tel" id="cPhone" class="glass-input" placeholder="Phone Number" required>
-                <input type="text" id="cDevice" class="glass-input" placeholder="Device Model" required>
-                <input type="text" id="cIssue" class="glass-input" placeholder="Issue / Notes" required>
-                <button type="submit" id="saveCustBtn" class="btn-primary">Save Customer</button>
+                <input type="text" id="cName" class="glass-input" placeholder="Name" required>
+                <input type="tel" id="cPhone" class="glass-input" placeholder="Phone" required>
+                <input type="text" id="cDevice" class="glass-input" placeholder="Device" required>
+                <input type="text" id="cIssue" class="glass-input" placeholder="Issue" required>
+                <button type="submit" class="btn-primary">Save Lead</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="quoteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center;">
+        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
+            <button onclick="document.getElementById('quoteModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <h2 style="margin-bottom: 20px;">Quick Quote</h2>
+            <form id="updateQuoteForm">
+                <input type="hidden" id="qCustId"><input type="hidden" id="qCustPhone"><input type="hidden" id="qCustName"><input type="hidden" id="qCustDevice">
+                <input type="number" id="qPrice" class="glass-input" placeholder="Estimated Price (RM)" step="0.01" required>
+                <textarea id="qRemarks" class="glass-input" placeholder="Parts / Service Details" required></textarea>
+                <button type="submit" class="btn-primary">Save Quote</button>
             </form>
         </div>
     </div>
@@ -151,15 +161,12 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, updateDoc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs", authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com", projectId: "ha-fix-tech-repair-8d27f", storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app", messagingSenderId: "630965976099", appId: "1:630965976099:web:9ff830cd7f5f624b060596", measurementId: "G-KJRGT6LQ43" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
-        onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
-        window.logoutAdmin = () => { if(confirm("Logout?")) signOut(auth).then(() => window.location.replace("login.html")); };
-
-        // MOBILE MENU LOGIC
+        // MOBILE SIDEBAR
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('overlay');
@@ -167,62 +174,82 @@
         menuBtn.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
 
+        onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
+        window.logoutAdmin = () => signOut(auth).then(() => window.location.replace("login.html"));
+
         let allCustomers = [];
-        onSnapshot(query(collection(db, "customers"), orderBy("createdAt", "desc")), (snap) => {
-            allCustomers = []; snap.forEach(d => allCustomers.push({ id: d.id, ...d.data() }));
+        onSnapshot(query(collection(db, "customers"), orderBy("createdAt", "desc")), (snapshot) => {
+            allCustomers = []; snapshot.forEach((doc) => { allCustomers.push({ id: doc.id, ...doc.data() }); });
             renderTable();
         });
 
         function renderTable() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const filter = document.getElementById('statusFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
             const tbody = document.getElementById('customersTableBody');
-            tbody.innerHTML = "";
+            tbody.innerHTML = ""; 
+            const filteredData = allCustomers.filter(cust => {
+                return ((cust.name && cust.name.toLowerCase().includes(searchTerm)) || (cust.phone && cust.phone.includes(searchTerm))) && 
+                       (statusFilter === "All" ? true : (cust.status || "Baru") === statusFilter);
+            });
             
-            const filtered = allCustomers.filter(c => 
-                ((c.name && c.name.toLowerCase().includes(search)) || (c.phone && c.phone.includes(search))) && 
-                (filter === "All" ? true : (c.status || "Baru") === filter)
-            );
-
-            if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No records.</td></tr>`; return; }
-
-            filtered.forEach(data => {
-                const tr = document.createElement('tr');
+            filteredData.forEach(data => {
                 const dbStatus = data.status || "Baru";
-                let statusText = "New", statusClass = "status-baru";
-                if(dbStatus === "Sebut Harga") { statusText = "Quoted"; statusClass = "status-sebutharga"; }
-                else if(dbStatus === "Proceed") { statusText = "Proceeded"; statusClass = "status-proceed"; }
-                else if(dbStatus === "Batal") { statusText = "Cancelled"; statusClass = ""; }
-
-                const actionBtns = `<div class="action-group">
-                    <button class="btn-action" onclick="window.location.href='customer-details.html?id=${data.id}'">🔍 Details</button>
-                    ${dbStatus !== 'Proceed' ? `<button class="btn-action" style="color:#fbbf24;" onclick="cancelLead('${data.id}')">❌ Cancel</button>` : ''}
-                </div>`;
-
+                const displayStatus = dbStatus === "Sebut Harga" ? "Quoted" : dbStatus === "Baru" ? "New" : dbStatus === "Proceed" ? "Proceeded" : "Cancelled";
+                
+                const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${new Date(data.createdAt).toLocaleDateString('en-MY')}</td>
-                    <td><strong>${data.name}</strong><br><small>${data.phone}</small></td>
-                    <td>${data.device}<br><small>${data.issue}</small></td>
-                    <td><span class="${statusClass}">${statusText}</span></td>
-                    <td>${actionBtns}</td>
+                    <td><strong style="color:var(--accent-blue);">${data.name}</strong><br><small>${data.phone}</small></td>
+                    <td><strong>${data.device}</strong><br><small>${data.issue}</small></td>
+                    <td><span class="status-${dbStatus.toLowerCase().replace(' ', '')}">${displayStatus}</span></td>
+                    <td>
+                        <div class="action-group">
+                            <button class="btn-action" onclick="window.location.href='customer-details.html?id=${data.id}'">🔍 Details</button>
+                            ${(dbStatus==='Baru' || dbStatus==='Sebut Harga') ? `<button class="btn-action" onclick="openQuoteModal('${data.id}','${data.quotePrice||''}','${data.partsList||''}','${data.phone}','${data.name}','${data.device}')">💰 Quote</button>` : ''}
+                            ${(dbStatus==='Baru' || dbStatus==='Sebut Harga') ? `<button class="btn-action btn-proceed" onclick="proceedToRepair('${data.id}','${data.name}','${data.phone}','${data.device}','${data.issue}','${data.quotePrice||0}')">✅ Proceed</button>` : ''}
+                            ${(dbStatus!=='Proceed' && dbStatus!=='Batal') ? `<button class="btn-action btn-cancel" onclick="cancelLead('${data.id}')">❌ Cancel</button>` : ''}
+                            ${dbStatus==='Batal' ? `<button class="btn-action btn-cancel" onclick="deleteCustomer('${data.id}')">🗑️ Delete</button>` : ''}
+                        </div>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
-        document.getElementById('searchInput').oninput = renderTable;
-        document.getElementById('statusFilter').onchange = renderTable;
+        document.getElementById('searchInput').addEventListener('input', renderTable);
+        document.getElementById('statusFilter').addEventListener('change', renderTable);
+
+        // LOGIC PROCEED TO REPAIR (HANTAR KE SERVICES)
+        window.proceedToRepair = async (id, name, phone, device, issue, price) => {
+            if(confirm(`Send ${name} to Active Repairs?`)) {
+                const ticketId = `HF-${Math.floor(1000 + Math.random() * 9000)}`;
+                try {
+                    await setDoc(doc(db, "tickets", ticketId), { name, phone, device, issue, agreedPrice: price, status: "Menunggu Alat Ganti", createdAt: new Date().toISOString() });
+                    await updateDoc(doc(db, "customers", id), { status: "Proceed", ticketId });
+                    alert("Success! Check Active Repairs.");
+                } catch (e) { alert(e.message); }
+            }
+        };
+
+        window.openQuoteModal = (id, price, remarks, phone, name, device) => {
+            document.getElementById('qCustId').value = id; document.getElementById('qCustPhone').value = phone; document.getElementById('qCustName').value = name; document.getElementById('qCustDevice').value = device;
+            document.getElementById('qPrice').value = price; document.getElementById('qRemarks').value = remarks;
+            document.getElementById('quoteModal').style.display = 'flex';
+        };
+
+        document.getElementById('updateQuoteForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('qCustId').value;
+            await updateDoc(doc(db, "customers", id), { quotePrice: document.getElementById('qPrice').value, partsList: document.getElementById('qRemarks').value, status: "Sebut Harga" });
+            document.getElementById('quoteModal').style.display = 'none';
+        };
 
         window.cancelLead = async (id) => { if(confirm("Cancel lead?")) await updateDoc(doc(db, "customers", id), { status: "Batal" }); };
-
+        window.deleteCustomer = async (id) => { if(confirm("Delete permanently?")) await deleteDoc(doc(db, "customers", id)); };
         document.getElementById('newCustForm').onsubmit = async (e) => {
             e.preventDefault();
-            await addDoc(collection(db, "customers"), {
-                name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value,
-                device: document.getElementById('cDevice').value, issue: document.getElementById('cIssue').value,
-                status: "Baru", createdAt: new Date().toISOString()
-            });
+            await addDoc(collection(db, "customers"), { name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value, device: document.getElementById('cDevice').value, issue: document.getElementById('cIssue').value, status: "Baru", createdAt: new Date().toISOString() });
             document.getElementById('custModal').style.display = 'none';
-            document.getElementById('newCustForm').reset();
         };
     </script>
 </body>
