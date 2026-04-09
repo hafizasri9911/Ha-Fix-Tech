@@ -1,0 +1,35 @@
+onSnapshot(q, (snapshot) => {
+    tbody.innerHTML = ""; // Kosongkan jadual lama
+    
+    if (snapshot.empty) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Tiada tiket aktif buat masa ini.</td></tr>`;
+        return;
+    }
+
+    snapshot.forEach((doc) => {
+        const data = doc.data();
+        const ticketId = doc.id;
+        
+        // Tetapkan warna dan dwibahasa untuk status
+        let statusClass = "repairing";
+        let statusEN = "Repairing";
+        let statusMS = "Sedang Dibaiki";
+
+        if(data.status === "Menunggu Alat Ganti") {
+            statusClass = "waiting"; statusEN = "Waiting Parts"; statusMS = "Menunggu Alat Ganti";
+        } else if(data.status === "Siap") {
+            statusClass = "done"; statusEN = "Done"; statusMS = "Siap";
+        }
+
+        // Masukkan Baris ke dalam Jadual
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td style="font-weight:bold; color:var(--accent-blue);">#${ticketId}</td>
+            <td>${data.name}</td>
+            <td>${data.device}</td>
+            <td><span class="status ${statusClass} lang" data-en="${statusEN}" data-ms="${statusMS}">${currentLang === 'en' ? statusEN : statusMS}</span></td>
+            <td><button class="btn-action lang" data-en="Update" data-ms="Kemaskini">Update</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+});

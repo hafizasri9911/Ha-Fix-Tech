@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Repair | HA-FIX Tech & Repair</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        body { 
+            background: radial-gradient(circle at top left, #172033, var(--bg-color)); 
+            color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; position: relative; overflow-x: hidden; padding: 20px;
+        }
+        
+        .blob { position: absolute; filter: blur(100px); z-index: -1; opacity: 0.6; }
+        .blob.blue { top: -5%; left: 10%; width: 500px; height: 500px; background: var(--accent-blue); }
+        .blob.purple { bottom: -5%; right: 10%; width: 400px; height: 400px; background: var(--accent-purple); }
+
+        .top-nav { position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 10px; background: var(--glass-bg); padding: 5px; border-radius: 20px; border: 1px solid var(--glass-border); backdrop-filter: blur(10px); z-index: 10;}
+        .lang-btn { background: transparent; color: var(--text-main); border: none; padding: 5px 15px; border-radius: 15px; cursor: pointer; font-weight: 600; transition: 0.3s; opacity: 0.5; text-decoration: none; font-size: 0.85rem;}
+        .lang-btn.active, .lang-btn:hover { background: var(--accent-blue); opacity: 1; }
+        .nav-divider { width: 1px; height: 20px; background: var(--glass-border); margin: 0 5px; }
+
+        .booking-container { 
+            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            border: 1px solid var(--glass-border); border-radius: 30px; padding: 3rem; 
+            width: 100%; max-width: 550px; text-align: left; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            margin-top: 50px;
+        }
+
+        .header-area { text-align: center; margin-bottom: 2rem; }
+        .header-area h1 { font-size: 2rem; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .header-area p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
+        
+        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 15px; border-radius: 12px; color: var(--text-main); font-size: 1rem; outline: none; transition: 0.3s; }
+        .glass-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+        textarea.glass-input { resize: vertical; min-height: 100px; }
+
+        .btn-submit { width: 100%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5); transform: translateY(-3px); }
+
+        /* Mesej Berjaya */
+        #successMessage { display: none; text-align: center; padding: 2rem; }
+        #successMessage h2 { color: #34d399; margin-bottom: 10px; }
+        #successMessage p { color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+        .btn-outline { display: inline-block; padding: 10px 20px; border: 1px solid var(--accent-blue); color: var(--accent-blue); border-radius: 10px; text-decoration: none; font-weight: 600; transition: 0.3s; }
+        .btn-outline:hover { background: var(--accent-blue); color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="blob blue"></div>
+    <div class="blob purple"></div>
+
+    <div class="top-nav">
+        <a href="index.html" class="lang-btn lang" data-en="← Home" data-ms="← Utama">← Home</a>
+        <div class="nav-divider"></div>
+        <button id="btn-en" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+        <button id="btn-ms" class="lang-btn" onclick="setLanguage('ms')">MS</button>
+    </div>
+
+    <div class="booking-container">
+        <div id="formSection">
+            <div class="header-area">
+                <h1 class="lang" data-en="Book a Repair" data-ms="Tempah Pembaikan">Book a Repair</h1>
+                <p class="lang" data-en="Fill in your details to speed up the repair registration process at our store." data-ms="Isikan butiran anda untuk mempercepatkan proses pendaftaran peranti di kedai kami.">Fill in your details to speed up the repair registration process at our store.</p>
+            </div>
+
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label class="lang" data-en="Full Name" data-ms="Nama Penuh">Full Name</label>
+                    <input type="text" id="cName" class="glass-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="lang" data-en="Phone Number" data-ms="Nombor Telefon">Phone Number</label>
+                    <input type="tel" id="cPhone" class="glass-input" placeholder="0123456789" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="lang" data-en="Device Model" data-ms="Model Peranti">Device Model</label>
+                    <input type="text" id="cDevice" class="glass-input lang" data-en="E.g., iPhone 13 Pro" data-ms="Cth: iPhone 13 Pro" placeholder="E.g., iPhone 13 Pro" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="lang" data-en="Describe the Issue" data-ms="Terangkan Kerosakan">Describe the Issue</label>
+                    <textarea id="cIssue" class="glass-input lang" data-en="E.g., Screen cracked, battery drains fast..." data-ms="Cth: Skrin pecah, bateri cepat habis..." placeholder="E.g., Screen cracked, battery drains fast..." required></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-submit lang" data-en="Submit Booking" data-ms="Hantar Tempahan">Submit Booking</button>
+            </form>
+        </div>
+
+        <div id="successMessage">
+            <svg style="width:64px; height:64px; color:#34d399; margin: 0 auto 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h2 class="lang" data-en="Booking Received!" data-ms="Tempahan Diterima!">Booking Received!</h2>
+            <p class="lang" data-en="Thank you! We have received your device details. Please bring your device to HA-FIX Tech & Repair. Mention your phone number at the counter." data-ms="Terima kasih! Kami telah menerima butiran peranti anda. Sila bawa peranti anda ke HA-FIX Tech. Beritahu sahaja nombor telefon anda di kaunter kami.">Thank you! We have received your device details. Please bring your device to HA-FIX Tech & Repair. Mention your phone number at the counter.</p>
+            <a href="index.html" class="btn-outline lang" data-en="Back to Home" data-ms="Kembali ke Utama">Back to Home</a>
+        </div>
+    </div>
+
+    <script type="module">
+        let currentLang = 'en'; 
+        window.setLanguage = function(lang) {
+            currentLang = lang;
+            const elements = document.querySelectorAll('.lang');
+            elements.forEach(el => {
+                if(el.getAttribute(`data-${lang}`)) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = el.getAttribute(`data-${lang}`);
+                    else el.innerText = el.getAttribute(`data-${lang}`);
+                }
+            });
+            document.getElementById('btn-en').classList.remove('active'); 
+            document.getElementById('btn-ms').classList.remove('active');
+            document.getElementById(`btn-${lang}`).classList.add('active');
+        };
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs",
+            authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com",
+            projectId: "ha-fix-tech-repair-8d27f",
+            storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app",
+            messagingSenderId: "630965976099",
+            appId: "1:630965976099:web:9ff830cd7f5f624b060596",
+            measurementId: "G-KJRGT6LQ43"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app); // Tidak perlukan Auth kerana ini public form
+
+        const bookingForm = document.getElementById('bookingForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            submitBtn.innerText = "Sila Tunggu...";
+            submitBtn.style.opacity = "0.7";
+
+            try {
+                // Simpan ke dalam koleksi "customers"
+                await addDoc(collection(db, "customers"), {
+                    name: document.getElementById('cName').value,
+                    phone: document.getElementById('cPhone').value,
+                    device: document.getElementById('cDevice').value,
+                    issue: document.getElementById('cIssue').value,
+                    source: "Online", // Penanda penting untuk filter di sistem Admin
+                    status: "Baru",
+                    createdAt: new Date().toISOString()
+                });
+
+                // Tunjuk mesej berjaya, sorok borang
+                document.getElementById('formSection').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+
+            } catch (error) {
+                console.error("Ralat:", error);
+                alert("Maaf, berlaku ralat teknikal. Sila cuba lagi.");
+                submitBtn.innerText = "Submit Booking";
+                submitBtn.style.opacity = "1";
+            }
+        });
+    </script>
+</body>
+</html>

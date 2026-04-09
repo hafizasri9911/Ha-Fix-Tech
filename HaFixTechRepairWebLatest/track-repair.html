@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Repair | HA-FIX Tech & Repair</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Salin gaya CSS asas dari atas */
+        :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: radial-gradient(circle at top right, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+        .blob { position: absolute; filter: blur(120px); z-index: -1; opacity: 0.5; }
+        .blob.blue { top: 0; left: 0; width: 600px; height: 600px; background: var(--accent-blue); }
+        .blob.purple { bottom: 20%; right: 0; width: 500px; height: 500px; background: var(--accent-purple); }
+        
+        .navbar { position: fixed; top: 0; width: 100%; padding: 20px 50px; background: rgba(11, 17, 33, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        .logo { font-size: 1.5rem; font-weight: 700; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--accent-blue); }
+        .lang-switcher { display: flex; gap: 5px; background: var(--glass-bg); padding: 4px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        .lang-btn { background: transparent; color: var(--text-main); border: none; padding: 5px 12px; border-radius: 15px; cursor: pointer; font-weight: 600; transition: 0.3s; opacity: 0.5; font-size: 0.8rem;}
+        .lang-btn.active { background: var(--accent-blue); opacity: 1; }
+
+        /* Tracking Specific Styles */
+        .section { padding: 150px 50px 80px; flex: 1; display: flex; justify-content: center; align-items: center; }
+        .tracker-container { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 30px; padding: 50px; width: 100%; max-width: 600px; text-align: center; backdrop-filter: blur(20px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 15px; border-radius: 12px; color: var(--text-main); font-size: 1rem; outline: none; transition: 0.3s; margin-bottom: 20px; }
+        .glass-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.1); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; padding: 15px 35px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: 0.3s; display: inline-block; border: none; cursor: pointer; width: 100%; }
+        .btn-primary:hover { box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5); transform: translateY(-3px); }
+
+        footer { background: rgba(0,0,0,0.3); border-top: 1px solid var(--glass-border); padding: 50px; text-align: center; margin-top: auto; }
+        .footer-info { color: var(--text-muted); line-height: 1.8; font-size: 0.95rem; }
+    </style>
+</head>
+<body>
+    <div class="blob blue"></div>
+    <div class="blob purple"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo">HA-FIX TECH</a>
+        <div class="nav-links">
+            <a href="book-repair.html" class="btn-primary">Tempah Repair Sekarang</a>
+            <a href="index.html" class="lang" data-en="Home" data-ms="Utama">Home</a>
+            <a href="our-services.html" class="lang" data-en="Services" data-ms="Servis">Services</a>
+            <a href="track-repair.html" class="active lang" data-en="Track Repair" data-ms="Semak Status">Track Repair</a>
+            <div class="lang-switcher">
+                <button id="btn-en" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+                <button id="btn-ms" class="lang-btn" onclick="setLanguage('ms')">MS</button>
+            </div>
+            <a href="login.html" style="opacity: 0.5; font-size: 0.8rem;" class="lang" data-en="Admin Portal" data-ms="Portal Admin">Admin Portal</a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="tracker-container">
+            <h2 class="lang" data-en="Track Your Repair" data-ms="Jejak Pembaikan Anda" style="margin-bottom: 10px; font-size: 2rem;">Track Your Repair</h2>
+            <p class="lang" data-en="Enter your details below to check the real-time status of your device." data-ms="Masukkan butiran anda di bawah untuk menyemak status terkini peranti anda." style="color: var(--text-muted); margin-bottom: 30px;">Enter your details below to check the real-time status of your device.</p>
+            
+            <form id="trackingForm">
+                <input type="text" id="ticketNo" class="glass-input lang" data-en="Repair Ticket Number (e.g. HF-1001)" data-ms="Nombor Tiket Pembaikan (Cth: HF-1001)" placeholder="Repair Ticket Number (e.g. HF-1001)" required>
+                <input type="tel" id="phoneNo" class="glass-input lang" data-en="Phone Number" data-ms="Nombor Telefon" placeholder="Phone Number" required>
+                <button type="submit" id="trackBtn" class="btn-primary lang" data-en="Track Now" data-ms="Jejak Sekarang">Track Now</button>
+            </form>
+
+            <div id="resultArea" style="display: none; margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px; border: 1px solid var(--accent-blue);">
+                <h3 style="color: var(--accent-blue); margin-bottom: 10px;">Status Peranti</h3>
+                <p style="margin-bottom: 5px;"><strong>Peranti:</strong> <span id="resDevice">-</span></p>
+                <p style="margin-bottom: 5px;"><strong>Status:</strong> <span id="resStatus" style="color: #34d399; font-weight: bold;">-</span></p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-info">
+            <h3 style="color: white; margin-bottom: 10px;">HA-FIX Tech & Repair</h3>
+            <p>SSM: 202503246898 (003772792-K) | 10697-G, Jalan Masjid Kg Bukit Kandis, 21200 Kuala Nerus, Terengganu</p>
+            <p style="margin-top: 10px; opacity: 0.6;">&copy; 2026 HA-FIX Tech & Repair. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        // 1. Fungsi Dwibahasa
+        window.setLanguage = function(lang) {
+            const elements = document.querySelectorAll('.lang');
+            elements.forEach(el => {
+                if(el.getAttribute(`data-${lang}`)) {
+                    if (el.tagName === 'INPUT') { el.placeholder = el.getAttribute(`data-${lang}`); } 
+                    else { el.innerText = el.getAttribute(`data-${lang}`); }
+                }
+            });
+            document.getElementById('btn-en').classList.remove('active'); 
+            document.getElementById('btn-ms').classList.remove('active');
+            document.getElementById(`btn-${lang}`).classList.add('active');
+        };
+
+        // 2. Import Firebase & Firestore (Tidak perlukan Auth kerana pelanggan tak perlu login)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs",
+            authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com",
+            projectId: "ha-fix-tech-repair-8d27f",
+            storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app",
+            messagingSenderId: "630965976099",
+            appId: "1:630965976099:web:9ff830cd7f5f624b060596",
+            measurementId: "G-KJRGT6LQ43"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 3. Fungsi Carian Tiket
+        const trackingForm = document.getElementById('trackingForm');
+        const trackBtn = document.getElementById('trackBtn');
+        const resultArea = document.getElementById('resultArea');
+
+        trackingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const ticketNo = document.getElementById('ticketNo').value.trim().toUpperCase(); // Pastikan huruf besar
+            const phoneNo = document.getElementById('phoneNo').value.trim();
+
+            trackBtn.innerText = "Mencari...";
+            trackBtn.style.opacity = "0.7";
+            resultArea.style.display = "none"; // Sorok result lama (jika ada)
+
+            try {
+                // Cari dokumen berdasarkan Nombor Tiket (ID)
+                const docRef = doc(db, "tickets", ticketNo);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // Sahkan nombor telefon padan (sebagai langkah keselamatan)
+                    if(data.phone === phoneNo) {
+                        document.getElementById('resDevice').innerText = data.device;
+                        document.getElementById('resStatus').innerText = data.status;
+                        resultArea.style.display = "block"; // Paparkan kotak keputusan
+                    } else {
+                        alert("Maaf, Nombor Telefon tidak sepadan dengan rekod tiket ini.");
+                    }
+                } else {
+                    alert("Tiket tidak dijumpai. Sila semak semula Nombor Tiket anda.");
+                }
+            } catch (error) {
+                console.error("Ralat:", error);
+                alert("Berlaku ralat sistem. Sila cuba sebentar lagi.");
+            } finally {
+                trackBtn.innerText = "Track Now";
+                trackBtn.style.opacity = "1";
+            }
+        });
+    </script>
+</body>
+</html>

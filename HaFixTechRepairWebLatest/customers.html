@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers | HA-FIX Tech & Repair</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: radial-gradient(circle at top left, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
+        
+        .blob { position: absolute; filter: blur(90px); z-index: -1; opacity: 0.5; }
+        .blob.blue { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--accent-blue); }
+        .blob.purple { bottom: -10%; right: -10%; width: 300px; height: 300px; background: var(--accent-purple); }
+        
+        .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; }
+        .company-info h2 { font-size: 1.2rem; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+        .company-info p { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .nav-menu li a { text-decoration: none; color: var(--text-muted); padding: 12px 16px; border-radius: 12px; display: block; transition: 0.3s; font-weight: 600; font-size: 0.9rem; }
+        .nav-menu li a:hover, .nav-menu li a.active { background: rgba(59, 130, 246, 0.15); color: var(--text-main); border: 1px solid rgba(59, 130, 246, 0.3); }
+        
+        .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .header h1 { font-size: 2rem; font-weight: 700; }
+        
+        .lang-switcher { display: flex; gap: 10px; background: var(--glass-bg); padding: 5px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        .lang-btn { background: transparent; color: var(--text-main); border: none; padding: 5px 15px; border-radius: 15px; cursor: pointer; font-weight: 600; transition: 0.3s; opacity: 0.5; }
+        .lang-btn.active { background: var(--accent-blue); opacity: 1; }
+
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; }
+        
+        .filter-section { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        .search-box { flex: 1; min-width: 200px; }
+        .filter-box { width: 150px; }
+        
+        .glass-table { width: 100%; border-collapse: collapse; }
+        .glass-table th, .glass-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: top; }
+        .glass-table th { color: var(--text-muted); font-size: 0.9rem; }
+        
+        .badge-online { background: rgba(139, 92, 246, 0.2); color: #c4b5fd; padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        .badge-manual { background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
+        
+        .status-baru { color: #fbbf24; font-weight: bold; }
+        .status-sebutharga { color: #60a5fa; font-weight: bold; }
+        .status-batal { color: #f87171; font-weight: bold; text-decoration: line-through; }
+        .status-proceed { color: #34d399; font-weight: bold; }
+
+        .action-group { display: flex; flex-direction: column; gap: 5px; }
+        .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.8rem; font-weight: bold; text-align: center; }
+        .btn-action:hover { background: var(--accent-blue); border-color: var(--accent-blue); }
+        .btn-proceed { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #34d399; }
+        .btn-proceed:hover { background: #10b981; color: white; }
+        .btn-cancel { background: rgba(248, 113, 113, 0.2); border-color: #f87171; color: #f87171; }
+        .btn-cancel:hover { background: #f87171; color: white; }
+        .btn-whatsapp { background: rgba(37, 211, 102, 0.2); border-color: #25D366; color: #25D366; }
+        .btn-whatsapp:hover { background: #25D366; color: white; }
+        .btn-export { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-export:hover { box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); transform: translateY(-2px); }
+
+        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; transition: 0.3s; margin-bottom: 15px; }
+        .glass-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.1); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
+        
+        textarea.glass-input { resize: vertical; min-height: 80px; }
+    </style>
+</head>
+<body>
+    <div class="blob blue"></div>
+    <div class="blob purple"></div>
+
+    <aside class="sidebar">
+        <div class="company-info">
+            <h2>HA-FIX TECH</h2>
+            <p>202503246898 (003772792-K)<br>Kuala Nerus, Terengganu</p>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="dashboard.html" class="lang" data-en="Dashboard" data-ms="Papan Pemuka">Dashboard</a></li>
+            <li><a href="customers.html" class="active lang" data-en="Leads & Quotes" data-ms="Saringan & Sebut Harga">Leads & Quotes</a></li>
+            <li><a href="services.html" class="lang" data-en="Active Repairs" data-ms="Pembaikan Aktif">Active Repairs</a></li>
+            <li><a href="inventory.html" class="lang" data-en="Inventory" data-ms="Inventori">Inventory</a></li>
+            <li><a href="finance.html" class="lang" data-en="Finance" data-ms="Kewangan">Finance</a></li>
+            <li style="margin-top: 20px;"><a href="#" onclick="logoutAdmin()" style="color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3);" class="lang" data-en="Logout" data-ms="Log Keluar">Logout</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <h1 class="lang" data-en="Leads & Quotations" data-ms="Saringan Pelanggan & Sebut Harga">Leads & Quotations</h1>
+            <div class="lang-switcher">
+                <button id="btn-en" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+                <button id="btn-ms" class="lang-btn" onclick="setLanguage('ms')">MS</button>
+            </div>
+        </header>
+
+        <div class="glass-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="lang" data-en="Customer Inquiries" data-ms="Pertanyaan Pelanggan" style="margin: 0;">Customer Inquiries</h2>
+                <button class="btn-action lang" onclick="document.getElementById('custModal').style.display='flex'" data-en="+ Manual Lead" data-ms="+ Daftar Pelanggan">+ Manual Lead</button>
+            </div>
+            
+            <div class="filter-section">
+                <input type="text" id="searchInput" class="glass-input search-box lang" data-en="Search name or phone..." data-ms="Cari nama atau telefon..." placeholder="Search name or phone..." style="margin-bottom:0;">
+                
+                <select id="statusFilter" class="glass-input filter-box" style="margin-bottom:0; background-color: #172033;">
+                    <option value="All">Semua Status</option>
+                    <option value="Baru">Baru</option>
+                    <option value="Sebut Harga">Sebut Harga</option>
+                    <option value="Proceed">Proceed (Diteruskan)</option>
+                    <option value="Batal">Batal (KIV)</option>
+                </select>
+
+                <button onclick="exportCSV()" class="btn-export lang" data-en="📥 Export CSV" data-ms="📥 Muat Turun Data">📥 Export CSV</button>
+            </div>
+
+            <table class="glass-table">
+                <thead>
+                    <tr>
+                        <th width="15%" class="lang" data-en="Date" data-ms="Tarikh">Date</th>
+                        <th width="25%" class="lang" data-en="Customer Info" data-ms="Maklumat Pelanggan">Customer Info</th>
+                        <th width="25%" class="lang" data-en="Device & Issue" data-ms="Peranti & Kerosakan">Device & Issue</th>
+                        <th width="20%" class="lang" data-en="Quotation Status" data-ms="Status Sebut Harga">Quotation Status</th>
+                        <th width="15%" class="lang" data-en="Action" data-ms="Tindakan">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="customersTableBody">
+                    <tr><td colspan="5" style="text-align:center;" class="lang" data-en="Loading data..." data-ms="Memuatkan data...">Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="custModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
+            <button onclick="document.getElementById('custModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <h2 class="lang" data-en="Register Walk-in Lead" data-ms="Daftar Pelanggan Walk-in" style="margin-bottom: 20px;">Register Walk-in Lead</h2>
+            
+            <form id="newCustForm">
+                <input type="text" id="cName" class="glass-input lang" data-en="Customer Name" data-ms="Nama Pelanggan" required>
+                <input type="tel" id="cPhone" class="glass-input lang" data-en="Phone Number" data-ms="Nombor Telefon" required>
+                <input type="text" id="cDevice" class="glass-input lang" data-en="Device Model" data-ms="Model Peranti" required>
+                <input type="text" id="cIssue" class="glass-input lang" data-en="Issue / Notes" data-ms="Kerosakan / Nota" required>
+                <button type="submit" id="saveCustBtn" class="btn-primary lang" data-en="Save Customer" data-ms="Simpan Pelanggan">Save Customer</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="quoteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
+            <button onclick="document.getElementById('quoteModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <h2 class="lang" data-en="Provide Quick Quote" data-ms="Beri Harga Pantas" style="margin-bottom: 20px;">Provide Quick Quote</h2>
+            
+            <form id="updateQuoteForm">
+                <input type="hidden" id="qCustId">
+                <input type="hidden" id="qCustPhone">
+                <input type="hidden" id="qCustName">
+                <input type="hidden" id="qCustDevice">
+
+                <label style="font-size: 0.8rem; color: var(--text-muted);" class="lang" data-en="Total Estimated Price (RM)" data-ms="Jumlah Anggaran (RM)">Total Estimated Price (RM)</label>
+                <input type="number" id="qPrice" class="glass-input" step="0.01" required>
+                
+                <label style="font-size: 0.8rem; color: var(--text-muted);" class="lang" data-en="Parts / Service Details" data-ms="Butiran Servis / Alat Ganti">Parts / Service Details</label>
+                <textarea id="qRemarks" class="glass-input" placeholder="Cth: Tukar Skrin LCD (RM150)" required></textarea>
+                
+                <button type="submit" class="btn-primary lang" data-en="Save Quotation" data-ms="Simpan Sebut Harga">Save Quotation</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        let currentLang = 'en'; 
+        window.setLanguage = function(lang) {
+            currentLang = lang;
+            const elements = document.querySelectorAll('.lang');
+            elements.forEach(el => {
+                if(el.getAttribute(`data-${lang}`)) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'OPTION' || el.tagName === 'LABEL') {
+                        el.placeholder = el.getAttribute(`data-${lang}`);
+                        el.innerText = el.getAttribute(`data-${lang}`);
+                    }
+                    else el.innerText = el.getAttribute(`data-${lang}`);
+                }
+            });
+            document.getElementById('btn-en').classList.remove('active'); document.getElementById('btn-ms').classList.remove('active');
+            document.getElementById(`btn-${lang}`).classList.add('active');
+            renderTable(); 
+        };
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs",
+            authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com",
+            projectId: "ha-fix-tech-repair-8d27f",
+            storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app",
+            messagingSenderId: "630965976099",
+            appId: "1:630965976099:web:9ff830cd7f5f624b060596",
+            measurementId: "G-KJRGT6LQ43"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
+        window.logoutAdmin = function() {
+            if(confirm("Log keluar dari sistem?")) signOut(auth).then(() => window.location.replace("login.html"));
+        };
+
+        let allCustomers = [];
+
+        const tbody = document.getElementById('customersTableBody');
+        const q = query(collection(db, "customers"), orderBy("createdAt", "desc")); 
+
+        onSnapshot(q, (snapshot) => {
+            allCustomers = [];
+            snapshot.forEach((doc) => {
+                allCustomers.push({ id: doc.id, ...doc.data() });
+            });
+            renderTable();
+        });
+
+        // 1. FUNGSI RENDER JADUAL
+        function renderTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            tbody.innerHTML = ""; 
+
+            const filteredData = allCustomers.filter(cust => {
+                const matchSearch = (cust.name && cust.name.toLowerCase().includes(searchTerm)) || 
+                                    (cust.phone && cust.phone.includes(searchTerm));
+                
+                const custStatus = cust.status || "Baru";
+                const matchStatus = statusFilter === "All" ? true : custStatus === statusFilter;
+                
+                return matchSearch && matchStatus;
+            });
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Tiada rekod dijumpai.</td></tr>`;
+                return;
+            }
+
+            filteredData.forEach(data => {
+                const d = new Date(data.createdAt);
+                const dateStr = d.toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' }) + "<br><span style='font-size:0.75rem; color:var(--text-muted);'>" + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) + "</span>";
+                const sourceBadge = data.source === "Online" ? `<span class="badge-online">🌐 Online</span>` : `<span class="badge-manual">👤 Manual</span>`;
+                
+                const deviceText = data.device || "-";
+                const issueText = data.issue || "-";
+                const currentStatus = data.status || "Baru";
+
+                let quoteHTML = "";
+                let statusClass = "status-baru";
+                
+                // Gunakan partsList sebagai rujukan nota quotation sekarang
+                const displayRemarks = data.partsList || data.quoteRemarks || "-";
+
+                if(currentStatus === "Sebut Harga") {
+                    statusClass = "status-sebutharga";
+                    quoteHTML = `<div style="background: rgba(59,130,246,0.1); padding: 8px; border-radius: 8px; margin-top: 5px; border: 1px solid rgba(59,130,246,0.3);">
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">Anggaran Total:</span> <strong>RM ${data.quotePrice || '0.00'}</strong><br>
+                                    <span style="font-size: 0.75rem; white-space: pre-line;">${displayRemarks}</span>
+                                 </div>`;
+                } else if(currentStatus === "Proceed") {
+                    statusClass = "status-proceed";
+                    quoteHTML = `<div style="margin-top:5px; font-size:0.8rem; color:#34d399;">Disahkan. Tiket: <strong>${data.ticketId}</strong></div>`;
+                } else if(currentStatus === "Batal") {
+                    statusClass = "status-batal";
+                }
+
+                // Pengurusan String Selamat
+                const safeName = (data.name || "").replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                const safePhone = (data.phone || "").replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                const safeDevice = (data.device || "").replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                const safeIssue = (data.issue || "").replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                
+                // Escape newlines untuk elak ralat Javascript
+                const safePartsList = displayRemarks.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\r?\n/g, "\\n");
+
+                let actionBtns = `<div class="action-group">`;
+
+                // Butang Penuh (Customer Details)
+                actionBtns += `<button class="btn-action" style="background: rgba(139, 92, 246, 0.2); border-color: #8b5cf6; color: #c4b5fd;" onclick="window.location.href='customer-details.html?id=${data.id}'">🔍 Butiran Penuh</button>`;
+
+                if(currentStatus === "Baru" || currentStatus === "Sebut Harga") {
+                    actionBtns += `
+                        <button class="btn-action lang" onclick="openQuoteModal('${data.id}', '${data.quotePrice || ''}', '${safePartsList}', '${safePhone}', '${safeName}', '${safeDevice}')" data-en="💰 Quick Quote" data-ms="💰 Harga Pantas">💰 Harga Pantas</button>
+                        <button class="btn-action btn-proceed lang" onclick="proceedToRepair('${data.id}', '${safeName}', '${safePhone}', '${safeDevice}', '${safeIssue}', '${data.quotePrice || 0}')" data-en="✅ Proceed" data-ms="✅ Teruskan">✅ Teruskan</button>
+                    `;
+                }
+
+                if(currentStatus === "Sebut Harga") {
+                    actionBtns += `<button class="btn-action btn-whatsapp" onclick="sendQuoteWhatsApp('${safePhone}', '${safeName}', '${safeDevice}', '${data.quotePrice}', '${safePartsList}')">💬 WA Harga</button>`;
+                }
+
+                if(currentStatus !== "Proceed" && currentStatus !== "Batal") {
+                    actionBtns += `<button class="btn-action btn-cancel lang" onclick="cancelLead('${data.id}')" data-en="❌ Cancel" data-ms="❌ Batal">❌ Batal</button>`;
+                }
+
+                if(currentStatus === "Batal") {
+                    actionBtns += `<button class="btn-action btn-cancel lang" onclick="deleteCustomer('${data.id}')" data-en="🗑️ Delete" data-ms="🗑️ Padam">🗑️ Padam</button>`;
+                }
+
+                actionBtns += `</div>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${dateStr}</td>
+                    <td>
+                        <strong style="color:var(--accent-blue);">${data.name}</strong><br>
+                        <span style="font-size:0.85rem;">${data.phone}</span><br>
+                        <div style="margin-top:5px;">${sourceBadge}</div>
+                    </td>
+                    <td><strong>${deviceText}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${issueText}</span></td>
+                    <td>
+                        <span class="${statusClass}">${currentStatus}</span>
+                        ${quoteHTML}
+                    </td>
+                    <td>${actionBtns}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderTable);
+        document.getElementById('statusFilter').addEventListener('change', renderTable);
+
+
+        // 2. FUNGSI WHATSAPP
+        window.sendQuoteWhatsApp = function(phone, name, device, price, remarks) {
+            let cleanPhone = phone.replace(/\D/g, '');
+            if(cleanPhone.startsWith('0')) cleanPhone = '60' + cleanPhone.substring(1);
+            
+            // Revert escaped newlines back to normal for WhatsApp
+            const formatRemarks = remarks.replace(/\\n/g, '\n');
+
+            const message = `Salam En/Cik ${name}. Terima kasih kerana menghubungi HA-FIX Tech.\n\nSebut harga untuk pembaikan *${device}* anda adalah *RM ${price}*.\n\nNota / Alat Ganti:\n${formatRemarks}\n\nBoleh kami teruskan dengan pembaikan ini?`;
+            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
+        };
+
+        // 3. FUNGSI SEBUT HARGA PANTAS
+        window.openQuoteModal = function(id, currentPrice, currentRemarks, phone, name, device) {
+            document.getElementById('qCustId').value = id;
+            document.getElementById('qCustPhone').value = phone;
+            document.getElementById('qCustName').value = name;
+            document.getElementById('qCustDevice').value = device;
+            
+            document.getElementById('qPrice').value = currentPrice !== 'undefined' ? currentPrice : '';
+            
+            // Revert newlines for the textarea
+            document.getElementById('qRemarks').value = currentRemarks !== 'undefined' ? currentRemarks.replace(/\\n/g, '\n') : '';
+            
+            document.getElementById('quoteModal').style.display = 'flex';
+        };
+
+        document.getElementById('updateQuoteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('qCustId').value;
+            const price = parseFloat(document.getElementById('qPrice').value).toFixed(2);
+            const remarks = document.getElementById('qRemarks').value;
+            
+            const phone = document.getElementById('qCustPhone').value;
+            const name = document.getElementById('qCustName').value;
+            const device = document.getElementById('qCustDevice').value;
+
+            try {
+                // KEMASKINI BARU: Simpan ke partsList dan letakkan price sebagai serviceCharge (sebagai lump sum)
+                await updateDoc(doc(db, "customers", id), {
+                    quotePrice: price,
+                    serviceCharge: price, 
+                    partsList: remarks, 
+                    status: "Sebut Harga"
+                });
+                document.getElementById('quoteModal').style.display = 'none';
+                
+                // Prompt WhatsApp Automatik
+                if(confirm("Sebut Harga telah disimpan. Adakah anda mahu hantar WhatsApp kepada pelanggan?")) {
+                    sendQuoteWhatsApp(phone, name, device, price, remarks);
+                }
+            } catch (error) { alert("Ralat: " + error.message); }
+        });
+
+
+        // 4. FUNGSI BATAL & PADAM REKOD
+        window.cancelLead = async function(id) {
+            if(confirm("Anda pasti mahu membatalkan / KIV pelanggan ini?")) {
+                try { await updateDoc(doc(db, "customers", id), { status: "Batal" }); } 
+                catch (error) { alert("Ralat: " + error.message); }
+            }
+        };
+
+        window.deleteCustomer = async function(id) {
+            if(confirm("AMARAN: Rekod ini akan dipadam secara kekal dari pangkalan data. Teruskan?")) {
+                try { await deleteDoc(doc(db, "customers", id)); } 
+                catch (error) { alert("Ralat: " + error.message); }
+            }
+        };
+
+        // 5. FUNGSI EXPORT CSV
+        window.exportCSV = function() {
+            if(allCustomers.length === 0) { alert("Tiada data untuk diexport."); return; }
+            
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Tarikh,Masa,Nama,Telefon,Peranti,Kerosakan,Sumber,Status,Harga_Quotation\n";
+            
+            allCustomers.forEach(c => {
+                const d = new Date(c.createdAt);
+                const dateOnly = d.toLocaleDateString('ms-MY');
+                const timeOnly = d.toLocaleTimeString('en-US');
+                const safeName = (c.name || "").replace(/"/g, '""');
+                const safeDevice = (c.device || "").replace(/"/g, '""');
+                const safeIssue = (c.issue || "").replace(/"/g, '""');
+                
+                const row = `"${dateOnly}","${timeOnly}","${safeName}","${c.phone || ''}","${safeDevice}","${safeIssue}","${c.source || ''}","${c.status || 'Baru'}","${c.quotePrice || ''}"`;
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Senarai_Pelanggan_HAFIX.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+
+        // 6. FUNGSI TERUSKAN KE SERVICES
+        window.proceedToRepair = async function(custId, name, phone, device, issue, price) {
+            if(confirm(`Setuju untuk memulakan pembaikan untuk ${name}? Sistem akan menjana tiket secara automatik.`)) {
+                try {
+                    const ticketId = `HF-${Math.floor(1000 + Math.random() * 9000)}`;
+                    await setDoc(doc(db, "tickets", ticketId), {
+                        name: name, 
+                        phone: phone, 
+                        device: device, 
+                        issue: issue,
+                        agreedPrice: price || "0.00",
+                        status: "Menunggu Alat Ganti", 
+                        createdAt: new Date().toISOString()
+                    });
+                    await updateDoc(doc(db, "customers", custId), { status: "Proceed", ticketId: ticketId });
+                    alert(`Berjaya! Tiket ${ticketId} telah dicipta.`);
+                } catch (error) { alert("Ralat semasa memproses: " + error.message); }
+            }
+        };
+
+        // 7. DAFTAR MANUAL
+        document.getElementById('newCustForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const saveBtn = document.getElementById('saveCustBtn');
+            saveBtn.innerText = "Menyimpan..."; saveBtn.style.opacity = "0.7";
+            try {
+                await addDoc(collection(db, "customers"), {
+                    name: document.getElementById('cName').value,
+                    phone: document.getElementById('cPhone').value,
+                    device: document.getElementById('cDevice').value,
+                    issue: document.getElementById('cIssue').value,
+                    source: "Manual", status: "Baru", createdAt: new Date().toISOString()
+                });
+                alert("Pelanggan berjaya didaftarkan!");
+                document.getElementById('newCustForm').reset();
+                document.getElementById('custModal').style.display = 'none'; 
+            } catch (error) { alert("Ralat: " + error.message); } 
+            finally { saveBtn.innerText = "Save Customer"; saveBtn.style.opacity = "1"; }
+        });
+    </script>
+</body>
+</html>

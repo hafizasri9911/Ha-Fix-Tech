@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services | HA-FIX Tech & Repair</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Salin gaya CSS dari index.html di atas untuk struktur asas (root, body, blob, navbar, footer) */
+        :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: radial-gradient(circle at top right, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+        .blob { position: absolute; filter: blur(120px); z-index: -1; opacity: 0.5; }
+        .blob.blue { top: 0; left: 0; width: 600px; height: 600px; background: var(--accent-blue); }
+        .blob.purple { bottom: 20%; right: 0; width: 500px; height: 500px; background: var(--accent-purple); }
+        
+        .navbar { position: fixed; top: 0; width: 100%; padding: 20px 50px; background: rgba(11, 17, 33, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        .logo { font-size: 1.5rem; font-weight: 700; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--accent-blue); }
+        .lang-switcher { display: flex; gap: 5px; background: var(--glass-bg); padding: 4px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        .lang-btn { background: transparent; color: var(--text-main); border: none; padding: 5px 12px; border-radius: 15px; cursor: pointer; font-weight: 600; transition: 0.3s; opacity: 0.5; font-size: 0.8rem;}
+        .lang-btn.active { background: var(--accent-blue); opacity: 1; }
+
+        /* Services Specific Styles */
+        .section { padding: 150px 50px 80px; max-width: 1200px; margin: 0 auto; flex: 1; }
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 50px; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 25px; padding: 40px 30px; text-align: center; transition: 0.3s; }
+        .glass-card:hover { transform: translateY(-10px); border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+        .glass-card h3 { font-size: 1.5rem; margin-bottom: 15px; color: var(--text-main); }
+        .glass-card p { color: var(--text-muted); line-height: 1.6; }
+
+        footer { background: rgba(0,0,0,0.3); border-top: 1px solid var(--glass-border); padding: 50px; text-align: center; margin-top: auto; }
+        .footer-info { color: var(--text-muted); line-height: 1.8; font-size: 0.95rem; }
+    </style>
+</head>
+<body>
+    <div class="blob blue"></div>
+    <div class="blob purple"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo">HA-FIX TECH</a>
+        <div class="nav-links">
+            <a href="book-repair.html" class="btn-primary">Tempah Repair Sekarang</a>
+            <a href="index.html" class="lang" data-en="Home" data-ms="Utama">Home</a>
+            <a href="our-services.html" class="active lang" data-en="Services" data-ms="Servis">Services</a>
+            <a href="track-repair.html" class="lang" data-en="Track Repair" data-ms="Semak Status">Track Repair</a>
+            <div class="lang-switcher">
+                <button id="btn-en" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+                <button id="btn-ms" class="lang-btn" onclick="setLanguage('ms')">MS</button>
+            </div>
+            <a href="login.html" style="opacity: 0.5; font-size: 0.8rem;" class="lang" data-en="Admin Portal" data-ms="Portal Admin">Admin Portal</a>
+        </div>
+    </nav>
+
+    <section class="section">
+        <h2 class="section-title lang" data-en="Our Services" data-ms="Servis Kami">Our Services</h2>
+        <div class="services-grid">
+            <div class="glass-card">
+                <h3 class="lang" data-en="Smartphone Repair" data-ms="Baiki Telefon Pintar">Smartphone Repair</h3>
+                <p class="lang" data-en="Screen replacement, battery issues, water damage, and motherboard repairs for all major brands." data-ms="Tukar skrin, masalah bateri, kerosakan air, dan pembaikan papan induk untuk semua jenama utama.">Screen replacement, battery issues, water damage, and motherboard repairs for all major brands.</p>
+            </div>
+            <div class="glass-card">
+                <h3 class="lang" data-en="PC & Laptop Services" data-ms="Servis PC & Laptop">PC & Laptop Services</h3>
+                <p class="lang" data-en="Hardware upgrades, formatting, virus removal, and physical damage repairs to get you back to work." data-ms="Naik taraf perkakasan, format semula, buang virus, dan pembaikan fizikal untuk melancarkan kerja anda.">Hardware upgrades, formatting, virus removal, and physical damage repairs to get you back to work.</p>
+            </div>
+            <div class="glass-card">
+                <h3 class="lang" data-en="Retail & Accessories" data-ms="Jualan & Aksesori">Retail & Accessories</h3>
+                <p class="lang" data-en="Wide range of cables, chargers, cases, and spare parts available in-store for your convenience." data-ms="Pelbagai pilihan kabel, pengecas, casing, dan alat ganti tersedia di kedai untuk kemudahan anda.">Wide range of cables, chargers, cases, and spare parts available in-store for your convenience.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-info">
+            <h3 style="color: white; margin-bottom: 10px;">HA-FIX Tech & Repair</h3>
+            <p>SSM: 202503246898 (003772792-K) | 10697-G, Jalan Masjid Kg Bukit Kandis, 21200 Kuala Nerus, Terengganu</p>
+            <p style="margin-top: 10px; opacity: 0.6;">&copy; 2026 HA-FIX Tech & Repair. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('.lang');
+            elements.forEach(el => { if(el.getAttribute(`data-${lang}`)) el.innerText = el.getAttribute(`data-${lang}`); });
+            document.getElementById('btn-en').classList.remove('active'); document.getElementById('btn-ms').classList.remove('active');
+            document.getElementById(`btn-${lang}`).classList.add('active');
+        }
+    </script>
+</body>
+</html>
