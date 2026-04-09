@@ -8,26 +8,40 @@
     <style>
         :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: radial-gradient(circle at top left, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow-x: hidden; padding: 20px; }
+        body { background: radial-gradient(circle at top left, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow-x: hidden; padding: 20px; position: relative; }
         
         .blob { position: absolute; filter: blur(90px); z-index: -1; opacity: 0.5; }
         .blob.blue { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--accent-blue); }
         .blob.purple { bottom: -10%; right: -10%; width: 300px; height: 300px; background: var(--accent-purple); }
 
-        .track-container { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 3rem 2rem; width: 100%; max-width: 500px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); text-align: center; position: relative; z-index: 10; }
+        /* Butang Kembali */
+        .btn-back-home { position: absolute; top: 30px; left: 30px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 10px 20px; border-radius: 12px; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 8px; z-index: 100; backdrop-filter: blur(10px); }
+        .btn-back-home:hover { background: rgba(255,255,255,0.2); transform: translateX(-5px); border-color: var(--accent-blue); }
+        
+        @media (max-width: 600px) {
+            .btn-back-home { top: 15px; left: 15px; padding: 8px 15px; font-size: 0.85rem; }
+        }
+
+        .track-container { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 3rem 2rem; width: 100%; max-width: 500px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); text-align: center; position: relative; z-index: 10; margin-top: 40px; }
         
         .logo-box { width: 80px; height: 80px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-weight: 800; font-size: 14px; letter-spacing: 1px; color: #94a3b8; }
         .track-container h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; letter-spacing: 0.5px; }
         .track-container p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2.5rem; line-height: 1.5; }
 
-        .glass-input { width: 100%; background: rgba(0, 0, 0, 0.2); border: 2px solid var(--glass-border); padding: 15px; border-radius: 12px; color: var(--text-main); outline: none; transition: 0.3s; font-size: 1.2rem; text-align: center; letter-spacing: 3px; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; padding-left: 5px;}
+
+        .glass-input { width: 100%; background: rgba(0, 0, 0, 0.2); border: 2px solid var(--glass-border); padding: 15px; border-radius: 12px; color: var(--text-main); outline: none; transition: 0.3s; font-size: 1.1rem; letter-spacing: 1px; font-weight: 600; }
         .glass-input:focus { border-color: var(--accent-blue); background: rgba(0, 0, 0, 0.4); box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
-        .glass-input::placeholder { color: #475569; letter-spacing: 1px; font-weight: 400; font-size: 1rem; text-transform: none; }
+        .glass-input::placeholder { color: #475569; font-weight: 400; font-size: 1rem; }
         
-        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 15px 24px; border-radius: 12px; cursor: pointer; font-weight: 800; transition: 0.3s; width: 100%; font-size: 1.1rem; letter-spacing: 0.5px; }
+        #ticketIdInput { text-transform: uppercase; font-size: 1.2rem; letter-spacing: 3px; font-weight: 700; }
+        #ticketIdInput::placeholder { letter-spacing: 1px; text-transform: none; }
+
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 15px 24px; border-radius: 12px; cursor: pointer; font-weight: 800; transition: 0.3s; width: 100%; font-size: 1.1rem; letter-spacing: 0.5px; margin-top: 10px; }
         .btn-primary:hover { box-shadow: 0 4px 20px rgba(139, 92, 246, 0.5); transform: translateY(-2px); }
 
-        .result-card { display: none; margin-top: 2rem; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; text-align: left; animation: fadeIn 0.5s ease-in-out; }
+        .result-card { display: none; margin-top: 2.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; text-align: left; animation: fadeIn 0.5s ease-in-out; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -49,13 +63,30 @@
     <div class="blob blue"></div>
     <div class="blob purple"></div>
 
+    <a href="index.html" class="btn-back-home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Kembali
+    </a>
+
     <div class="track-container">
         <div class="logo-box">LOGO</div>
         <h1>HA-FIX TECH</h1>
-        <p>Sila masukkan nombor Rujukan Tiket anda untuk menyemak status pembaikan terkini.</p>
+        <p>Sila masukkan maklumat di bawah untuk menyemak status pembaikan terkini peranti anda.</p>
 
         <form id="trackForm">
-            <input type="text" id="ticketIdInput" class="glass-input" placeholder="Cth: HF-1234" required autocomplete="off">
+            <div class="form-group">
+                <label>No. Rujukan Tiket</label>
+                <input type="text" id="ticketIdInput" class="glass-input" placeholder="Cth: HF-1234" required autocomplete="off">
+            </div>
+            
+            <div class="form-group">
+                <label>Nombor Telefon (Pengesahan Keselamatan)</label>
+                <input type="tel" id="phoneInput" class="glass-input" placeholder="Cth: 0123456789" required autocomplete="off">
+            </div>
+
             <button type="submit" id="searchBtn" class="btn-primary">🔍 Semak Status</button>
         </form>
 
@@ -92,7 +123,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-        // Konfigurasi Database HA-FIX Tech (Sama macam sistem admin)
+        // Konfigurasi Database HA-FIX Tech
         const firebaseConfig = {
             apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs",
             authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com",
@@ -109,13 +140,15 @@
         document.getElementById('trackForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Ambil input dan paksa huruf besar
+            // 1. Ambil input No Tiket
             let ticketId = document.getElementById('ticketIdInput').value.trim().toUpperCase();
-            
-            // Kalau pelanggan tak taip "HF-", sistem tolong tambah secara automatik
             if (!ticketId.startsWith("HF-") && /^\d+$/.test(ticketId)) {
                 ticketId = "HF-" + ticketId;
             }
+
+            // 2. Ambil input No Telefon (Buang semua simbol/jarak tinggalkan nombor sahaja)
+            const inputPhoneRaw = document.getElementById('phoneInput').value;
+            const inputPhoneClean = inputPhoneRaw.replace(/\D/g, '');
 
             const btn = document.getElementById('searchBtn');
             const resultCard = document.getElementById('resultCard');
@@ -132,44 +165,52 @@
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     
-                    // Masukkan data ke dalam kad keputusan
-                    document.getElementById('rTicketId').innerText = ticketId;
-                    
-                    // Sembunyikan sikit nama pelanggan (Privacy) - cth: Ahmad ***
-                    const namaPenuh = data.name || "Pelanggan";
-                    const namaPendek = namaPenuh.split(' ')[0] + " ***";
-                    document.getElementById('rName').innerText = namaPendek;
-                    
-                    document.getElementById('rDevice').innerText = data.device || "Tidak Nyata";
-                    document.getElementById('rIssue').innerText = data.issue || "Tidak Nyata";
+                    // Ambil no telefon dari database dan bersihkan untuk perbandingan
+                    const dbPhoneClean = (data.phone || "").replace(/\D/g, '');
 
-                    // Logik Warna Status
-                    const statusBox = document.getElementById('rStatusBox');
-                    const statusText = document.getElementById('rStatusText');
-                    const collectMsg = document.getElementById('rCollectMsg');
-                    const currentStatus = data.status || "Sedang Dibaiki";
-                    
-                    // Reset kelas warna
-                    statusBox.className = "status-box";
-                    collectMsg.style.display = "none";
+                    // LOGIK KESELAMATAN (SECURITY CHECK)
+                    const isPhoneMatch = inputPhoneClean === dbPhoneClean || 
+                                         (inputPhoneClean.length >= 9 && dbPhoneClean.endsWith(inputPhoneClean.slice(-9)));
 
-                    if (currentStatus === "Menunggu Alat Ganti") {
-                        statusBox.classList.add("status-waiting");
-                        statusText.innerText = "MENUNGGU ALAT GANTI";
-                    } else if (currentStatus === "Siap") {
-                        statusBox.classList.add("status-done");
-                        statusText.innerText = "SIAP & SEDIA DIAMBIL";
-                        collectMsg.style.display = "block"; // Tunjuk mesej suruh ambil
+                    if (isPhoneMatch) {
+                        // LULUS KESELAMATAN: Papar data penuh
+                        document.getElementById('rTicketId').innerText = ticketId;
+                        document.getElementById('rName').innerText = data.name || "Tidak Nyata";
+                        document.getElementById('rDevice').innerText = data.device || "Tidak Nyata";
+                        document.getElementById('rIssue').innerText = data.issue || "Tidak Nyata";
+
+                        // Logik Warna Status
+                        const statusBox = document.getElementById('rStatusBox');
+                        const statusText = document.getElementById('rStatusText');
+                        const collectMsg = document.getElementById('rCollectMsg');
+                        const currentStatus = data.status || "Sedang Dibaiki";
+                        
+                        // Reset kelas warna
+                        statusBox.className = "status-box";
+                        collectMsg.style.display = "none";
+
+                        if (currentStatus === "Menunggu Alat Ganti") {
+                            statusBox.classList.add("status-waiting");
+                            statusText.innerText = "MENUNGGU ALAT GANTI";
+                        } else if (currentStatus === "Siap") {
+                            statusBox.classList.add("status-done");
+                            statusText.innerText = "SIAP & SEDIA DIAMBIL";
+                            collectMsg.style.display = "block"; // Tunjuk mesej suruh ambil
+                        } else {
+                            statusBox.classList.add("status-repairing");
+                            statusText.innerText = "SEDANG DIBAIKI";
+                        }
+
+                        // Tunjuk Kad
+                        resultCard.style.display = 'block';
+
                     } else {
-                        statusBox.classList.add("status-repairing");
-                        statusText.innerText = "SEDANG DIBAIKI";
+                        // GAGAL KESELAMATAN: No telefon tak sama
+                        alert("⚠️ Ralat Keselamatan: Nombor Telefon yang dimasukkan tidak sepadan dengan rekod tiket ini.");
                     }
 
-                    // Tunjuk Kad
-                    resultCard.style.display = 'block';
-
                 } else {
-                    alert("Tiket tidak dijumpai! Sila pastikan ejaan dan format nombor tiket betul (Cth: HF-1234).");
+                    alert("❌ Tiket tidak dijumpai! Sila pastikan ejaan dan format nombor tiket betul (Cth: HF-1234).");
                 }
             } catch (error) {
                 alert("Ralat sambungan: " + error.message);

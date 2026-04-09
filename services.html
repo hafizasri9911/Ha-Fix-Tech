@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services | HA-FIX Tech & Repair</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Active Repairs | HA-FIX Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
@@ -24,9 +24,6 @@
         .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .header h1 { font-size: 2rem; font-weight: 700; }
-        .lang-switcher { display: flex; gap: 10px; background: var(--glass-bg); padding: 5px; border-radius: 20px; border: 1px solid var(--glass-border); }
-        .lang-btn { background: transparent; color: var(--text-main); border: none; padding: 5px 15px; border-radius: 15px; cursor: pointer; font-weight: 600; transition: 0.3s; opacity: 0.5; }
-        .lang-btn.active { background: var(--accent-blue); opacity: 1; }
         
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; }
         .glass-table { width: 100%; border-collapse: collapse; }
@@ -37,46 +34,35 @@
         .status.waiting { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); }
         .status.repairing { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.5); }
         .status.done { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5); }
+        .status.cancelled { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); }
         
         .action-group { display: flex; flex-direction: column; gap: 5px; }
         .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.8rem; font-weight: bold; text-align: center; }
-        .btn-action:hover { background: var(--accent-blue); border-color: var(--accent-blue); }
-        .btn-receipt { background: rgba(139, 92, 246, 0.2); border-color: #8b5cf6; color: #c4b5fd; }
-        .btn-receipt:hover { background: #8b5cf6; color: white; }
-        .btn-profile { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #fcd34d; }
-        .btn-profile:hover { background: #f59e0b; color: white; }
+        .btn-action:hover:not(:disabled) { background: var(--accent-blue); border-color: var(--accent-blue); }
+        .btn-action:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-pay { background: rgba(52, 211, 153, 0.2); border-color: #34d399; color: #34d399; }
+        .btn-pay:hover { background: #34d399; color: white; }
         
         .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; transition: 0.3s; margin-bottom: 15px; font-size: 0.95rem; }
-        .glass-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.1); }
         .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
 
-        textarea.glass-input { resize: vertical; min-height: 80px; }
-
-        /* --------------------------------------------------------------------------
-           A4 PRINT PREVIEW STYLING (THE PERFECT FIX)
-           Ini adalah reka bentuk khas untuk PDF A4. Ia tersorok pada asalnya.
-        -------------------------------------------------------------------------- */
+        /* A4 PRINT PREVIEW STYLING */
         #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; overflow-y: auto; padding: 40px 20px; justify-content: center; }
-        
-        /* Bekas A4 yang nampak seperti sehelai kertas di skrin */
-        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 20mm; background: #ffffff; color: #000000; font-family: 'Arial', sans-serif; box-shadow: 0 0 30px rgba(0,0,0,0.5); border-radius: 0; position: relative; box-sizing: border-box; }
-        
-        .inv-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
-        .inv-header h1 { color: #0b1121; margin-bottom: 5px; font-size: 28px; font-weight: bold; text-transform: uppercase;}
-        .inv-header p { font-size: 14px; color: #555; margin-bottom: 2px; }
-        .inv-details { display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px; color: #000; }
-        .inv-details p { margin: 3px 0; }
-        
-        /* Jadual A4 yang kemas, table-layout fixed memaksa teks turun bawah */
-        .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 14px; table-layout: fixed; }
-        .inv-table th, .inv-table td { border: 1px solid #ccc; padding: 12px; text-align: left; word-wrap: break-word; vertical-align: top; }
-        .inv-table th { background-color: #f4f4f4; color: #333; font-weight: bold; }
-        .inv-total { text-align: right; font-size: 20px; font-weight: bold; margin-top: 20px; color: #0b1121; border-top: 2px solid #333; padding-top: 15px; }
-        .inv-footer { text-align: center; font-size: 12px; color: #777; margin-top: 50px; border-top: 1px solid #ddd; padding-top: 15px; }
-
-        /* Butang kawalan di atas preview A4 */
+        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; font-family: 'Plus Jakarta Sans', Arial, sans-serif; position: relative; box-sizing: border-box; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         #previewControls { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 2001; }
     </style>
+
+<style>
+    .glass-panel { overflow-x: auto; } /* Benarkan scroll kiri kanan dalam panel */
+    
+    @media (max-width: 768px) {
+        .glass-table { min-width: 700px; } /* Paksa table ada lebar minimum supaya tak kemek */
+        .header h1 { font-size: 1.5rem; }
+        .btn-action { padding: 10px; font-size: 0.75rem; }
+    }
+</style>
+
 </head>
 <body>
     <div class="blob blue"></div>
@@ -88,43 +74,36 @@
             <p>202503246898 (003772792-K)<br>Kuala Nerus, Terengganu</p>
         </div>
         <ul class="nav-menu">
-            <li><a href="dashboard.html" class="lang" data-en="Dashboard" data-ms="Papan Pemuka">Dashboard</a></li>
-            <li><a href="customers.html" class="lang" data-en="Leads & Quotes" data-ms="Saringan & Sebut Harga">Leads & Quotes</a></li>
-            <li><a href="services.html" class="active lang" data-en="Active Repairs" data-ms="Pembaikan Aktif">Active Repairs</a></li>
-            <li><a href="inventory.html" class="lang" data-en="Inventory" data-ms="Inventori">Inventory</a></li>
-            <li><a href="finance.html" class="lang" data-en="Finance" data-ms="Kewangan">Finance</a></li>
-            <li style="margin-top: 20px;"><a href="#" onclick="logoutAdmin()" style="color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3);" class="lang" data-en="Logout" data-ms="Log Keluar">Logout</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="customers.html">Leads & Quotes</a></li>
+            <li><a href="services.html" class="active">Active Repairs</a></li>
+            <li><a href="inventory.html">Inventory</a></li>
+            <li><a href="finance.html">Finance</a></li>
+            <li style="margin-top: 20px;"><a href="#" onclick="logoutAdmin()" style="color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3);">Logout</a></li>
         </ul>
     </aside>
 
     <main class="main-content">
         <header class="header">
-            <h1 class="lang" data-en="Active Repair Tracking" data-ms="Pusat Pembaikan Aktif">Active Repair Tracking</h1>
-            <div class="lang-switcher">
-                <button id="btn-en" class="lang-btn active" onclick="setLanguage('en')">EN</button>
-                <button id="btn-ms" class="lang-btn" onclick="setLanguage('ms')">MS</button>
-            </div>
+            <h1>Active Repair Tracking</h1>
+            <button class="btn-action" onclick="document.getElementById('ticketModal').style.display='flex'">+ Fast-Track Ticket</button>
         </header>
 
         <div class="glass-panel">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2 class="lang" data-en="Repair Tickets" data-ms="Tiket Pembaikan" style="margin: 0;">Repair Tickets</h2>
-                <button class="btn-action lang" onclick="document.getElementById('ticketModal').style.display='flex'" data-en="+ Fast-Track Ticket" data-ms="+ Daftar Terus (Pantas)">+ Daftar Terus (Pantas)</button>
-            </div>
-            
+            <h2 style="margin-bottom: 1.5rem;">Repair Tickets</h2>
             <table class="glass-table">
                 <thead>
                     <tr>
-                        <th width="10%" class="lang" data-en="Ticket" data-ms="Tiket">Ticket</th>
-                        <th width="20%" class="lang" data-en="Customer" data-ms="Pelanggan">Customer</th>
-                        <th width="25%" class="lang" data-en="Device & Issue" data-ms="Peranti & Kerosakan">Device & Issue</th>
-                        <th width="15%" class="lang" data-en="Agreed Cost" data-ms="Kos Dipersetujui">Agreed Cost</th>
-                        <th width="15%" class="lang" data-en="Status" data-ms="Status">Status</th>
-                        <th width="15%" class="lang" data-en="Action" data-ms="Tindakan">Action</th>
+                        <th width="10%">Ticket</th>
+                        <th width="20%">Customer</th>
+                        <th width="25%">Device & Issue</th>
+                        <th width="15%">Balance (RM)</th>
+                        <th width="15%">Status</th>
+                        <th width="15%">Action</th>
                     </tr>
                 </thead>
                 <tbody id="ticketsTableBody">
-                    <tr><td colspan="6" style="text-align:center;" class="lang" data-en="Loading data..." data-ms="Memuatkan data...">Loading data...</td></tr>
+                    <tr><td colspan="6" style="text-align:center;">Loading data...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -133,16 +112,18 @@
     <div id="statusModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center;">
         <div class="glass-panel" style="width: 100%; max-width: 400px; position: relative;">
             <button onclick="document.getElementById('statusModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 class="lang" data-en="Update Status" data-ms="Kemaskini Status Pembaikan" style="margin-bottom: 20px; color: var(--accent-blue);">Update Status</h2>
+            <h2 style="margin-bottom: 20px; color: var(--accent-blue);">Update Status</h2>
             <form id="updateStatusForm">
-                <input type="hidden" id="sTicketId"><input type="hidden" id="sPhone"><input type="hidden" id="sName"><input type="hidden" id="sDevice">
-                <label style="font-size: 0.85rem; color: var(--text-muted);">Pilih Status Terkini:</label>
-                <select id="sStatus" class="glass-input" required style="background-color: #172033; cursor: pointer;">
-                    <option value="Menunggu Alat Ganti">Menunggu Alat Ganti</option>
-                    <option value="Sedang Dibaiki">Sedang Dibaiki</option>
-                    <option value="Siap">Siap (Sedia Diambil)</option>
+                <input type="hidden" id="sTicketId">
+                <label style="font-size: 0.85rem; color: var(--text-muted);">Select Status:</label>
+                <select id="sStatus" class="glass-input" required style="background-color: #172033;">
+                    <option value="Menunggu Alat Ganti">Waiting for Parts</option>
+                    <option value="Sedang Diagnosting">Diagnosing</option>
+                    <option value="Sedang Dibaiki">In Progress</option>
+                    <option value="Siap">Ready for Collection</option>
+                    <option value="Batal">Cancelled</option>
                 </select>
-                <button type="submit" class="btn-primary lang" data-en="Update" data-ms="Simpan Perubahan">Simpan Perubahan</button>
+                <button type="submit" class="btn-primary">Save Status</button>
             </form>
         </div>
     </div>
@@ -150,14 +131,14 @@
     <div id="ticketModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center;">
         <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
             <button onclick="document.getElementById('ticketModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 class="lang" data-en="Create Repair Ticket" data-ms="Daftar Tiket Pantas" style="margin-bottom: 20px;">Create Repair Ticket</h2>
+            <h2 style="margin-bottom: 20px;">Fast-Track Registration</h2>
             <form id="newTicketForm">
-                <input type="text" id="tName" class="glass-input" placeholder="Nama Pelanggan" required>
-                <input type="tel" id="tPhone" class="glass-input" placeholder="Nombor Telefon" required>
-                <input type="text" id="tDevice" class="glass-input" placeholder="Model Peranti" required>
-                <input type="text" id="tIssue" class="glass-input" placeholder="Kerosakan Utama" required>
-                <input type="number" id="tPrice" class="glass-input" placeholder="Harga Persetujuan (RM)" step="0.01">
-                <button type="submit" id="saveTicketBtn" class="btn-primary">Daftar Tiket</button>
+                <input type="text" id="tName" class="glass-input" placeholder="Customer Name" required>
+                <input type="tel" id="tPhone" class="glass-input" placeholder="Phone Number" required>
+                <input type="text" id="tDevice" class="glass-input" placeholder="Device Model" required>
+                <input type="text" id="tIssue" class="glass-input" placeholder="Main Issue" required>
+                <input type="number" id="tPrice" class="glass-input" placeholder="Agreed Price (RM)" step="0.01">
+                <button type="submit" id="saveTicketBtn" class="btn-primary">Register Ticket</button>
             </form>
         </div>
     </div>
@@ -165,364 +146,259 @@
     <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto;">
         <div class="glass-panel" style="width: 100%; max-width: 600px; position: relative; margin: 20px auto;">
             <button onclick="document.getElementById('receiptModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 class="lang" data-en="Confirm Receipt Data" data-ms="Sahkan Data Resit" style="margin-bottom: 20px; color: var(--accent-purple);">Confirm Receipt Data</h2>
-            
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Sila semak data quotation di bawah sebelum melihat preview A4.</p>
-
+            <h2 style="margin-bottom: 20px; color: var(--accent-purple);">Generate Official Document</h2>
             <form id="generateReceiptForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px;">
                 <div style="grid-column: span 2;">
-                    <label style="font-size: 0.85rem; color: var(--text-muted);">Senarai Perkara / Alat Ganti (Tarik dari Quotation):</label>
-                    <textarea id="rPartsList" class="glass-input" rows="4" placeholder="Senarai servis & alat ganti ditarik dari Leads..."></textarea>
-                </div>
-                <div>
-                    <label style="font-size: 0.85rem; color: var(--text-muted);">Kos Alat Ganti (RM):</label>
-                    <input type="number" id="rPartsCost" class="glass-input" placeholder="0.00" step="0.01" required>
-                </div>
-                <div>
-                    <label style="font-size: 0.85rem; color: var(--text-muted);">Caj Servis / Upah (RM):</label>
-                    <input type="number" id="rLaborCost" class="glass-input" value="0.00" step="0.01" required>
-                </div>
-                <div>
-                    <label style="font-size: 0.85rem; color: var(--text-muted);">Caj Perjalanan (RM):</label>
-                    <input type="number" id="rDeliveryCost" class="glass-input" value="0.00" step="0.01" required>
-                </div>
-                <div>
-                    <label style="font-size: 0.85rem; color: var(--text-muted);">Kaedah Pembayaran:</label>
-                    <select id="rPaymentMethod" class="glass-input" required style="background-color: #172033; cursor: pointer;">
-                        <option value="Tunai">Tunai / Cash</option>
-                        <option value="QR Pay">QR Pay</option>
-                        <option value="Online Transfer">Online Transfer</option>
+                    <label style="font-size: 0.85rem; color: #93c5fd;">Document Type:</label>
+                    <select id="docType" class="glass-input" style="background-color: #172033; color: white;">
+                        <option value="OFFICIAL RECEIPT">Official Receipt</option>
+                        <option value="INVOICE">Invoice</option>
                     </select>
                 </div>
-                
-                <div style="grid-column: span 2; margin-top: 10px;">
-                    <button type="button" onclick="openA4Preview()" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));">🔍 Lihat Preview A4</button>
+                <div style="grid-column: span 2;"><label style="font-size: 0.85rem; color: var(--text-muted);">Parts/Service Items:</label><textarea id="rPartsList" class="glass-input" rows="4"></textarea></div>
+                <div><label>Parts Cost (RM):</label><input type="number" id="rPartsCost" class="glass-input" step="0.01"></div>
+                <div><label>Labor (RM):</label><input type="number" id="rLaborCost" class="glass-input" step="0.01"></div>
+                <div><label>Delivery (RM):</label><input type="number" id="rDeliveryCost" class="glass-input" step="0.01"></div>
+                <div><label>Deposit Paid (RM):</label><input type="number" id="rDeposit" class="glass-input" step="0.01"></div>
+                <div style="grid-column: span 2;">
+                    <label>Payment Method:</label>
+                    <select id="rPaymentMethod" class="glass-input" style="background-color: #172033; color: white;">
+                        <option value="Cash">Cash</option><option value="QR Pay">QR Pay</option><option value="Online Transfer">Online Transfer</option>
+                    </select>
                 </div>
+                <div style="grid-column: span 2;"><button type="button" onclick="openA4Preview()" class="btn-primary">🔍 View A4 Preview</button></div>
             </form>
         </div>
     </div>
 
     <div id="previewBackdrop">
         <div id="previewControls">
-            <button onclick="closeA4Preview()" class="btn-action btn-cancel">❌ Tutup Preview</button>
-            <button onclick="generatePDF()" class="btn-action btn-proceed" style="background: #10b981; border-color: #10b981; color: white;">📄 Sahkan & Muat Turun A4 PDF</button>
+            <button onclick="closeA4Preview()" class="btn-action" style="background: #f87171;">❌ Close Preview</button>
+            <button onclick="generatePDF()" class="btn-action" style="background: #10b981; border-color: #10b981;">📄 Download PDF</button>
         </div>
-
         <div id="invoice-template">
-            <div class="inv-header">
-                <h1>HA-FIX TECH & REPAIR</h1>
-                <p>SSM: 202503246898 (003772792-K)</p>
-                <p>10697-G, Jalan Masjid Kg Bukit Kandis, 21200 Kuala Nerus, Terengganu</p>
-            </div>
-            
-            <div class="inv-details">
-                <div>
-                    <p><strong>Kepada:</strong> <span id="pdfName"></span></p>
-                    <p><strong>No. Telefon:</strong> <span id="pdfPhone"></span></p>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 65px; height: 65px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #64748b; border-radius: 6px; font-weight: 700; letter-spacing: 1px;">LOGO</div>
+                    <div style="font-weight: 800; font-size: 28px; color: #000; letter-spacing: 0.5px;">HA-FIX TECH</div>
                 </div>
-                <div style="text-align: right;">
-                    <p><strong>No. Resit:</strong> <span id="pdfTicket"></span></p>
-                    <p><strong>Tarikh:</strong> <span id="pdfDate"></span></p>
-                    <p><strong>Bayaran:</strong> <span id="pdfMethod"></span></p>
+                <div style="text-align: right; font-size: 12px; color: #1e293b; line-height: 1.5;">
+                    <strong style="font-size: 13px; color: #000;">HA-FIX TECH & REPAIR</strong><br>
+                    SSM: 202503246898 (003772792-K)<br>
+                    10697-G, Jalan Masjid Kg Bukit Kandis,<br>
+                    21200 Kuala Nerus, Terengganu, Malaysia
                 </div>
             </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
+                <div style="width: 45%; font-size: 14px; color: #000; line-height: 1.6;">
+                    <p style="margin: 0 0 8px 0; font-weight: 700; font-size: 15px;">Prepared For:</p>
+                    <p style="margin: 0; font-weight: 600;" id="pdfName"></p>
+                    <p style="margin: 0;">Phone: <span id="pdfPhone"></span></p>
+                </div>
+                <div style="width: 45%; text-align: right;">
+                    <h2 id="pdfDocTitle" style="margin: 0 0 15px 0; font-size: 32px; font-weight: 800; color: #000; text-transform: uppercase;">OFFICIAL RECEIPT</h2>
+                    <div style="font-size: 13px; color: #000;">
+                        <p style="margin: 3px 0; display: flex; justify-content: flex-end; gap: 10px;"><span>Ref No:</span> <strong id="pdfTicket"></strong></p>
+                        <p style="margin: 3px 0; display: flex; justify-content: flex-end; gap: 10px;"><span>Date:</span> <span id="pdfDate"></span></p>
+                        <p style="margin: 3px 0; display: flex; justify-content: flex-end; gap: 10px;"><span>Payment Mode:</span> <span id="pdfMethod"></span></p>
+                    </div>
+                </div>
+            </div>
             
-            <table class="inv-table">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 30px; color: #000;">
                 <thead>
-                    <tr>
-                        <th style="width: 75%; text-align: left;">Perkara / Deskripsi (Peranti: <span id="pdfDevice"></span>)</th>
-                        <th style="width: 25%; text-align: right;">Jumlah (RM)</th>
+                    <tr style="border-top: 2px solid #000; border-bottom: 2px solid #000;">
+                        <th style="padding: 12px 5px; text-align: left; width: 8%;">SNO</th>
+                        <th style="padding: 12px 5px; text-align: left; width: 8%;">Qty</th>
+                        <th style="padding: 12px 5px; text-align: left; width: 44%;">Description</th>
+                        <th style="padding: 12px 5px; text-align: right; width: 15%;">Unit (MYR)</th>
+                        <th style="padding: 12px 5px; text-align: right; width: 10%;">Tax (MYR)</th>
+                        <th style="padding: 12px 5px; text-align: right; width: 15%;">Total (MYR)</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td id="pdfPartsList" style="word-wrap: break-word; color: #000; line-height: 1.5;"></td>
-                        <td style="text-align: right;"></td>
-                    </tr>
-                    <tr>
-                        <td>Kos Alat Ganti (Sila Rujuk Waranti Jika Berkaitan)</td>
-                        <td style="text-align: right;" id="pdfParts">0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Caj Servis / Upah Pembaikan</td>
-                        <td style="text-align: right;" id="pdfLabor">0.00</td>
-                    </tr>
-                    <tr id="trDelivery" style="display: none;">
-                        <td>Caj Perjalanan / Penghantaran</td>
-                        <td style="text-align: right;" id="pdfDelivery">0.00</td>
-                    </tr>
-                </tbody>
+                <tbody id="pdfTableBody" style="border-bottom: 2px solid #000;"></tbody>
             </table>
             
-            <div class="inv-total">
-                Jumlah Keseluruhan: RM <span id="pdfTotal">0.00</span>
+            <div style="display: flex; justify-content: space-between; font-size: 14px; color: #000; margin-bottom: 30px;">
+                <div style="width: 50%;">
+                    <p style="margin: 0 0 20px 0; font-weight: 700; font-size: 15px;">Total Item: <span id="pdfTotalItem" style="font-weight: 400;"></span></p>
+                    <div style="border: 1px solid #cbd5e1; padding: 15px; width: 90%; background: #ffffff;">
+                        <p style="margin: 0 0 5px 0; font-weight: 700; color: #000;">Remark:</p>
+                        <p style="margin: 0; font-size: 12px; color: #334155; line-height: 1.5;">This document serves as proof of transaction. Please retain it for any warranty claims.</p>
+                    </div>
+                </div>
+                <div style="width: 40%; text-align: right;">
+                    <p style="margin: 8px 0; display: flex; justify-content: space-between;"><span>Total Amt (MYR)</span> <span id="pdfTotalAmt"></span></p>
+                    <p style="margin: 8px 0; color: #334155; display: flex; justify-content: space-between;"><span>Deposit Paid</span> <span id="pdfDeposit"></span></p>
+                    <div style="margin-top: 15px; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; padding: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 800; font-size: 18px;">Balance Due </span>
+                        <span id="pdfFinalTotal" style="font-weight: 800; font-size: 18px;"></span>
+                    </div>
+                </div>
             </div>
             
-            <div class="inv-footer">
-                <p>Terima kasih kerana menggunakan perkhidmatan HA-FIX Tech & Repair.</p>
-                <p>Sila simpan resit ini sebagai bukti pembayaran dan rujukan waranti (jika ada).</p>
+            <div style="font-size: 10.5px; color: #000; line-height: 1.6; border-top: 1px dotted #ccc; padding-top: 20px; margin-top: 20px;">
+                <p style="margin: 0 0 8px 0; font-weight: 800; color: #000; text-transform: uppercase; text-decoration: underline;">Terms & Conditions:</p>
+                1) All services and spare parts come with a 30-day warranty from the date of collection.<br>
+                2) Warranty voids if signs of physical damage, liquid damage, or third-party disassembly found.<br>
+                3) Cash refunds are not available for any parts or services. All sales final.<br>
+                4) Please retain this original receipt for any warranty claims or collection.<br>
+                5) HA-FIX Tech is not liable for data loss during repair. Customers must backup before service.
             </div>
         </div>
     </div>
 
     <script type="module">
-        let currentLang = 'en'; 
-        window.setLanguage = function(lang) {
-            currentLang = lang;
-            const elements = document.querySelectorAll('.lang');
-            elements.forEach(el => {
-                if(el.getAttribute(`data-${lang}`)) {
-                    if (el.tagName === 'INPUT' || el.tagName === 'OPTION' || el.tagName === 'LABEL') {
-                        el.placeholder = el.getAttribute(`data-${lang}`); el.innerText = el.getAttribute(`data-${lang}`);
-                    } else el.innerText = el.getAttribute(`data-${lang}`);
-                }
-            });
-            document.getElementById('btn-en').classList.remove('active'); document.getElementById('btn-ms').classList.remove('active');
-            document.getElementById(`btn-${lang}`).classList.add('active');
-        };
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, updateDoc, getDocs, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, updateDoc, getDocs, onSnapshot, query, where, orderBy, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs",
-            authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com",
-            projectId: "ha-fix-tech-repair-8d27f",
-            storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app",
-            messagingSenderId: "630965976099",
-            appId: "1:630965976099:web:9ff830cd7f5f624b060596",
-            measurementId: "G-KJRGT6LQ43"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const firebaseConfig = { apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs", authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com", projectId: "ha-fix-tech-repair-8d27f", storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app", messagingSenderId: "630965976099", appId: "1:630965976099:web:9ff830cd7f5f624b060596", measurementId: "G-KJRGT6LQ43" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
         onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
-        window.logoutAdmin = function() {
-            if(confirm("Log keluar dari sistem?")) signOut(auth).then(() => window.location.replace("login.html"));
-        };
+        window.logoutAdmin = () => signOut(auth).then(() => window.location.replace("login.html"));
 
-        window.viewCustomerProfile = async function(ticketId) {
-            try {
-                const q = query(collection(db, "customers"), where("ticketId", "==", ticketId));
-                const querySnapshot = await getDocs(q);
-                if (!querySnapshot.empty) {
-                    window.location.href = `customer-details.html?id=${querySnapshot.docs[0].id}`;
-                } else { alert("Maklumat terperinci tidak dijumpai."); }
-            } catch (error) { alert("Gagal mencari profil pelanggan."); }
-        };
-
-        window.openStatusModal = function(ticketId, currentStatus, phone, name, device) {
-            document.getElementById('sTicketId').value = ticketId;
-            document.getElementById('sPhone').value = phone; document.getElementById('sName').value = name; document.getElementById('sDevice').value = device;
-            document.getElementById('sStatus').value = currentStatus;
-            document.getElementById('statusModal').style.display = 'flex';
-        };
-
-        document.getElementById('updateStatusForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const ticketId = document.getElementById('sTicketId').value; const newStatus = document.getElementById('sStatus').value;
-            const phone = document.getElementById('sPhone').value; const name = document.getElementById('sName').value; const device = document.getElementById('sDevice').value;
-            try {
-                await updateDoc(doc(db, "tickets", ticketId), { status: newStatus, updatedAt: new Date().toISOString() });
-                document.getElementById('statusModal').style.display = 'none';
-                if(newStatus === "Siap" && confirm(`Hantar notifikasi WhatsApp kepada ${name}?`)) {
-                    let cleanPhone = phone.replace(/\D/g, ''); if(cleanPhone.startsWith('0')) cleanPhone = '60' + cleanPhone.substring(1);
-                    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Salam En/Cik ${name}, peranti ${device} anda (Tiket: ${ticketId}) telah siap dibaiki di HA-FIX Tech. Anda boleh datang ambil di kedai ya. Terima kasih!`)}`, '_blank');
-                }
-            } catch (error) { alert("Gagal: " + error.message); }
-        });
-
-        const tbody = document.getElementById('ticketsTableBody');
-        const qTickets = query(collection(db, "tickets"), orderBy("createdAt", "desc")); 
-
-        onSnapshot(qTickets, (snapshot) => {
-            tbody.innerHTML = ""; 
-            if (snapshot.empty) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Tiada tiket aktif.</td></tr>`; return; }
-
+        onSnapshot(query(collection(db, "tickets"), orderBy("createdAt", "desc")), (snapshot) => {
+            const tbody = document.getElementById('ticketsTableBody');
+            tbody.innerHTML = "";
             snapshot.forEach((documentSnapshot) => {
                 const data = documentSnapshot.data();
                 const ticketId = documentSnapshot.id;
                 
-                let statusClass = "repairing", statusEN = "Repairing", statusMS = "Sedang Dibaiki";
-                if(data.status === "Menunggu Alat Ganti") { statusClass = "waiting"; statusEN = "Waiting Parts"; statusMS = "Menunggu Alat Ganti"; } 
-                else if(data.status === "Siap") { statusClass = "done"; statusEN = "Done"; statusMS = "Siap"; }
+                onSnapshot(query(collection(db, "customers"), where("ticketId", "==", ticketId)), (cSnap) => {
+                    let isPaid = false, balance = 0, custDocId = "";
+                    if(!cSnap.empty) {
+                        const cData = cSnap.docs[0].data();
+                        isPaid = cData.isPaid || false;
+                        balance = cData.balancePrice || 0;
+                        custDocId = cSnap.docs[0].id;
+                    }
 
-                const safeName = (data.name || "").replace(/'/g, "\\'"); const safePhone = (data.phone || "").replace(/'/g, "\\'"); const safeDevice = (data.device || "").replace(/'/g, "\\'");
+                    let row = document.getElementById(`row-${ticketId}`);
+                    if(!row) { row = document.createElement('tr'); row.id = `row-${ticketId}`; tbody.appendChild(row); }
 
-                let priceDisplay = `<span style="color:var(--text-muted); font-size:0.8rem;">Tiada Harga</span>`;
-                if(data.agreedPrice && parseFloat(data.agreedPrice) > 0) {
-                    priceDisplay = `<strong style="color:#34d399;">RM ${parseFloat(data.agreedPrice).toFixed(2)}</strong>`;
-                }
+                    let displayStatus = "Repairing", statusClass = "repairing";
+                    if(data.status === "Menunggu Alat Ganti") { displayStatus = "Waiting Parts"; statusClass = "waiting"; }
+                    else if(data.status === "Sedang Diagnosting") { displayStatus = "Diagnosing"; statusClass = "repairing"; }
+                    else if(data.status === "Sedang Dibaiki") { displayStatus = "In Progress"; statusClass = "repairing"; }
+                    else if(data.status === "Siap") { displayStatus = "Ready"; statusClass = "done"; }
+                    else if(data.status === "Batal") { displayStatus = "Cancelled"; statusClass = "cancelled"; }
 
-                let actionBtns = `<div class="action-group">
-                    <button class="btn-action btn-profile" onclick="viewCustomerProfile('${ticketId}')">🔍 Lihat Profil</button>
-                    <button class="btn-action" onclick="openStatusModal('${ticketId}', '${data.status}', '${safePhone}', '${safeName}', '${safeDevice}')">🔄 Tukar Status</button>
-                `;
-                if(data.status === "Siap") {
-                    actionBtns += `<button class="btn-action btn-receipt" onclick="confirmReceiptData('${ticketId}', '${safeName}', '${safePhone}', '${safeDevice}', '${data.agreedPrice || 0}')">📄 Cetak Resit</button>`;
-                }
-                actionBtns += `</div>`;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight:bold; color:var(--accent-blue);">#${ticketId}</td>
-                    <td><strong style="color:white;">${data.name}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${data.phone}</span></td>
-                    <td><strong>${data.device}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${data.issue || '-'}</span></td>
-                    <td>${priceDisplay}</td>
-                    <td><span class="status ${statusClass} lang" data-en="${statusEN}" data-ms="${statusMS}">${currentLang === 'en' ? statusEN : statusMS}</span></td>
-                    <td>${actionBtns}</td>
-                `;
-                tbody.appendChild(tr);
+                    row.innerHTML = `
+                        <td style="font-weight:bold; color:var(--accent-blue);">#${ticketId}</td>
+                        <td><strong>${data.name}</strong><br><small>${data.phone}</small></td>
+                        <td>${data.device}<br><small>${data.issue || '-'}</small></td>
+                        <td><strong style="color:#34d399;">RM ${balance}</strong></td>
+                        <td><span class="status ${statusClass}">${displayStatus}</span></td>
+                        <td>
+                            <div class="action-group">
+                                <button class="btn-action btn-profile" onclick="window.location.href='customer-details.html?id=${custDocId}'">🔍 Details</button>
+                                <button class="btn-action" onclick="openStatusModal('${ticketId}', '${data.status}')">🔄 Status</button>
+                                ${!isPaid ? 
+                                    `<button class="btn-action btn-pay" onclick="confirmPayment('${custDocId}', '${balance}', '${ticketId}')">💰 Confirm Pay</button>` : 
+                                    `<span style="color:#34d399; font-weight:bold; text-align:center; padding: 5px 0;">✅ Paid</span>`
+                                }
+                                <button class="btn-action" id="print-btn-${ticketId}" ${!isPaid ? 'disabled' : ''} onclick="confirmReceiptData('${ticketId}')">📄 Print Receipt</button>
+                            </div>
+                        </td>
+                    `;
+                });
             });
         });
 
-        // ==============================================================================
-        // FUNGSI PENGESAHAN DATA RESIT (STEP 1)
-        // Menarik data leads dan membuka modal untuk pengesahan / edit last minit
-        // ==============================================================================
-        let currentTicketId = "";
-        let currentCustData = {};
-
-        window.confirmReceiptData = async function(ticketId, name, phone, device, agreedPrice) {
-            currentTicketId = ticketId;
-            currentCustData = { name, phone, device };
-            
-            // Default values
-            let pTotal = parseFloat(agreedPrice).toFixed(2);
-            let sCharge = "0.00";
-            let dCharge = "0.00";
-            let pList = `Pembaikan peranti ${device}`;
-
-            // PENTING: Pergi cari fail "customers" yang sepadan dengan tiket ni
-            try {
-                const q = query(collection(db, "customers"), where("ticketId", "==", ticketId));
-                const querySnapshot = await getDocs(q);
-                if (!querySnapshot.empty) {
-                    const custData = querySnapshot.docs[0].data();
-                    
-                    // Tarik pecahan harga dan nota (jika ada di Leads)
-                    pTotal = custData.partsTotal || pTotal;
-                    sCharge = custData.serviceCharge || "0.00";
-                    dCharge = custData.deliveryCharge || "0.00";
-                    pList = custData.partsList || pList;
-                }
-            } catch (error) {
-                console.error("Gagal menarik data quotation pelanggan", error);
+        window.confirmPayment = async function(custId, balance, ticketId) {
+            if(confirm(`Confirm receive final payment of RM ${balance}? Record to Finance & Unlock Receipt.`)) {
+                try {
+                    await updateDoc(doc(db, "customers", custId), { isPaid: true });
+                    await addDoc(collection(db, "transactions"), {
+                        type: "Income", amount: parseFloat(balance), category: "Repair Services",
+                        desc: `Final Payment for Ticket #${ticketId}`, date: new Date().toISOString().split('T')[0], createdAt: new Date().toISOString()
+                    });
+                } catch (e) { alert(e.message); }
             }
-
-            // Suapkan ke dalam Borang Pengesahan Resit
-            document.getElementById('rPartsList').value = pList;
-            document.getElementById('rPartsCost').value = pTotal;
-            document.getElementById('rLaborCost').value = sCharge;
-            document.getElementById('rDeliveryCost').value = dCharge;
-            
-            document.getElementById('receiptModal').style.display = 'flex';
         };
 
-        // ==============================================================================
-        // FUNGSI MEMBUKA PREVIEW A4 (STEP 2)
-        // Mengisi template A4 fizikak dengan data dari form pengesahan
-        // ==============================================================================
-        window.openA4Preview = function() {
+        window.openStatusModal = (id, status) => { 
+            document.getElementById('sTicketId').value = id; document.getElementById('sStatus').value = status; 
+            document.getElementById('statusModal').style.display = 'flex'; 
+        };
+
+        document.getElementById('updateStatusForm').onsubmit = async (e) => {
+            e.preventDefault();
+            await updateDoc(doc(db, "tickets", document.getElementById('sTicketId').value), { status: document.getElementById('sStatus').value });
+            document.getElementById('statusModal').style.display = 'none';
+        };
+
+        let currentCustData = {};
+        window.confirmReceiptData = async (ticketId) => {
+            const q = query(collection(db, "customers"), where("ticketId", "==", ticketId));
+            const snap = await getDocs(q);
+            if(!snap.empty) {
+                const d = snap.docs[0].data(); currentCustData = d;
+                document.getElementById('rPartsList').value = d.partsList || "";
+                document.getElementById('rPartsCost').value = d.partsTotal || 0;
+                document.getElementById('rLaborCost').value = d.serviceCharge || 0;
+                document.getElementById('rDeliveryCost').value = d.deliveryCharge || 0;
+                document.getElementById('rDeposit').value = d.deposit || 0;
+                document.getElementById('receiptModal').style.display = 'flex';
+            }
+        };
+
+        window.openA4Preview = () => {
             const partsCost = parseFloat(document.getElementById('rPartsCost').value) || 0;
             const laborCost = parseFloat(document.getElementById('rLaborCost').value) || 0;
             const deliveryCost = parseFloat(document.getElementById('rDeliveryCost').value) || 0;
+            const dep = parseFloat(document.getElementById('rDeposit').value) || 0;
             const total = partsCost + laborCost + deliveryCost;
             
-            if (total === 0) { alert("Sila pastikan jumlah harga tidak sifar (0)."); return; }
+            document.getElementById('pdfDocTitle').innerText = document.getElementById('docType').value;
+            document.getElementById('pdfName').innerText = currentCustData.name;
+            document.getElementById('pdfPhone').innerText = currentCustData.phone;
+            document.getElementById('pdfTicket').innerText = currentCustData.ticketId;
+            document.getElementById('pdfDate').innerText = new Date().toLocaleDateString('en-MY');
+            document.getElementById('pdfMethod').innerText = document.getElementById('rPaymentMethod').value;
+            
+            const tbody = document.getElementById('pdfTableBody');
+            const partsListTxt = document.getElementById('rPartsList').value.replace(/\n/g, '<br>');
+            let content = ""; let SNO = 1;
 
-            // Tutup modal pengesahan, buka preview A4
+            if (partsCost > 0 || partsListTxt.trim() !== "") {
+                content += `<tr><td style="padding:10px;">${SNO++}</td><td style="padding:10px;">1</td><td style="padding:10px;"><b>Device Repair: ${currentCustData.device}</b><br><small>${partsListTxt}</small></td><td style="padding:10px;text-align:right;">${partsCost.toFixed(2)}</td><td style="padding:10px;text-align:right;">0.00</td><td style="padding:10px;text-align:right;">${partsCost.toFixed(2)}</td></tr>`;
+            }
+            if (laborCost > 0) {
+                content += `<tr><td style="padding:10px;">${SNO++}</td><td style="padding:10px;">1</td><td style="padding:10px;">Service Fee / Labor Charge</td><td style="padding:10px;text-align:right;">${laborCost.toFixed(2)}</td><td style="padding:10px;text-align:right;">0.00</td><td style="padding:10px;text-align:right;">${laborCost.toFixed(2)}</td></tr>`;
+            }
+            if (deliveryCost > 0) {
+                content += `<tr><td style="padding:10px;">${SNO++}</td><td style="padding:10px;">1</td><td style="padding:10px;">Delivery / Transport</td><td style="padding:10px;text-align:right;">${deliveryCost.toFixed(2)}</td><td style="padding:10px;text-align:right;">0.00</td><td style="padding:10px;text-align:right;">${deliveryCost.toFixed(2)}</td></tr>`;
+            }
+            
+            tbody.innerHTML = content;
+            document.getElementById('pdfTotalItem').innerText = (SNO - 1);
+            document.getElementById('pdfTotalAmt').innerText = total.toFixed(2);
+            document.getElementById('pdfDeposit').innerText = dep.toFixed(2);
+            document.getElementById('pdfFinalTotal').innerText = (total - dep).toFixed(2);
+            
             document.getElementById('receiptModal').style.display = 'none';
             document.getElementById('previewBackdrop').style.display = 'flex';
             document.getElementById('invoice-template').style.display = 'block';
-
-            // Mengisi data ke dalam template A4
-            document.getElementById('pdfName').innerText = currentCustData.name; 
-            document.getElementById('pdfPhone').innerText = currentCustData.phone;
-            document.getElementById('pdfTicket').innerText = currentTicketId; 
-            document.getElementById('pdfDate').innerText = new Date().toLocaleDateString('ms-MY');
-            document.getElementById('pdfMethod').innerText = document.getElementById('rPaymentMethod').value; 
-            document.getElementById('pdfDevice').innerText = currentCustData.device;
-            
-            // Mengisi Senarai Barang (Tukar Enter kepada <br> tag)
-            const partsListText = document.getElementById('rPartsList').value.replace(/\n/g, '<br>');
-            document.getElementById('pdfPartsList').innerHTML = partsListText;
-            
-            // Mengisi Harga
-            document.getElementById('pdfParts').innerText = partsCost.toFixed(2); 
-            document.getElementById('pdfLabor').innerText = laborCost.toFixed(2); 
-            
-            // Tunjuk / Sorok Caj Perjalanan
-            if(deliveryCost > 0) {
-                document.getElementById('trDelivery').style.display = 'table-row';
-                document.getElementById('pdfDelivery').innerText = deliveryCost.toFixed(2);
-            } else {
-                document.getElementById('trDelivery').style.display = 'none';
-            }
-            
-            document.getElementById('pdfTotal').innerText = total.toFixed(2);
         };
 
-        // ==============================================================================
-        // FUNGSI MENUTUP PREVIEW A4
-        // ==============================================================================
-        window.closeA4Preview = function() {
-            document.getElementById('previewBackdrop').style.display = 'none';
-            document.getElementById('invoice-template').style.display = 'none';
-            // Buka balik modal data, incase nak edit
-            document.getElementById('receiptModal').style.display = 'flex';
+        window.closeA4Preview = () => { document.getElementById('previewBackdrop').style.display = 'none'; document.getElementById('receiptModal').style.display = 'flex'; };
+        window.generatePDF = () => {
+            const opt = { margin: 0, filename: `Receipt_${currentCustData.ticketId}.pdf`, image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            html2pdf().set(opt).from(document.getElementById('invoice-template')).save();
         };
 
-        // ==============================================================================
-        // FUNGSI JANA PDF (FINAL STEP)
-        // Tangkap preview A4 yang sempurna tanpa cropping
-        // ==============================================================================
-        window.generatePDF = function() {
-            // Sembunyikan butang kawalan preview sebelum snap!
-            document.getElementById('previewControls').style.display = 'none';
-            
-            const element = document.getElementById('invoice-template');
-            
-            const opt = { 
-                margin: 10, // Margin keliling 10mm
-                filename: `Resit_${currentTicketId}.pdf`, 
-                image: { type: 'jpeg', quality: 0.98 }, 
-                html2canvas: { scale: 2, useCORS: true }, 
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
-            };
-
-            // Print ke PDF!
-            html2pdf().set(opt).from(element).save().then(() => { 
-                // Tunjuk balik butang kawalan
-                document.getElementById('previewControls').style.display = 'flex';
-                // Tutup semua
-                document.getElementById('previewBackdrop').style.display = 'none';
-                document.getElementById('invoice-template').style.display = 'none';
-            });
-        };
-
-        // Fast Track Ticket
-        document.getElementById('newTicketForm').addEventListener('submit', async (e) => {
+        document.getElementById('newTicketForm').onsubmit = async (e) => {
             e.preventDefault();
             const ticketId = `HF-${Math.floor(1000 + Math.random() * 9000)}`;
-            const saveBtn = document.getElementById('saveTicketBtn');
-            saveBtn.innerText = "Menyimpan..."; saveBtn.style.opacity = "0.7";
-
             try {
-                await setDoc(doc(db, "tickets", ticketId), {
-                    name: document.getElementById('tName').value, phone: document.getElementById('tPhone').value,
-                    device: document.getElementById('tDevice').value, issue: document.getElementById('tIssue').value,
-                    agreedPrice: document.getElementById('tPrice').value || "0.00",
-                    status: "Sedang Dibaiki", createdAt: new Date().toISOString()
-                });
-                alert(`Tiket didaftarkan: ${ticketId}`);
-                document.getElementById('newTicketForm').reset(); document.getElementById('ticketModal').style.display = 'none'; 
-            } catch (error) { alert("Ralat: " + error.message); } 
-            finally { saveBtn.innerText = "Daftar Tiket"; saveBtn.style.opacity = "1"; }
-        });
+                await setDoc(doc(db, "tickets", ticketId), { name: document.getElementById('tName').value, phone: document.getElementById('tPhone').value, device: document.getElementById('tDevice').value, issue: document.getElementById('tIssue').value, agreedPrice: document.getElementById('tPrice').value || "0.00", status: "Sedang Diagnosting", createdAt: new Date().toISOString() });
+                document.getElementById('newTicketForm').reset(); document.getElementById('ticketModal').style.display = 'none';
+            } catch (e) { alert(e.message); }
+        };
     </script>
 </body>
 </html>

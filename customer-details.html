@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Details | HA-FIX Tech & Repair</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Customer Details | HA-FIX Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -59,6 +59,16 @@
         
         .quick-select { padding: 8px; font-size: 0.8rem; background-color: #172033; margin-bottom: 8px; cursor: pointer; }
     </style>
+
+    <style>
+        @media (max-width: 768px) {
+        .details-grid { grid-template-columns: 1fr !important; gap: 1rem; }
+        .cost-row { grid-template-columns: 1fr !important; display: grid; }
+        .stat-badge { font-size: 0.7rem; }
+        .main-content { padding: 1rem; }
+        .glass-panel { padding: 1rem; }
+        }
+    </style>
 </head>
 <body>
     <div class="blob blue"></div>
@@ -75,145 +85,130 @@
             <li><a href="services.html">Active Repairs</a></li>
             <li><a href="inventory.html">Inventory</a></li>
             <li><a href="finance.html">Finance</a></li>
+            <li style="margin-top: 20px;"><a href="#" onclick="logoutAdmin()" style="color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3);">Logout</a></li>
         </ul>
     </aside>
 
     <main class="main-content">
         <header class="header">
             <h1>
-                <a href="#" onclick="history.back(); return false;" class="btn-back">← Kembali</a> 
-                Maklumat Terperinci Pelanggan
+                <a href="#" onclick="history.back(); return false;" class="btn-back">← Back</a> 
+                Customer Details
             </h1>
         </header>
 
         <div class="glass-panel">
-            <div id="statusDisplay" class="status-badge">Memuatkan...</div>
+            <div id="statusDisplay" class="status-badge">Loading...</div>
 
             <form id="detailsForm">
+                <input type="hidden" id="dUsedPartsHidden" value="">
+
                 <div class="details-grid">
                     <div>
-                        <h3 class="section-title">Maklumat Asas & Peranti</h3>
-                        
-                        <div class="form-group">
-                            <label>Nama Pelanggan</label>
-                            <input type="text" id="dName" class="glass-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Nombor Telefon</label>
-                            <input type="tel" id="dPhone" class="glass-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Model Peranti</label>
-                            <input type="text" id="dDevice" class="glass-input" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Aduan Asal / Kerosakan (Dari Pelanggan)</label>
-                            <textarea id="dIssue" class="glass-input" required></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Hasil Pemeriksaan (Diagnosis Technician)</label>
-                            <textarea id="dTechRemarks" class="glass-input" placeholder="Cth: Skrin pecah teruk, Face ID rosak, bateri kembung..."></textarea>
-                        </div>
+                        <h3 class="section-title">Basic Info & Device</h3>
+                        <div class="form-group"><label>Customer Name</label><input type="text" id="dName" class="glass-input" required></div>
+                        <div class="form-group"><label>Phone Number</label><input type="tel" id="dPhone" class="glass-input" required></div>
+                        <div class="form-group"><label>Device Model</label><input type="text" id="dDevice" class="glass-input" required></div>
+                        <div class="form-group"><label>Initial Issue / Complaint</label><textarea id="dIssue" class="glass-input" required></textarea></div>
+                        <div class="form-group"><label>Technician Diagnosis / Remarks</label><textarea id="dTechRemarks" class="glass-input" placeholder="E.g.: Screen cracked, needs replacement..."></textarea></div>
                     </div>
 
                     <div>
-                        <h3 class="section-title">Sebut Harga & Alat Ganti</h3>
+                        <h3 class="section-title">Quotation & Parts</h3>
                         
                         <div class="inv-search-box">
                             <div class="form-group" style="margin-bottom: 0;">
-                                <label>🔍 Cari & Tambah Dari Inventori</label>
-                                
+                                <label>🔍 Search & Add from Inventory (Auto Stock Deduction)</label>
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
                                     <select id="invCatFilter" class="glass-input" style="flex:1; min-width: 110px; margin-bottom: 0; padding: 10px; background-color: #172033; cursor: pointer; font-size: 0.8rem;">
-                                        <option value="All">Kategori (Semua)</option>
-                                        <option value="Alat Ganti">Alat Ganti</option>
-                                        <option value="Aksesori">Aksesori</option>
-                                        <option value="Peralatan">Peralatan</option>
+                                        <option value="All">Category (All)</option>
+                                        <option value="Alat Ganti">Spare Parts</option>
+                                        <option value="Aksesori">Accessories</option>
                                     </select>
-
                                     <select id="invBrandFilter" class="glass-input" style="flex:1; min-width: 110px; margin-bottom: 0; padding: 10px; background-color: #172033; cursor: pointer; font-size: 0.8rem;">
-                                        <option value="All">Jenama (Semua)</option>
+                                        <option value="All">Brand (All)</option>
                                     </select>
-
                                     <select id="invPartFilter" class="glass-input" style="flex:1; min-width: 110px; margin-bottom: 0; padding: 10px; background-color: #172033; cursor: pointer; font-size: 0.8rem;">
-                                        <option value="All">Part (Semua)</option>
+                                        <option value="All">Part (All)</option>
                                     </select>
                                 </div>
-
                                 <div style="display: flex; gap: 8px; align-items: stretch; margin-top: 10px;">
-                                    <input type="text" id="invSearch" list="invList" class="glass-input" placeholder="Pilih alat ganti..." style="margin-bottom:0; flex:1; min-width: 150px;">
+                                    <input type="text" id="invSearch" list="invList" class="glass-input" placeholder="Select a part..." style="margin-bottom:0; flex:1; min-width: 150px;">
                                     <datalist id="invList"></datalist>
-                                    
-                                    <button type="button" id="addPartBtn" class="btn-action">➕ Tambah</button>
+                                    <button type="button" id="addPartBtn" class="btn-action">➕ Add</button>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label>Senarai Perkara / Alat Ganti (Boleh edit manual)</label>
-                            <textarea id="dPartsList" class="glass-input" placeholder="Cth: 1x LCD OLED (GX), 1x Bateri (Yoobao)" style="min-height: 120px;"></textarea>
+                            <label>List of Items / Parts</label>
+                            <textarea id="dPartsList" class="glass-input" style="min-height: 80px;"></textarea>
                         </div>
 
                         <div class="cost-breakdown">
-                            <label style="color: #93c5fd; font-weight: bold; margin-bottom: 10px; display: block; font-size: 0.9rem;">💰 Pecahan Kos (Quotation)</label>
+                            <label style="color: #93c5fd; font-weight: bold; margin-bottom: 10px; display: block; font-size: 0.9rem;">💰 Cost Breakdown & Payment</label>
                             
                             <div class="cost-row">
                                 <div class="form-group">
-                                    <label>Alat Ganti (RM)</label>
-                                    <div style="height: 38px;"></div> <input type="number" id="dPartsTotal" class="glass-input cost-input" step="0.01" placeholder="0.00" value="0.00">
+                                    <label>Parts (RM)</label>
+                                    <div style="height: 38px;"></div>
+                                    <input type="number" id="dPartsTotal" class="glass-input cost-input" step="0.01" value="0.00">
                                 </div>
-                                
                                 <div class="form-group">
-                                    <label>Caj Servis / Upah (RM)</label>
+                                    <label>Service Fee (RM)</label>
                                     <select id="quickService" class="glass-input quick-select">
-                                        <option value="">-- Pilih Servis Pantas --</option>
-                                        <optgroup label="💻 Laptop: Software">
-                                            <option value="50" data-name="Format & Pasang OS">Format & Pasang OS (RM50 - RM80)</option>
-                                            <option value="40" data-name="Buang Virus & Malware">Buang Virus & Malware (RM40 - RM70)</option>
-                                            <option value="40" data-name="Password Removal">Password Removal (RM40 - RM60)</option>
-                                        </optgroup>
-                                        <optgroup label="💻 Laptop: Hardware">
-                                            <option value="30" data-name="Tukar Bateri Laptop">Tukar Bateri (RM30 - RM50)</option>
-                                            <option value="40" data-name="Tukar Skrin & LCD Laptop">Tukar Skrin & LCD (RM40 - RM80)</option>
-                                            <option value="30" data-name="Tukar Keyboard">Tukar Keyboard (RM30 - RM60)</option>
-                                            <option value="30" data-name="Tukar Kipas">Tukar Kipas (RM30 - RM50)</option>
-                                            <option value="30" data-name="Upgrade RAM & SSD">Upgrade RAM & SSD (RM30 - RM50)</option>
-                                            <option value="30" data-name="Cuci Habuk & Thermal Paste">Cuci & Thermal Paste (RM30 - RM50)</option>
-                                        </optgroup>
-                                        <optgroup label="📱 Telefon: Software">
-                                            <option value="40" data-name="Flash Software">Flash Software (RM40 - RM70)</option>
-                                            <option value="30" data-name="Pembersihan Storan & System Lock">System Lock / Cuci (RM30 - RM60)</option>
-                                        </optgroup>
-                                        <optgroup label="📱 Telefon: Hardware">
-                                            <option value="30" data-name="Tukar Bateri Telefon">Tukar Bateri (RM30 - RM50)</option>
-                                            <option value="40" data-name="Tukar Skrin & LCD Telefon">Tukar Skrin & LCD (RM40 - RM80)</option>
-                                            <option value="40" data-name="Tukar Charging Port">Tukar Charging Port (RM40 - RM70)</option>
-                                            <option value="40" data-name="Lain-lain Servis Hardware">Lain-lain (RM40 - RM80)</option>
-                                        </optgroup>
+                                        <option value="">-- Quick Service Select --</option>
+                                        
+                                        <option disabled style="font-weight:bold; color:var(--accent-blue);">💻 Laptop: Software</option>
+                                        <option value="50" data-name="Format & Install OS">Format & Install OS (RM50 - RM80)</option>
+                                        <option value="40" data-name="Remove Virus & Malware">Remove Virus & Malware (RM40 - RM70)</option>
+                                        <option value="40" data-name="Password Removal">Password Removal (RM40 - RM60)</option>
+                                        
+                                        <option disabled style="font-weight:bold; color:var(--accent-blue);">💻 Laptop: Hardware</option>
+                                        <option value="30" data-name="Laptop Battery Replacement">Battery Replacement (RM30 - RM50)</option>
+                                        <option value="40" data-name="Laptop Screen & LCD">Screen & LCD Replacement (RM40 - RM80)</option>
+                                        <option value="30" data-name="Keyboard Replacement">Keyboard Replacement (RM30 - RM60)</option>
+                                        <option value="30" data-name="Fan Replacement">Fan Replacement (RM30 - RM50)</option>
+                                        <option value="30" data-name="RAM & SSD Upgrade">RAM & SSD Upgrade (RM30 - RM50)</option>
+                                        <option value="30" data-name="Cleaning & Thermal Paste">Cleaning & Thermal Paste (RM30 - RM50)</option>
+
+                                        <option disabled style="font-weight:bold; color:var(--accent-blue);">📱 Phone & Tablet: Software</option>
+                                        <option value="40" data-name="Flash Software">Flash Software (RM40 - RM70)</option>
+                                        <option value="30" data-name="System Lock / Wipe">System Lock / Wipe (RM30 - RM60)</option>
+
+                                        <option disabled style="font-weight:bold; color:var(--accent-blue);">📱 Phone & Tablet: Hardware</option>
+                                        <option value="30" data-name="Phone/Tablet Battery Replacement">Battery Replacement (RM30 - RM50)</option>
+                                        <option value="40" data-name="Phone/Tablet Screen & LCD">Screen & LCD Replacement (RM40 - RM80)</option>
+                                        <option value="40" data-name="Charging Port Replacement">Charging Port (RM40 - RM70)</option>
+                                        <option value="40" data-name="Other Hardware Repair">Others (RM40 - RM80)</option>
                                     </select>
-                                    <input type="number" id="dServiceCharge" class="glass-input cost-input" step="0.01" placeholder="Taip/Edit Manual" value="0.00">
+                                    <input type="number" id="dServiceCharge" class="glass-input cost-input" step="0.01" value="0.00">
                                 </div>
-                                
                                 <div class="form-group">
-                                    <label>Caj Perjalanan (RM)</label>
+                                    <label>Delivery (RM)</label>
                                     <select id="quickDelivery" class="glass-input quick-select">
-                                        <option value="">-- Jarak Servis --</option>
-                                        <option value="0">Bawah 10 km (Percuma)</option>
-                                        <option value="10">10 - 20 km (RM10.00)</option>
-                                        <option value="15">20 - 30 km (RM15.00)</option>
+                                        <option value="">-- Distance --</option>
+                                        <option value="0">Below 10 km (RM0)</option>
+                                        <option value="10">10 - 20 km (RM10)</option>
+                                        <option value="15">20 - 30 km (RM15)</option>
                                     </select>
-                                    <input type="number" id="dDeliveryCharge" class="glass-input cost-input" step="0.01" placeholder="Taip/Edit Manual" value="0.00">
+                                    <input type="number" id="dDeliveryCharge" class="glass-input cost-input" step="0.01" value="0.00">
                                 </div>
                             </div>
-
-                            <div class="form-group" style="margin-bottom: 0; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; margin-top: 5px;">
-                                <label>Jumlah Keseluruhan (RM)</label>
-                                <input type="number" id="dQuotePrice" class="glass-input" step="0.01" placeholder="0.00" readonly style="font-size: 1.5rem; font-weight: bold; color: #34d399; margin-bottom: 0; background: rgba(16, 185, 129, 0.1); border-color: #10b981;">
+                            
+                            <div class="cost-row" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                                <div class="form-group"><label style="color: #94a3b8;">Total (RM)</label><input type="number" id="dQuotePrice" class="glass-input" readonly style="font-weight: bold; color: #94a3b8; background: rgba(255,255,255,0.05); margin-bottom: 0;"></div>
+                                <div class="form-group"><label style="color: #fbbf24;">Deposit (RM)</label><input type="number" id="dDeposit" class="glass-input cost-input" step="0.01" value="0.00" style="border-color: rgba(251, 191, 36, 0.5); margin-bottom: 0;"></div>
+                                <div class="form-group"><label style="color: #34d399;">Balance (RM)</label><input type="number" id="dBalancePrice" class="glass-input" readonly style="font-weight: bold; color: #34d399; background: rgba(16, 185, 129, 0.1); border-color: #10b981; margin-bottom: 0;"></div>
+                            </div>
+                            
+                            <div style="grid-column: span 3; margin-top: 15px;">
+                                <label style="font-size: 0.8rem; color: var(--text-muted);">Payment Status (Read-Only)</label>
+                                <input type="text" id="dPaymentStatus" class="glass-input" readonly value="Unpaid" style="margin-bottom:0; background: rgba(255,255,255,0.05);">
                             </div>
                         </div>
 
-                        <button type="submit" id="saveDetailsBtn" class="btn-primary">💾 Simpan & Kemaskini Maklumat</button>
+                        <button type="submit" id="saveDetailsBtn" class="btn-primary">💾 Save & Update Details</button>
                     </div>
                 </div>
             </form>
@@ -222,245 +217,166 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, updateDoc, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs",
-            authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com",
-            projectId: "ha-fix-tech-repair-8d27f",
-            storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app",
-            messagingSenderId: "630965976099",
-            appId: "1:630965976099:web:9ff830cd7f5f624b060596",
-            measurementId: "G-KJRGT6LQ43"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const firebaseConfig = { apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs", authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com", projectId: "ha-fix-tech-repair-8d27f", storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app", messagingSenderId: "630965976099", appId: "1:630965976099:web:9ff830cd7f5f624b060596", measurementId: "G-KJRGT6LQ43" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
         onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
+        window.logoutAdmin = function() {
+            if(confirm("Logout from the system?")) signOut(auth).then(() => window.location.replace("login.html"));
+        };
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const custId = urlParams.get('id');
+        const urlParams = new URLSearchParams(window.location.search); const custId = urlParams.get('id');
+        if (!custId) { alert("Error: Customer ID not found."); window.location.href = "customers.html"; }
 
-        if (!custId) {
-            alert("Ralat: ID Pelanggan tidak dijumpai.");
-            window.location.href = "customers.html";
-        }
-
-        // ==========================================
-        // FUNGSI AUTO-KIRA JUMLAH BESAR (TOTAL)
-        // ==========================================
         function calculateTotalQuote() {
             const parts = parseFloat(document.getElementById('dPartsTotal').value) || 0;
             const service = parseFloat(document.getElementById('dServiceCharge').value) || 0;
             const delivery = parseFloat(document.getElementById('dDeliveryCharge').value) || 0;
-            
+            const deposit = parseFloat(document.getElementById('dDeposit').value) || 0;
             const total = parts + service + delivery;
+            const balance = total - deposit;
+            
             document.getElementById('dQuotePrice').value = total.toFixed(2);
+            document.getElementById('dBalancePrice').value = balance.toFixed(2);
+            
+            let status = "Unpaid";
+            if(total > 0) {
+                if(balance <= 0) status = "Paid in Full";
+                else if(deposit > 0) status = "Partially Paid";
+            }
+            document.getElementById('dPaymentStatus').value = status;
         }
 
-        // Dengar perubahan manual pada kotak harga
-        document.querySelectorAll('.cost-input').forEach(input => {
-            input.addEventListener('input', calculateTotalQuote);
-        });
+        document.querySelectorAll('.cost-input').forEach(input => { input.addEventListener('input', calculateTotalQuote); });
 
-        // ==========================================
-        // FUNGSI QUICK SELECT DROPDOWN (SERVIS & PERJALANAN)
-        // ==========================================
         document.getElementById('quickService').addEventListener('change', function() {
             if(this.value !== "") {
-                const basePrice = parseFloat(this.value);
+                document.getElementById('dServiceCharge').value = parseFloat(this.value).toFixed(2);
+                calculateTotalQuote();
                 const serviceName = this.options[this.selectedIndex].getAttribute('data-name');
-                
-                // Isi harga ke dalam kotak (Boleh di-edit manual lepas ni)
-                document.getElementById('dServiceCharge').value = basePrice.toFixed(2);
-                calculateTotalQuote();
-
-                // Tambah nota servis ke dalam kotak teks (Jika belum ada)
                 const partsList = document.getElementById('dPartsList');
-                if(!partsList.value.includes(serviceName)) {
-                    const newText = `- Upah Servis: ${serviceName}`;
-                    partsList.value = partsList.value ? partsList.value + '\n' + newText : newText;
-                }
+                if(!partsList.value.includes(serviceName)) partsList.value = partsList.value ? partsList.value + '\n- Service Fee: ' + serviceName : '- Service Fee: ' + serviceName;
             }
         });
-
         document.getElementById('quickDelivery').addEventListener('change', function() {
-            if(this.value !== "") {
-                const basePrice = parseFloat(this.value);
-                document.getElementById('dDeliveryCharge').value = basePrice.toFixed(2);
-                calculateTotalQuote();
-            }
+            if(this.value !== "") { document.getElementById('dDeliveryCharge').value = parseFloat(this.value).toFixed(2); calculateTotalQuote(); }
         });
 
-        // ==========================================
-        // 1. FUNGSI TARIK DATA INVENTORI & DINAMIK FILTER
-        // ==========================================
         let inventoryData = [];
-        const invList = document.getElementById('invList');
-        const invCatFilter = document.getElementById('invCatFilter');
-        const invBrandFilter = document.getElementById('invBrandFilter');
-        const invPartFilter = document.getElementById('invPartFilter');
-        const invSearch = document.getElementById('invSearch');
-
         function populateDynamicFilters() {
-            const brands = new Set();
-            const parts = new Set();
-            
+            const brands = new Set(); const parts = new Set();
             inventoryData.forEach(item => {
-                if(item.type2 && item.type2.trim() !== "") brands.add(item.type2);
-                if(item.type4 && item.type4.trim() !== "") parts.add(item.type4);
+                if(item.type2) brands.add(item.type2); if(item.type4) parts.add(item.type4);
             });
-
-            const currentBrand = invBrandFilter.value;
-            const currentPart = invPartFilter.value;
-
-            invBrandFilter.innerHTML = '<option value="All">Jenama (Semua)</option>';
-            [...brands].sort().forEach(b => { invBrandFilter.innerHTML += `<option value="${b}">${b}</option>`; });
-            invBrandFilter.value = brands.has(currentBrand) ? currentBrand : "All";
-
-            invPartFilter.innerHTML = '<option value="All">Part (Semua)</option>';
-            [...parts].sort().forEach(p => { invPartFilter.innerHTML += `<option value="${p}">${p}</option>`; });
-            invPartFilter.value = parts.has(currentPart) ? currentPart : "All";
+            const currentBrand = document.getElementById('invBrandFilter').value;
+            const currentPart = document.getElementById('invPartFilter').value;
+            document.getElementById('invBrandFilter').innerHTML = '<option value="All">Brand (All)</option>';
+            [...brands].sort().forEach(b => { document.getElementById('invBrandFilter').innerHTML += `<option value="${b}">${b}</option>`; });
+            document.getElementById('invBrandFilter').value = brands.has(currentBrand) ? currentBrand : "All";
+            document.getElementById('invPartFilter').innerHTML = '<option value="All">Part (All)</option>';
+            [...parts].sort().forEach(p => { document.getElementById('invPartFilter').innerHTML += `<option value="${p}">${p}</option>`; });
+            document.getElementById('invPartFilter').value = parts.has(currentPart) ? currentPart : "All";
         }
-
         function updateDatalist() {
-            const selectedCat = invCatFilter.value;
-            const selectedBrand = invBrandFilter.value;
-            const selectedPart = invPartFilter.value;
-            
-            invList.innerHTML = ""; 
-            
+            const selectedCat = document.getElementById('invCatFilter').value;
+            const selectedBrand = document.getElementById('invBrandFilter').value;
+            const selectedPart = document.getElementById('invPartFilter').value;
+            const invList = document.getElementById('invList'); invList.innerHTML = ""; 
             inventoryData.forEach(item => {
-                const matchCat = selectedCat === "All" || item.category === selectedCat;
-                const matchBrand = selectedBrand === "All" || item.type2 === selectedBrand;
-                const matchPart = selectedPart === "All" || item.type4 === selectedPart;
-
-                if(matchCat && matchBrand && matchPart) {
-                    const option = document.createElement('option');
-                    option.value = `[${item.id}] ${item.itemName} - RM ${parseFloat(item.sellPrice).toFixed(2)}`;
-                    invList.appendChild(option);
+                if((selectedCat === "All" || item.category === selectedCat) && (selectedBrand === "All" || item.type2 === selectedBrand) && (selectedPart === "All" || item.type4 === selectedPart)) {
+                    const option = document.createElement('option'); option.value = `[${item.id}] ${item.itemName} - Sell: RM ${parseFloat(item.sellPrice).toFixed(2)}`; invList.appendChild(option);
                 }
             });
-            invSearch.value = ""; 
+            document.getElementById('invSearch').value = ""; 
         }
+        document.getElementById('invCatFilter').addEventListener('change', updateDatalist);
+        document.getElementById('invBrandFilter').addEventListener('change', updateDatalist);
+        document.getElementById('invPartFilter').addEventListener('change', updateDatalist);
 
-        invCatFilter.addEventListener('change', updateDatalist);
-        invBrandFilter.addEventListener('change', updateDatalist);
-        invPartFilter.addEventListener('change', updateDatalist);
-
-        const qInv = query(collection(db, "inventory"), orderBy("itemName"));
-        onSnapshot(qInv, (snapshot) => {
-            inventoryData = [];
-            snapshot.forEach((doc) => {
-                inventoryData.push({ id: doc.id, ...doc.data() });
-            });
-            populateDynamicFilters(); 
-            updateDatalist();         
+        onSnapshot(query(collection(db, "inventory"), orderBy("itemName")), (snapshot) => {
+            inventoryData = []; snapshot.forEach((doc) => { inventoryData.push({ id: doc.id, ...doc.data() }); });
+            populateDynamicFilters(); updateDatalist();         
         });
 
-
-        // ==========================================
-        // 2. FUNGSI TAMBAH PART & AUTO MASUK HARGA
-        // ==========================================
         document.getElementById('addPartBtn').addEventListener('click', () => {
-            const searchVal = invSearch.value;
-            if(!searchVal) return;
-
+            const searchVal = document.getElementById('invSearch').value;
             const match = searchVal.match(/\[(.*?)\]/);
             if(match && match[1]) {
-                const itemId = match[1];
-                const item = inventoryData.find(i => i.id === itemId);
-                
+                const item = inventoryData.find(i => i.id === match[1]);
                 if(item) {
+                    const hiddenInput = document.getElementById('dUsedPartsHidden');
+                    hiddenInput.value = hiddenInput.value ? hiddenInput.value + ',' + item.id : item.id;
+
                     const currentParts = document.getElementById('dPartsList').value;
-                    const newPartText = `- Alat Ganti: 1x ${item.itemName} (RM ${parseFloat(item.sellPrice).toFixed(2)})`;
+                    const newPartText = `- Part: 1x ${item.itemName} (RM ${parseFloat(item.sellPrice).toFixed(2)})`;
                     document.getElementById('dPartsList').value = currentParts ? currentParts + '\n' + newPartText : newPartText;
 
-                    const currentPartsTotal = parseFloat(document.getElementById('dPartsTotal').value) || 0;
-                    const newPartsTotal = currentPartsTotal + parseFloat(item.sellPrice);
-                    document.getElementById('dPartsTotal').value = newPartsTotal.toFixed(2);
-                    
-                    calculateTotalQuote();
-                    invSearch.value = ""; 
+                    document.getElementById('dPartsTotal').value = (parseFloat(document.getElementById('dPartsTotal').value) + parseFloat(item.sellPrice)).toFixed(2);
+                    calculateTotalQuote(); document.getElementById('invSearch').value = ""; 
                 }
-            } else {
-                alert("Sila pilih alat ganti yang sah dari senarai.");
-            }
+            } else alert("Please select a valid part from the list.");
         });
 
-
-        // ==========================================
-        // 3. FUNGSI TARIK DATA PELANGGAN
-        // ==========================================
         async function loadCustomerData() {
             try {
                 const docSnap = await getDoc(doc(db, "customers", custId));
                 if (docSnap.exists()) {
                     const data = docSnap.data();
+                    document.getElementById('dName').value = data.name || ""; document.getElementById('dPhone').value = data.phone || "";
+                    document.getElementById('dDevice').value = data.device || ""; document.getElementById('dIssue').value = data.issue || "";
+                    document.getElementById('dTechRemarks').value = data.techRemarks || ""; document.getElementById('dPartsList').value = data.partsList || "";
                     
-                    document.getElementById('dName').value = data.name || "";
-                    document.getElementById('dPhone').value = data.phone || "";
-                    document.getElementById('dDevice').value = data.device || "";
-                    document.getElementById('dIssue').value = data.issue || "";
+                    document.getElementById('dPartsTotal').value = data.partsTotal || "0.00"; document.getElementById('dServiceCharge').value = data.serviceCharge || "0.00";
+                    document.getElementById('dDeliveryCharge').value = data.deliveryCharge || "0.00"; document.getElementById('dDeposit').value = data.deposit || "0.00";
                     
-                    document.getElementById('dTechRemarks').value = data.techRemarks || "";
-                    document.getElementById('dPartsList').value = data.partsList || "";
-                    
-                    // Tarik pecahan kos
-                    document.getElementById('dPartsTotal').value = data.partsTotal || "0.00";
-                    document.getElementById('dServiceCharge').value = data.serviceCharge || "0.00";
-                    document.getElementById('dDeliveryCharge').value = data.deliveryCharge || "0.00";
-                    document.getElementById('dQuotePrice').value = data.quotePrice || "0.00";
+                    document.getElementById('dUsedPartsHidden').value = data.usedParts ? data.usedParts.join(',') : "";
 
-                    const statusBadge = document.getElementById('statusDisplay');
-                    statusBadge.innerText = `Status: ${data.status || "Baru"}`;
-                    if(data.status === "Proceed") statusBadge.style.color = "#34d399";
-                    else if(data.status === "Batal") statusBadge.style.color = "#f87171";
+                    calculateTotalQuote();
+                    
+                    const dbStatus = data.status || "Baru";
+                    let displayStatus = "New";
+                    if(dbStatus === "Sebut Harga") displayStatus = "Quoted";
+                    else if(dbStatus === "Proceed") displayStatus = "Proceeded";
+                    else if(dbStatus === "Batal") displayStatus = "Cancelled";
+                    else if(dbStatus === "Menunggu Alat Ganti") displayStatus = "Waiting for Parts";
+                    else if(dbStatus === "Sedang Dibaiki") displayStatus = "Repairing";
+                    else if(dbStatus === "Siap") displayStatus = "Ready for Collection";
+                    
+                    const statusBadge = document.getElementById('statusDisplay'); 
+                    statusBadge.innerText = `Status: ${displayStatus}`;
+                    
+                    if(data.status === "Proceed" || data.status === "Siap") statusBadge.style.color = "#34d399"; 
+                    else if(data.status === "Batal") statusBadge.style.color = "#f87171"; 
                     else statusBadge.style.color = "#fbbf24";
-
-                } else {
-                    alert("Rekod pelanggan tidak wujud.");
-                    window.location.href = "customers.html";
                 }
-            } catch (error) {
-                console.error("Ralat ambil data:", error);
-            }
+            } catch (error) {}
         }
-
         loadCustomerData();
 
-        // ==========================================
-        // 4. FUNGSI SIMPAN KEMASKINI PELANGGAN
-        // ==========================================
         document.getElementById('detailsForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('saveDetailsBtn');
-            btn.innerText = "Menyimpan..."; btn.style.opacity = "0.7";
+            const btn = document.getElementById('saveDetailsBtn'); btn.innerText = "Saving..."; btn.style.opacity = "0.7";
+
+            const idsString = document.getElementById('dUsedPartsHidden').value;
+            const usedPartsArr = idsString ? idsString.split(',').filter(id => id.trim() !== '') : [];
 
             try {
                 await updateDoc(doc(db, "customers", custId), {
-                    name: document.getElementById('dName').value,
-                    phone: document.getElementById('dPhone').value,
-                    device: document.getElementById('dDevice').value,
-                    issue: document.getElementById('dIssue').value,
-                    techRemarks: document.getElementById('dTechRemarks').value,
-                    partsList: document.getElementById('dPartsList').value,
-                    
-                    partsTotal: document.getElementById('dPartsTotal').value,
-                    serviceCharge: document.getElementById('dServiceCharge').value,
-                    deliveryCharge: document.getElementById('dDeliveryCharge').value,
-                    quotePrice: document.getElementById('dQuotePrice').value 
+                    name: document.getElementById('dName').value, phone: document.getElementById('dPhone').value,
+                    device: document.getElementById('dDevice').value, issue: document.getElementById('dIssue').value,
+                    techRemarks: document.getElementById('dTechRemarks').value, partsList: document.getElementById('dPartsList').value,
+                    partsTotal: document.getElementById('dPartsTotal').value, serviceCharge: document.getElementById('dServiceCharge').value,
+                    deliveryCharge: document.getElementById('dDeliveryCharge').value, deposit: document.getElementById('dDeposit').value,
+                    quotePrice: document.getElementById('dQuotePrice').value, balancePrice: document.getElementById('dBalancePrice').value,
+                    paymentStatus: document.getElementById('dPaymentStatus').value,
+                    usedParts: usedPartsArr 
                 });
-
-                alert("Maklumat terperinci berjaya dikemaskini!");
-            } catch (error) {
-                alert("Gagal menyimpan: " + error.message);
-            } finally {
-                btn.innerText = "💾 Simpan & Kemaskini Maklumat"; btn.style.opacity = "1";
-            }
+                alert("Customer details updated successfully!");
+            } catch (error) { alert("Failed to save: " + error.message); } 
+            finally { btn.innerText = "💾 Save & Update Details"; btn.style.opacity = "1"; }
         });
     </script>
 </body>
