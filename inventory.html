@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory | HA-FIX Tech & Repair</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: radial-gradient(circle at top left, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
+        .blob { position: absolute; filter: blur(90px); z-index: -1; opacity: 0.5; }
+        .blob.blue { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--accent-blue); }
+        .blob.purple { bottom: -10%; right: -10%; width: 300px; height: 300px; background: var(--accent-purple); }
+        
+        .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; }
+        .company-info h2 { font-size: 1.2rem; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+        .company-info p { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .nav-menu li a { text-decoration: none; color: var(--text-muted); padding: 12px 16px; border-radius: 12px; display: block; transition: 0.3s; font-weight: 600; font-size: 0.9rem; }
+        .nav-menu li a:hover, .nav-menu li a.active { background: rgba(59, 130, 246, 0.15); color: var(--text-main); border: 1px solid rgba(59, 130, 246, 0.3); }
+        
+        .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .header h1 { font-size: 2rem; font-weight: 700; }
+        .lang-switcher { display: flex; gap: 10px; background: var(--glass-bg); padding: 5px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        .lang-btn { background: transparent; color: var(--text-main); border: none; padding: 5px 15px; border-radius: 15px; cursor: pointer; font-weight: 600; transition: 0.3s; opacity: 0.5; }
+        .lang-btn.active { background: var(--accent-blue); opacity: 1; }
+        
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; }
+        
+        .glass-table { width: 100%; border-collapse: collapse; }
+        .glass-table th, .glass-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
+        .glass-table th { color: var(--text-muted); font-size: 0.85rem; }
+        
+        .sortable { cursor: pointer; user-select: none; transition: 0.2s; border-radius: 6px; }
+        .sortable:hover { background: rgba(255, 255, 255, 0.08); color: var(--text-main); }
+        .sort-icon { font-size: 0.75rem; margin-left: 5px; opacity: 0.3; display: inline-block; transition: 0.3s; }
+        .sort-active { opacity: 1; color: var(--accent-blue); }
+
+        .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: 0.3s; font-size: 0.75rem; font-weight: bold; width: auto; display: inline-block; }
+        .btn-action:hover { background: var(--accent-blue); border-color: var(--accent-blue); }
+        .btn-excel { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #34d399; }
+        .btn-excel:hover { background: #10b981; color: white; }
+        .btn-template { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #fcd34d; }
+        .btn-template:hover { background: #f59e0b; color: white; }
+        
+        /* Butang Padam Diletakkan Semula */
+        .btn-delete { background: rgba(248, 113, 113, 0.2); border-color: #f87171; color: #f87171; padding: 5px 8px; font-size: 0.7rem; }
+        .btn-delete:hover { background: #f87171; color: white; }
+        
+        .header-action-btn { padding: 8px 15px; font-size: 0.85rem; }
+        .low-stock { color: #f87171; font-weight: bold; }
+        .good-stock { color: #34d399; font-weight: bold; }
+
+        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 10px; border-radius: 8px; color: var(--text-main); outline: none; transition: 0.3s; font-size: 0.9rem; }
+        .glass-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.1); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; font-size: 1rem; }
+        .btn-primary:hover { box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); transform: translateY(-2px); }
+        
+        .form-section-title { font-size: 0.9rem; color: var(--accent-blue); border-bottom: 1px solid var(--glass-border); padding-bottom: 5px; margin-bottom: 10px; margin-top: 15px; font-weight: bold; grid-column: span 3; }
+        
+        @media (max-width: 900px) {
+            .modal-grid { grid-template-columns: 1fr !important; }
+            .form-section-title { grid-column: span 1 !important; }
+            .full-width { grid-column: span 1 !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="blob blue"></div>
+    <div class="blob purple"></div>
+
+    <aside class="sidebar">
+        <div class="company-info">
+            <h2>HA-FIX TECH</h2>
+            <p>202503246898 (003772792-K)<br>Kuala Nerus, Terengganu</p>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="dashboard.html" class="lang" data-en="Dashboard" data-ms="Papan Pemuka">Dashboard</a></li>
+            <li><a href="customers.html" class="lang" data-en="Leads & Quotes" data-ms="Saringan & Sebut Harga">Leads & Quotes</a></li>
+            <li><a href="services.html" class="lang" data-en="Active Repairs" data-ms="Pembaikan Aktif">Active Repairs</a></li>
+            <li><a href="inventory.html" class="active lang" data-en="Inventory" data-ms="Inventori">Inventory</a></li>
+            <li><a href="finance.html" class="lang" data-en="Finance" data-ms="Kewangan">Finance</a></li>
+            <li style="margin-top: 20px;"><a href="#" onclick="logoutAdmin()" style="color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3);" class="lang" data-en="Logout" data-ms="Log Keluar">Logout</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <h1 class="lang" data-en="Inventory Management" data-ms="Pengurusan Inventori">Inventory Management</h1>
+            <div class="lang-switcher">
+                <button id="btn-en" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+                <button id="btn-ms" class="lang-btn" onclick="setLanguage('ms')">MS</button>
+            </div>
+        </header>
+
+        <div class="glass-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 15px;">
+                <h2 class="lang" data-en="Stock List" data-ms="Senarai Stok" style="margin: 0;">Stock List</h2>
+                
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn-action btn-template header-action-btn" onclick="downloadTemplate()">📥 Template Excel</button>
+                    <input type="file" id="excelUpload" accept=".xlsx, .xls, .csv" style="display: none;">
+                    <button class="btn-action btn-excel header-action-btn" onclick="document.getElementById('excelUpload').click()">📤 Import Excel</button>
+                    <button class="btn-action header-action-btn lang" onclick="document.getElementById('itemModal').style.display='flex'" data-en="+ Add Item" data-ms="+ Tambah Manual">+ Tambah Manual</button>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="searchInv" class="glass-input" placeholder="Cari Kod, Nama atau Model..." style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                
+                <select id="categoryFilter" class="glass-input" style="width: 150px; margin-bottom: 0; background-color: #172033; cursor: pointer;">
+                    <option value="All">Semua Kategori</option>
+                    <option value="Alat Ganti">Alat Ganti</option>
+                    <option value="Aksesori">Aksesori</option>
+                    <option value="Peralatan">Peralatan</option>
+                </select>
+
+                <select id="type1Filter" class="glass-input" style="width: 150px; margin-bottom: 0; background-color: #172033; cursor: pointer;">
+                    <option value="All">Semua Peranti</option>
+                    <option value="Phone">Phone</option>
+                    <option value="Tablet">Tablet</option>
+                    <option value="Laptop">Laptop</option>
+                    <option value="PC">PC</option>
+                </select>
+
+                <select id="type4Filter" class="glass-input" style="width: 150px; margin-bottom: 0; background-color: #172033; cursor: pointer;">
+                    <option value="All">Semua Part</option>
+                    <option value="LCD">LCD</option>
+                    <option value="Bateri">Bateri</option>
+                    <option value="Ribbon">Ribbon</option>
+                    <option value="Board">Board</option>
+                    <option value="Lain-lain">Lain-lain</option>
+                </select>
+            </div>
+            
+            <table class="glass-table">
+                <thead>
+                    <tr>
+                        <th width="10%" class="sortable" onclick="sortTable('id')">Kod <span class="sort-icon" id="sort-id">↕</span></th>
+                        <th width="30%" class="sortable" onclick="sortTable('itemName')">Nama Barang / Spesifikasi <span class="sort-icon" id="sort-itemName">↕</span></th>
+                        <th width="15%" class="sortable" onclick="sortTable('type1')">Peranti / Brand <span class="sort-icon" id="sort-type1">↕</span></th>
+                        <th width="10%" class="sortable" onclick="sortTable('stockQty')">Stok <span class="sort-icon" id="sort-stockQty">↕</span></th>
+                        <th width="10%" class="sortable" onclick="sortTable('costPrice')">Modal <span class="sort-icon" id="sort-costPrice">↕</span></th>
+                        <th width="10%" class="sortable" onclick="sortTable('sellPrice')">Jual <span class="sort-icon" id="sort-sellPrice">↕</span></th>
+                        <th width="15%">Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody id="inventoryTableBody">
+                    <tr><td colspan="7" style="text-align:center; padding: 20px;">Memuatkan data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="itemModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto; padding: 20px;">
+        <div class="glass-panel" style="width: 100%; max-width: 850px; position: relative; margin: auto; max-height: 90vh; overflow-y: auto;">
+            <button onclick="document.getElementById('itemModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <h2 style="margin-bottom: 5px;">Pendaftaran Inventori Terperinci</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px;">Isi maklumat asas. Nama barang akan dijana secara automatik.</p>
+            
+            <form id="newItemForm" class="modal-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 15px;">
+                
+                <div class="form-section-title">1. Klasifikasi Peranti (Type 1 - Type 3)</div>
+                
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Kategori Utama</label>
+                    <select id="iCategory" class="glass-input" required style="background-color: #172033;">
+                        <option value="Alat Ganti">Alat Ganti / Spare Part</option>
+                        <option value="Aksesori">Aksesori</option>
+                        <option value="Peralatan">Peralatan</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Jenis Peranti (Type 1)</label>
+                    <select id="iType1" class="glass-input auto-name-trigger" style="background-color: #172033;">
+                        <option value="">- Pilih Jenis -</option>
+                        <option value="Phone">Phone</option>
+                        <option value="Tablet">Tablet</option>
+                        <option value="Laptop">Laptop</option>
+                        <option value="PC">PC</option>
+                        <option value="Services">Services</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Jenama Peranti (Type 2)</label>
+                    <input type="text" id="iType2" class="glass-input auto-name-trigger" placeholder="Cth: Apple, Xiaomi, Samsung">
+                </div>
+                <div class="full-width" style="grid-column: span 3;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Model Peranti Spesifik (Type 3)</label>
+                    <input type="text" id="iType3" class="glass-input auto-name-trigger" placeholder="Cth: iPhone 13 Pro Max">
+                </div>
+
+                <div class="form-section-title">2. Spesifikasi Alat Ganti (Type 4 - Type 6)</div>
+
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Jenis Part (Type 4)</label>
+                    <input type="text" id="iType4" class="glass-input auto-name-trigger" placeholder="Cth: LCD, Bateri, Ribbon" list="partTypes">
+                    <datalist id="partTypes">
+                        <option value="LCD"></option><option value="Bateri"></option><option value="Ribbon"></option>
+                        <option value="Motherboard"></option><option value="Kamera"></option><option value="Housing"></option>
+                    </datalist>
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Jenama Part (Type 5)</label>
+                    <input type="text" id="iType5" class="glass-input auto-name-trigger" placeholder="Cth: GX, Bemax, Yoobao">
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Kualiti / Spesifikasi (Type 6)</label>
+                    <input type="text" id="iType6" class="glass-input auto-name-trigger" placeholder="Cth: Ori Pulled, High Cap, Super AMOLED">
+                </div>
+
+                <div class="full-width" style="grid-column: span 3; background: rgba(59,130,246,0.1); padding: 10px; border-radius: 8px; border: 1px dashed rgba(59,130,246,0.3);">
+                    <label style="font-size: 0.75rem; color: #93c5fd; font-weight:bold;">Nama Barang Paparan (Auto-Generated)</label>
+                    <input type="text" id="iName" class="glass-input" style="margin-bottom:0; background:transparent; border:none; font-weight:bold; font-size:1.1rem; padding:0;" placeholder="Nama akan dijana di sini..." required>
+                </div>
+
+                <div class="form-section-title">3. Pembelian, Stok & Harga</div>
+
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Kod Barang ID</label>
+                    <input type="text" id="iCode" class="glass-input" placeholder="(Auto Jika Kosong)">
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Tarikh Terima</label>
+                    <input type="date" id="iDate" class="glass-input">
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Nama Supplier</label>
+                    <input type="text" id="iSupplier" class="glass-input" placeholder="Cth: Pemborong KL">
+                </div>
+
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Kuantiti</label>
+                    <input type="number" id="iQty" class="glass-input" required>
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Harga Modal (RM)</label>
+                    <input type="number" id="iCost" class="glass-input" step="0.01" required>
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Harga Jual (RM) <span style="color:#fbbf24;">(Auto x2)</span></label>
+                    <input type="number" id="iSell" class="glass-input" step="0.01" required>
+                </div>
+
+                <div class="full-width" style="grid-column: span 3;">
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Deskripsi / Nota Tambahan</label>
+                    <input type="text" id="iDesc" class="glass-input" placeholder="Tulis apa-apa nota jika perlu...">
+                </div>
+
+                <div class="full-width" style="grid-column: span 3; margin-top: 10px;">
+                    <button type="submit" id="saveItemBtn" class="btn-primary">💾 Simpan Barang Ke Dalam Inventori</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        let currentLang = 'en'; 
+        window.setLanguage = function(lang) {
+            currentLang = lang;
+            document.getElementById('btn-en').classList.remove('active'); document.getElementById('btn-ms').classList.remove('active');
+            document.getElementById(`btn-${lang}`).classList.add('active');
+        };
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs",
+            authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com",
+            projectId: "ha-fix-tech-repair-8d27f",
+            storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app",
+            messagingSenderId: "630965976099",
+            appId: "1:630965976099:web:9ff830cd7f5f624b060596",
+            measurementId: "G-KJRGT6LQ43"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
+        window.logoutAdmin = function() {
+            if(confirm("Log keluar dari sistem?")) signOut(auth).then(() => window.location.replace("login.html"));
+        };
+
+        // --- FUNGSI AUTO-NAMA BARANG ---
+        const autoNameTriggers = document.querySelectorAll('.auto-name-trigger');
+        autoNameTriggers.forEach(el => {
+            el.addEventListener('input', generateAutoName);
+        });
+
+        function generateAutoName() {
+            const brand = document.getElementById('iType2').value.trim();
+            const model = document.getElementById('iType3').value.trim();
+            const part = document.getElementById('iType4').value.trim();
+            const partBrand = document.getElementById('iType5').value.trim();
+            const spec = document.getElementById('iType6').value.trim();
+
+            let finalName = [];
+            if(brand) finalName.push(brand);
+            if(model) finalName.push(model);
+            if(part) finalName.push("- " + part);
+            
+            let bracketInfo = [];
+            if(partBrand) bracketInfo.push(partBrand);
+            if(spec) bracketInfo.push(spec);
+            
+            if(bracketInfo.length > 0) {
+                finalName.push(`(${bracketInfo.join(', ')})`);
+            }
+
+            document.getElementById('iName').value = finalName.join(' ');
+        }
+
+        // --- FUNGSI AUTO-KIRA HARGA (MARKUP 100%) ---
+        document.getElementById('iCost').addEventListener('input', function() {
+            const costValue = parseFloat(this.value);
+            if (!isNaN(costValue)) { document.getElementById('iSell').value = (costValue * 2).toFixed(2); }
+        });
+
+        // --- PEMBOLEHUBAH GLOBAL ---
+        let allInventory = [];
+        let currentSortCol = 'createdAt'; 
+        let currentSortDir = 'desc';
+        const tbody = document.getElementById('inventoryTableBody');
+
+        // Set Tarikh Hari Ini Pada Borang
+        document.getElementById('iDate').valueAsDate = new Date();
+
+        // --- TARIK DATA DARI FIREBASE ---
+        const q = query(collection(db, "inventory"), orderBy("createdAt", "desc")); 
+        onSnapshot(q, (snapshot) => {
+            allInventory = [];
+            snapshot.forEach((doc) => {
+                allInventory.push({ id: doc.id, ...doc.data() });
+            });
+            renderInventory();
+        });
+
+        // --- FUNGSI SORTING JADUAL ---
+        window.sortTable = function(column) {
+            if (currentSortCol === column) {
+                currentSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortCol = column;
+                currentSortDir = 'asc';
+            }
+            
+            document.querySelectorAll('.sort-icon').forEach(icon => {
+                icon.innerText = '↕'; icon.classList.remove('sort-active');
+            });
+            
+            const activeIcon = document.getElementById(`sort-${column}`);
+            if(activeIcon) {
+                activeIcon.innerText = currentSortDir === 'asc' ? '▲' : '▼';
+                activeIcon.classList.add('sort-active');
+            }
+            renderInventory();
+        };
+
+        // --- FUNGSI PADAM (DELETE) ---
+        window.deleteItem = async function(itemId) {
+            if(confirm(`Anda pasti mahu memadam barang ini (${itemId})?\nTindakan ini tidak boleh diundur.`)) {
+                try {
+                    await deleteDoc(doc(db, "inventory", itemId));
+                } catch (error) {
+                    alert("Ralat memadam rekod: " + error.message);
+                }
+            }
+        };
+
+        // --- FUNGSI RENDER JADUAL ---
+        function renderInventory() {
+            const searchTerm = document.getElementById('searchInv').value.toLowerCase();
+            const catFilter = document.getElementById('categoryFilter').value;
+            const t1Filter = document.getElementById('type1Filter').value;
+            const t4Filter = document.getElementById('type4Filter').value;
+            
+            tbody.innerHTML = ""; 
+
+            // 1. Tapis data
+            let filteredData = allInventory.filter(item => {
+                const searchStr = `${item.itemName} ${item.id} ${item.type3} ${item.type5}`.toLowerCase();
+                const matchSearch = searchStr.includes(searchTerm);
+                
+                const matchCat = catFilter === "All" ? true : item.category === catFilter;
+                const matchT1 = t1Filter === "All" ? true : item.type1 === t1Filter;
+                const matchT4 = t4Filter === "All" ? true : item.type4 === t4Filter;
+                
+                return matchSearch && matchCat && matchT1 && matchT4;
+            });
+
+            // 2. Susun data
+            filteredData.sort((a, b) => {
+                let valA = a[currentSortCol] || '';
+                let valB = b[currentSortCol] || '';
+
+                if(['stockQty', 'costPrice', 'sellPrice'].includes(currentSortCol)) {
+                    valA = parseFloat(valA) || 0; valB = parseFloat(valB) || 0;
+                } else {
+                    valA = valA.toString().toLowerCase(); valB = valB.toString().toLowerCase();
+                }
+
+                if (valA < valB) return currentSortDir === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSortDir === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px;">Tiada rekod inventori.</td></tr>`;
+                return;
+            }
+
+            filteredData.forEach(data => {
+                let stockClass = "good-stock";
+                if(data.stockQty < 5) stockClass = "low-stock";
+                
+                // Gabungkan Brand & Peranti untuk lajur Type1
+                const deviceDisp = `${data.type1 || ''} ${data.type2 || ''}`.trim() || data.category;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:bold; color:var(--text-muted); font-size:0.8rem;">${data.id}</td>
+                    <td>
+                        <strong style="font-size: 0.9rem; color:white;">${data.itemName}</strong><br>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">${data.type4 || ''} ${data.type5 ? '('+data.type5+')' : ''} ${data.type6 || ''}</span>
+                    </td>
+                    <td style="font-size:0.85rem;">${deviceDisp}</td>
+                    <td class="${stockClass}" style="font-size: 0.95rem;">${data.stockQty}</td>
+                    <td style="font-size:0.85rem;">${parseFloat(data.costPrice).toFixed(2)}</td>
+                    <td style="color:var(--accent-blue); font-weight:bold; font-size: 0.95rem;">${parseFloat(data.sellPrice).toFixed(2)}</td>
+                    <td>
+                        <div style="display:flex; gap:5px; align-items:center;">
+                            <button class="btn-action" onclick="window.location.href='inventory-details.html?id=${data.id}'">✏️</button>
+                            <button class="btn-action btn-delete" onclick="deleteItem('${data.id}')" title="Padam">❌</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('searchInv').addEventListener('input', renderInventory);
+        document.getElementById('categoryFilter').addEventListener('change', renderInventory);
+        document.getElementById('type1Filter').addEventListener('change', renderInventory);
+        document.getElementById('type4Filter').addEventListener('change', renderInventory);
+
+        // --- SIMPAN BARANG BARU ---
+        document.getElementById('newItemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            let itemCode = document.getElementById('iCode').value.trim().toUpperCase();
+            if(!itemCode) itemCode = `ITEM-${Math.floor(1000 + Math.random() * 9000)}`;
+
+            const saveBtn = document.getElementById('saveItemBtn');
+            saveBtn.innerText = "Menyimpan..."; saveBtn.style.opacity = "0.7";
+
+            try {
+                await setDoc(doc(db, "inventory", itemCode), {
+                    type1: document.getElementById('iType1').value,
+                    type2: document.getElementById('iType2').value,
+                    type3: document.getElementById('iType3').value,
+                    type4: document.getElementById('iType4').value,
+                    type5: document.getElementById('iType5').value,
+                    type6: document.getElementById('iType6').value,
+                    supplier: document.getElementById('iSupplier').value,
+                    receivingDate: document.getElementById('iDate').value,
+                    description: document.getElementById('iDesc').value,
+                    itemName: document.getElementById('iName').value,
+                    category: document.getElementById('iCategory').value,
+                    stockQty: parseInt(document.getElementById('iQty').value),
+                    costPrice: parseFloat(document.getElementById('iCost').value),
+                    sellPrice: parseFloat(document.getElementById('iSell').value),
+                    createdAt: new Date().toISOString()
+                });
+                alert(`Barang berjaya disimpan dengan kod: ${itemCode}`);
+                document.getElementById('newItemForm').reset();
+                document.getElementById('itemModal').style.display = 'none'; 
+            } catch (error) { alert("Ralat: " + error.message); } 
+            finally { saveBtn.innerText = "💾 Simpan Barang Ke Dalam Inventori"; saveBtn.style.opacity = "1"; }
+        });
+
+        // --- FUNGSI EXCEL TERKINI ---
+        window.downloadTemplate = function() {
+            const ws_data = [
+                ["KodBarang", "Kategori", "Type1_Device", "Type2_Brand", "Type3_Model", "Type4_Part", "Type5_PartBrand", "Type6_Specs", "NamaBarang", "Kuantiti", "HargaModal", "HargaJual", "Supplier", "Penerangan"],
+                ["LCD-IP13", "Alat Ganti", "Phone", "Apple", "iPhone 13 Pro", "LCD", "GX", "Super AMOLED", "Apple iPhone 13 Pro - LCD (GX) Super AMOLED", 10, 250.00, 500.00, "Pemborong KL", "Warranty 1 Bulan"],
+                ["BATT-SS22", "Alat Ganti", "Phone", "Samsung", "Galaxy S22", "Bateri", "Yoobao", "High Capacity", "Samsung Galaxy S22 - Bateri (Yoobao) High Capacity", 20, 80.00, 160.00, "Shopee", ""]
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template_Inventori_Pro");
+            XLSX.writeFile(wb, "Template_Inventori_HAFIX_PRO.xlsx");
+        };
+
+        document.getElementById('excelUpload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    if(jsonData.length === 0) return;
+                    if(!confirm(`Teruskan muat naik ${jsonData.length} barang?`)) return;
+
+                    for(let i = 0; i < jsonData.length; i++) {
+                        const item = jsonData[i];
+                        const code = item["KodBarang"] ? String(item["KodBarang"]).trim().toUpperCase() : `ITEM-${Math.floor(1000 + Math.random() * 9000)}`;
+                        const cost = parseFloat(item["HargaModal"]) || 0.00;
+                        let sell = parseFloat(item["HargaJual"]);
+                        if (isNaN(sell) || sell <= 0) { sell = cost * 2; }
+
+                        await setDoc(doc(db, "inventory", code), {
+                            type1: item["Type1_Device"] || "",
+                            type2: item["Type2_Brand"] || "",
+                            type3: item["Type3_Model"] || "",
+                            type4: item["Type4_Part"] || "",
+                            type5: item["Type5_PartBrand"] || "",
+                            type6: item["Type6_Specs"] || "",
+                            itemName: item["NamaBarang"] || "Tiada Nama",
+                            category: item["Kategori"] || "Alat Ganti",
+                            stockQty: parseInt(item["Kuantiti"]) || 0,
+                            costPrice: cost,
+                            sellPrice: sell,
+                            supplier: item["Supplier"] || "",
+                            description: item["Penerangan"] || "",
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+                    alert(`Selesai!`);
+                    document.getElementById('excelUpload').value = ""; 
+                } catch (error) { alert("Ralat semasa membaca fail Excel."); }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+</body>
+</html>
