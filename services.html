@@ -14,19 +14,24 @@
         .blob.blue { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--accent-blue); }
         .blob.purple { bottom: -10%; right: -10%; width: 300px; height: 300px; background: var(--accent-purple); }
         
-        .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; }
+        .menu-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 3000; background: var(--accent-blue); border: none; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2400; }
+        .sidebar-overlay.active { display: block; }
+
+        .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; z-index: 2500; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .company-info h2 { font-size: 1.2rem; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
         .company-info p { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 10px; }
         .nav-menu li a { text-decoration: none; color: var(--text-muted); padding: 12px 16px; border-radius: 12px; display: block; transition: 0.3s; font-weight: 600; font-size: 0.9rem; }
         .nav-menu li a:hover, .nav-menu li a.active { background: rgba(59, 130, 246, 0.15); color: var(--text-main); border: 1px solid rgba(59, 130, 246, 0.3); }
         
-        .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; }
+        .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; width: 100%; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .header h1 { font-size: 2rem; font-weight: 700; }
         
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; }
-        .glass-table { width: 100%; border-collapse: collapse; }
+        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
+        .glass-table { width: 100%; border-collapse: collapse; min-width: 900px; }
         .glass-table th, .glass-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: top; }
         .glass-table th { color: var(--text-muted); font-size: 0.9rem; }
         
@@ -34,145 +39,40 @@
         .status.waiting { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); }
         .status.repairing { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.5); }
         .status.done { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5); }
-        .status.cancelled { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); }
         
         .action-group { display: flex; flex-direction: column; gap: 5px; }
         .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.8rem; font-weight: bold; text-align: center; }
         .btn-action:hover:not(:disabled) { background: var(--accent-blue); border-color: var(--accent-blue); }
         .btn-action:disabled { opacity: 0.3; cursor: not-allowed; }
-
         .btn-pay { background: rgba(52, 211, 153, 0.2); border-color: #34d399; color: #34d399; }
-        .btn-pay:hover { background: #34d399; color: white; }
+        .btn-profile { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #fcd34d; }
         
-        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; transition: 0.3s; margin-bottom: 15px; font-size: 0.95rem; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; }
+        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; transition: 0.3s; margin-bottom: 15px; }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; }
 
-        /* A4 PRINT PREVIEW STYLING */
-        #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; overflow-y: auto; padding: 40px 20px; justify-content: center; }
-        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; font-family: 'Plus Jakarta Sans', Arial, sans-serif; position: relative; box-sizing: border-box; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
-        #previewControls { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 2001; }
+        #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 4000; overflow-y: auto; padding: 40px 20px; justify-content: center; }
+        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; position: relative; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
 
-        /* HAMBURGER MENU STYLING */
-        .menu-toggle { 
-        display: none; 
-        position: fixed; 
-        top: 15px; 
-        left: 15px; 
-        z-index: 3000; 
-        background: var(--accent-blue); 
-        border: none; 
-        color: white; 
-        padding: 10px 15px; 
-        border-radius: 8px; 
-        cursor: pointer;
-        font-weight: bold;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        /* RESPONSIVE LOGIC */
         @media (max-width: 900px) {
-            .menu-toggle { display: block; } /* Munculkan butang menu */
-
+            .menu-toggle { display: block; }
             body { flex-direction: column; }
-
-            .sidebar { 
-                position: fixed; 
-                left: -100%; /* Sembunyi ke kiri */
-                top: 0; 
-                width: 280px; 
-                height: 100vh; 
-                z-index: 2500; 
-                transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 15px 0 30px rgba(0,0,0,0.5);
-            }
-
-        .sidebar.active { left: 0; } /* Muncul bila aktif */
-
-        .main-content { 
-            padding: 1rem; 
-            padding-top: 4.5rem; /* Elak bertindih dengan butang hamburger */
-            width: 100%;
+            .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; }
+            .sidebar.active { left: 0; }
+            .main-content { padding: 1rem; padding-top: 5rem; }
+            .header h1 { font-size: 1.5rem; }
+            .glass-panel { padding: 1.2rem; }
+            #generateReceiptForm { grid-template-columns: 1fr !important; }
         }
-
-        .header h1 { font-size: 1.5rem; }
-
-        /* Table Optimization */
-        .glass-panel { 
-            padding: 1rem; 
-            overflow-x: auto; /* Benarkan scroll horizontal */
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .glass-table { 
-            min-width: 800px; /* Paksa lebar supaya teks tak 'kemek' */
-        }
-
-        /* Action Buttons Mobile */
-        .action-group { 
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 8px; 
-        }
-        
-        .btn-action { padding: 12px; font-size: 0.9rem; }
-        }
-
-        /* OVERLAY bila menu buka */
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 2400;
-        }
-        .sidebar-overlay.active { display: block; }
     </style>
-
-<style>
-    .glass-panel { overflow-x: auto; } /* Benarkan scroll kiri kanan dalam panel */
-    
-    @media (max-width: 768px) {
-        .glass-table { min-width: 700px; } /* Paksa table ada lebar minimum supaya tak kemek */
-        .header h1 { font-size: 1.5rem; }
-        .btn-action { padding: 10px; font-size: 0.75rem; }
-    }
-</style>
-
-<button class="menu-toggle" id="menuBtn">☰ MENU</button>
-<div class="sidebar-overlay" id="overlay"></div>
-
-<script>
-    const menuBtn = document.getElementById('menuBtn');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.getElementById('overlay');
-
-    function toggleMenu() {
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-        menuBtn.innerText = sidebar.classList.contains('active') ? '✕ CLOSE' : '☰ MENU';
-    }
-
-    menuBtn.addEventListener('click', toggleMenu);
-    overlay.addEventListener('click', toggleMenu);
-
-    // Tutup menu bila klik link (untuk mobile)
-    document.querySelectorAll('.nav-menu a').forEach(link => {
-        link.addEventListener('click', () => {
-            if(window.innerWidth <= 900) toggleMenu();
-        });
-    });
-</script>
-
 </head>
 <body>
-    <div class="blob blue"></div>
-    <div class="blob purple"></div>
+    <button class="menu-toggle" id="menuBtn">☰ MENU</button>
+    <div class="sidebar-overlay" id="overlay"></div>
 
     <aside class="sidebar">
         <div class="company-info">
             <h2>HA-FIX TECH</h2>
-            <p>202503246898 (003772792-K)<br>Kuala Nerus, Terengganu</p>
+            <p>202503246898 (003772792-K)<br>Management System</p>
         </div>
         <ul class="nav-menu">
             <li><a href="dashboard.html">Dashboard</a></li>
@@ -180,44 +80,44 @@
             <li><a href="services.html" class="active">Active Repairs</a></li>
             <li><a href="inventory.html">Inventory</a></li>
             <li><a href="finance.html">Finance</a></li>
-            <li style="margin-top: 20px;"><a href="#" onclick="logoutAdmin()" style="color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3);">Logout</a></li>
+            <li style="margin-top: 20px;"><a href="#" onclick="logoutAdmin()" style="color: #f87171;">Logout</a></li>
         </ul>
     </aside>
 
     <main class="main-content">
         <header class="header">
-            <h1>Active Repair Tracking</h1>
-            <button class="btn-action" onclick="document.getElementById('ticketModal').style.display='flex'">+ Fast-Track Ticket</button>
+            <h1>Active Repairs</h1>
         </header>
 
         <div class="glass-panel">
-            <h2 style="margin-bottom: 1.5rem;">Repair Tickets</h2>
-            <table class="glass-table">
-                <thead>
-                    <tr>
-                        <th width="10%">Ticket</th>
-                        <th width="20%">Customer</th>
-                        <th width="25%">Device & Issue</th>
-                        <th width="15%">Balance (RM)</th>
-                        <th width="15%">Status</th>
-                        <th width="15%">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="ticketsTableBody">
-                    <tr><td colspan="6" style="text-align:center;">Loading data...</td></tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th width="10%">Ticket</th>
+                            <th width="20%">Customer</th>
+                            <th width="25%">Device & Issue</th>
+                            <th width="15%">Balance (RM)</th>
+                            <th width="15%">Status</th>
+                            <th width="15%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ticketsTableBody">
+                        <tr><td colspan="6" style="text-align:center;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 
-    <div id="statusModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center;">
+    <div id="statusModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center;">
         <div class="glass-panel" style="width: 100%; max-width: 400px; position: relative;">
             <button onclick="document.getElementById('statusModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
             <h2 style="margin-bottom: 20px; color: var(--accent-blue);">Update Status</h2>
             <form id="updateStatusForm">
                 <input type="hidden" id="sTicketId">
                 <label style="font-size: 0.85rem; color: var(--text-muted);">Select Status:</label>
-                <select id="sStatus" class="glass-input" required style="background-color: #172033;">
+                <select id="sStatus" class="glass-input" required style="background-color: #172033; color:white;">
                     <option value="Menunggu Alat Ganti">Waiting for Parts</option>
                     <option value="Sedang Diagnosting">Diagnosing</option>
                     <option value="Sedang Dibaiki">In Progress</option>
@@ -229,22 +129,7 @@
         </div>
     </div>
 
-    <div id="ticketModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center;">
-        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
-            <button onclick="document.getElementById('ticketModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 style="margin-bottom: 20px;">Fast-Track Registration</h2>
-            <form id="newTicketForm">
-                <input type="text" id="tName" class="glass-input" placeholder="Customer Name" required>
-                <input type="tel" id="tPhone" class="glass-input" placeholder="Phone Number" required>
-                <input type="text" id="tDevice" class="glass-input" placeholder="Device Model" required>
-                <input type="text" id="tIssue" class="glass-input" placeholder="Main Issue" required>
-                <input type="number" id="tPrice" class="glass-input" placeholder="Agreed Price (RM)" step="0.01">
-                <button type="submit" id="saveTicketBtn" class="btn-primary">Register Ticket</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; overflow-y: auto;">
+    <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center; overflow-y: auto;">
         <div class="glass-panel" style="width: 100%; max-width: 600px; position: relative; margin: 20px auto;">
             <button onclick="document.getElementById('receiptModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
             <h2 style="margin-bottom: 20px; color: var(--accent-purple);">Generate Official Document</h2>
@@ -273,74 +158,37 @@
     </div>
 
     <div id="previewBackdrop">
-        <div id="previewControls">
-            <button onclick="closeA4Preview()" class="btn-action" style="background: #f87171;">❌ Close Preview</button>
-            <button onclick="generatePDF()" class="btn-action" style="background: #10b981; border-color: #10b981;">📄 Download PDF</button>
+        <div style="position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 4001;">
+            <button onclick="closeA4Preview()" class="btn-action" style="background: #f87171;">❌ Close</button>
+            <button onclick="generatePDF()" class="btn-action" style="background: #10b981;">📄 Download</button>
         </div>
         <div id="invoice-template">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 65px; height: 65px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #64748b; border-radius: 6px; font-weight: 700; letter-spacing: 1px;">LOGO</div>
-                    <div style="font-weight: 800; font-size: 28px; color: #000; letter-spacing: 0.5px;">HA-FIX TECH</div>
+                    <div style="width: 65px; height: 65px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #64748b; border-radius: 6px; font-weight: 700;">LOGO</div>
+                    <div style="font-weight: 800; font-size: 28px; color: #000;">HA-FIX TECH</div>
                 </div>
-                <div style="text-align: right; font-size: 12px; color: #1e293b; line-height: 1.5;">
-                    <strong style="font-size: 13px; color: #000;">HA-FIX TECH & REPAIR</strong><br>
-                    SSM: 202503246898 (003772792-K)<br>
-                    10697-G, Jalan Masjid Kg Bukit Kandis,<br>
-                    21200 Kuala Nerus, Terengganu, Malaysia
+                <div style="text-align: right; font-size: 12px; line-height: 1.5;">
+                    <strong style="font-size: 13px;">HA-FIX TECH & REPAIR</strong><br>SSM: 202503246898 (003772792-K)<br>Kuala Nerus, Terengganu
                 </div>
             </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
-                <div style="width: 45%; font-size: 14px; color: #000; line-height: 1.6;">
-                    <p style="margin: 0 0 8px 0; font-weight: 700; font-size: 15px;">Prepared For:</p>
-                    <p style="margin: 0; font-weight: 600;" id="pdfName"></p>
-                    <p style="margin: 0;">Phone: <span id="pdfPhone"></span></p>
-                </div>
-                <div style="width: 45%; text-align: right;">
-                    <h2 id="pdfDocTitle" style="margin: 0 0 15px 0; font-size: 32px; font-weight: 800; color: #000; text-transform: uppercase;">OFFICIAL RECEIPT</h2>
-                    <div style="font-size: 13px; color: #000;">
-                        <p style="margin: 3px 0; display: flex; justify-content: flex-end; gap: 10px;"><span>Ref No:</span> <strong id="pdfTicket"></strong></p>
-                        <p style="margin: 3px 0; display: flex; justify-content: flex-end; gap: 10px;"><span>Date:</span> <span id="pdfDate"></span></p>
-                        <p style="margin: 3px 0; display: flex; justify-content: flex-end; gap: 10px;"><span>Payment Mode:</span> <span id="pdfMethod"></span></p>
-                    </div>
-                </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
+                <div style="width: 45%; font-size: 14px;"><p style="font-weight: 700;">Prepared For:</p><p id="pdfName"></p><p id="pdfPhone"></p></div>
+                <div style="width: 45%; text-align: right;"><h2 id="pdfDocTitle" style="font-size: 32px; font-weight: 800; margin-bottom:10px;">RECEIPT</h2><p>Ref: <strong id="pdfTicket"></strong></p><p>Date: <span id="pdfDate"></span></p></div>
             </div>
-            
-            <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 30px; color: #000;">
-                <thead>
-                    <tr style="border-top: 2px solid #000; border-bottom: 2px solid #000;">
-                        <th style="padding: 12px 5px; text-align: left; width: 8%;">SNO</th>
-                        <th style="padding: 12px 5px; text-align: left; width: 8%;">Qty</th>
-                        <th style="padding: 12px 5px; text-align: left; width: 44%;">Description</th>
-                        <th style="padding: 12px 5px; text-align: right; width: 15%;">Unit (MYR)</th>
-                        <th style="padding: 12px 5px; text-align: right; width: 10%;">Tax (MYR)</th>
-                        <th style="padding: 12px 5px; text-align: right; width: 15%;">Total (MYR)</th>
-                    </tr>
-                </thead>
-                <tbody id="pdfTableBody" style="border-bottom: 2px solid #000;"></tbody>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 30px; border-top: 2px solid #000;">
+                <thead><tr><th style="padding:10px;text-align:left;width:10%;">SNO</th><th style="padding:10px;text-align:left;width:10%;">Qty</th><th style="padding:10px;text-align:left;width:50%;">Description</th><th style="padding:10px;text-align:right;width:30%;">Total (RM)</th></tr></thead>
+                <tbody id="pdfTableBody" style="border-top: 1px solid #000; border-bottom: 2px solid #000;"></tbody>
             </table>
-            
-            <div style="display: flex; justify-content: space-between; font-size: 14px; color: #000; margin-bottom: 30px;">
-                <div style="width: 50%;">
-                    <p style="margin: 0 0 20px 0; font-weight: 700; font-size: 15px;">Total Item: <span id="pdfTotalItem" style="font-weight: 400;"></span></p>
-                    <div style="border: 1px solid #cbd5e1; padding: 15px; width: 90%; background: #ffffff;">
-                        <p style="margin: 0 0 5px 0; font-weight: 700; color: #000;">Remark:</p>
-                        <p style="margin: 0; font-size: 12px; color: #334155; line-height: 1.5;">This document serves as proof of transaction. Please retain it for any warranty claims.</p>
-                    </div>
-                </div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                <div style="width: 50%; border: 1px solid #cbd5e1; padding: 15px; font-size: 12px;"><strong>Remark:</strong> Keep for warranty claims.</div>
                 <div style="width: 40%; text-align: right;">
-                    <p style="margin: 8px 0; display: flex; justify-content: space-between;"><span>Total Amt (MYR)</span> <span id="pdfTotalAmt"></span></p>
-                    <p style="margin: 8px 0; color: #334155; display: flex; justify-content: space-between;"><span>Deposit Paid</span> <span id="pdfDeposit"></span></p>
-                    <div style="margin-top: 15px; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; padding: 10px 0; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 800; font-size: 18px;">Balance Due </span>
-                        <span id="pdfFinalTotal" style="font-weight: 800; font-size: 18px;"></span>
-                    </div>
+                    <p>Total Amt: RM <span id="pdfTotalAmt"></span></p><p>Deposit: RM <span id="pdfDeposit"></span></p>
+                    <h3 style="border-top: 1px solid #000; padding-top: 10px;">Balance Due: RM <span id="pdfFinalTotal"></span></h3>
                 </div>
             </div>
-            
-            <div style="font-size: 10.5px; color: #000; line-height: 1.6; border-top: 1px dotted #ccc; padding-top: 20px; margin-top: 20px;">
-                <p style="margin: 0 0 8px 0; font-weight: 800; color: #000; text-transform: uppercase; text-decoration: underline;">Terms & Conditions:</p>
+            <div style="font-size: 10.5px; line-height: 1.6; border-top: 1px dotted #ccc; padding-top: 20px; margin-top: 20px;">
+                <strong>Terms & Conditions:</strong><br>
                 1) All services and spare parts come with a 30-day warranty from the date of collection.<br>
                 2) Warranty voids if signs of physical damage, liquid damage, or third-party disassembly found.<br>
                 3) Cash refunds are not available for any parts or services. All sales final.<br>
@@ -353,10 +201,16 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-        import { getFirestore, collection, doc, updateDoc, getDocs, onSnapshot, query, where, orderBy, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, updateDoc, getDocs, onSnapshot, query, where, orderBy, addDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs", authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com", projectId: "ha-fix-tech-repair-8d27f", storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app", messagingSenderId: "630965976099", appId: "1:630965976099:web:9ff830cd7f5f624b060596", measurementId: "G-KJRGT6LQ43" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
+
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('overlay');
+        function toggleMenu() { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); menuBtn.innerText = sidebar.classList.contains('active') ? '✕ CLOSE' : '☰ MENU'; }
+        menuBtn.addEventListener('click', toggleMenu); overlay.addEventListener('click', toggleMenu);
 
         onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
         window.logoutAdmin = () => signOut(auth).then(() => window.location.replace("login.html"));
@@ -372,9 +226,7 @@
                     let isPaid = false, balance = 0, custDocId = "";
                     if(!cSnap.empty) {
                         const cData = cSnap.docs[0].data();
-                        isPaid = cData.isPaid || false;
-                        balance = cData.balancePrice || 0;
-                        custDocId = cSnap.docs[0].id;
+                        isPaid = cData.isPaid || false; balance = cData.balancePrice || 0; custDocId = cSnap.docs[0].id;
                     }
 
                     let row = document.getElementById(`row-${ticketId}`);
@@ -383,7 +235,6 @@
                     let displayStatus = "Repairing", statusClass = "repairing";
                     if(data.status === "Menunggu Alat Ganti") { displayStatus = "Waiting Parts"; statusClass = "waiting"; }
                     else if(data.status === "Sedang Diagnosting") { displayStatus = "Diagnosing"; statusClass = "repairing"; }
-                    else if(data.status === "Sedang Dibaiki") { displayStatus = "In Progress"; statusClass = "repairing"; }
                     else if(data.status === "Siap") { displayStatus = "Ready"; statusClass = "done"; }
                     else if(data.status === "Batal") { displayStatus = "Cancelled"; statusClass = "cancelled"; }
 
@@ -397,11 +248,8 @@
                             <div class="action-group">
                                 <button class="btn-action btn-profile" onclick="window.location.href='customer-details.html?id=${custDocId}'">🔍 Details</button>
                                 <button class="btn-action" onclick="openStatusModal('${ticketId}', '${data.status}')">🔄 Status</button>
-                                ${!isPaid ? 
-                                    `<button class="btn-action btn-pay" onclick="confirmPayment('${custDocId}', '${balance}', '${ticketId}')">💰 Confirm Pay</button>` : 
-                                    `<span style="color:#34d399; font-weight:bold; text-align:center; padding: 5px 0;">✅ Paid</span>`
-                                }
-                                <button class="btn-action" id="print-btn-${ticketId}" ${!isPaid ? 'disabled' : ''} onclick="confirmReceiptData('${ticketId}')">📄 Print Receipt</button>
+                                ${!isPaid ? `<button class="btn-action btn-pay" onclick="confirmPayment('${custDocId}', '${balance}', '${ticketId}')">💰 Confirm Pay</button>` : `<span style="color:#34d399; font-weight:bold; text-align:center;">✅ Paid</span>`}
+                                <button class="btn-action" id="print-btn-${ticketId}" ${!isPaid ? 'disabled' : ''} onclick="confirmReceiptData('${ticketId}')">📄 Print</button>
                             </div>
                         </td>
                     `;
@@ -409,35 +257,25 @@
             });
         });
 
-        window.confirmPayment = async function(custId, balance, ticketId) {
-            if(confirm(`Confirm receive final payment of RM ${balance}? Record to Finance & Unlock Receipt.`)) {
-                try {
-                    await updateDoc(doc(db, "customers", custId), { isPaid: true });
-                    await addDoc(collection(db, "transactions"), {
-                        type: "Income", amount: parseFloat(balance), category: "Repair Services",
-                        desc: `Final Payment for Ticket #${ticketId}`, date: new Date().toISOString().split('T')[0], createdAt: new Date().toISOString()
-                    });
-                } catch (e) { alert(e.message); }
+        window.confirmPayment = async (custId, balance, ticketId) => {
+            if(confirm(`Receive RM ${balance}?`)) {
+                await updateDoc(doc(db, "customers", custId), { isPaid: true });
+                await addDoc(collection(db, "transactions"), { type: "Income", amount: parseFloat(balance), category: "Repair", desc: `Final Pay #${ticketId}`, date: new Date().toISOString().split('T')[0], createdAt: new Date().toISOString() });
             }
         };
 
-        window.openStatusModal = (id, status) => { 
-            document.getElementById('sTicketId').value = id; document.getElementById('sStatus').value = status; 
-            document.getElementById('statusModal').style.display = 'flex'; 
-        };
+        window.openStatusModal = (id, status) => { document.getElementById('sTicketId').value = id; document.getElementById('sStatus').value = status; document.getElementById('statusModal').style.display = 'flex'; };
+        document.getElementById('updateStatusForm').onsubmit = async (e) => { e.preventDefault(); await updateDoc(doc(db, "tickets", document.getElementById('sTicketId').value), { status: document.getElementById('sStatus').value }); document.getElementById('statusModal').style.display = 'none'; };
 
-        document.getElementById('updateStatusForm').onsubmit = async (e) => {
-            e.preventDefault();
-            await updateDoc(doc(db, "tickets", document.getElementById('sTicketId').value), { status: document.getElementById('sStatus').value });
-            document.getElementById('statusModal').style.display = 'none';
-        };
-
+        // FIX BUG SYNC KOSONG
         let currentCustData = {};
         window.confirmReceiptData = async (ticketId) => {
             const q = query(collection(db, "customers"), where("ticketId", "==", ticketId));
             const snap = await getDocs(q);
             if(!snap.empty) {
-                const d = snap.docs[0].data(); currentCustData = d;
+                const d = snap.docs[0].data(); 
+                currentCustData = d;
+                // SYNC BALIK DATA DARI CUSTOMER DETAILS KE MODAL
                 document.getElementById('rPartsList').value = d.partsList || "";
                 document.getElementById('rPartsCost').value = d.partsTotal || 0;
                 document.getElementById('rLaborCost').value = d.serviceCharge || 0;
@@ -459,24 +297,22 @@
             document.getElementById('pdfPhone').innerText = currentCustData.phone;
             document.getElementById('pdfTicket').innerText = currentCustData.ticketId;
             document.getElementById('pdfDate').innerText = new Date().toLocaleDateString('en-MY');
-            document.getElementById('pdfMethod').innerText = document.getElementById('rPaymentMethod').value;
             
             const tbody = document.getElementById('pdfTableBody');
             const partsListTxt = document.getElementById('rPartsList').value.replace(/\n/g, '<br>');
+            
             let content = ""; let SNO = 1;
-
-            if (partsCost > 0 || partsListTxt.trim() !== "") {
-                content += `<tr><td style="padding:10px;">${SNO++}</td><td style="padding:10px;">1</td><td style="padding:10px;"><b>Device Repair: ${currentCustData.device}</b><br><small>${partsListTxt}</small></td><td style="padding:10px;text-align:right;">${partsCost.toFixed(2)}</td><td style="padding:10px;text-align:right;">0.00</td><td style="padding:10px;text-align:right;">${partsCost.toFixed(2)}</td></tr>`;
+            if (partsCost > 0 || partsListTxt !== "") {
+                content += `<tr><td>${SNO++}</td><td>1</td><td><b>Device Repair: ${currentCustData.device}</b><br><small>${partsListTxt}</small></td><td style="text-align:right;">${partsCost.toFixed(2)}</td></tr>`;
             }
             if (laborCost > 0) {
-                content += `<tr><td style="padding:10px;">${SNO++}</td><td style="padding:10px;">1</td><td style="padding:10px;">Service Fee / Labor Charge</td><td style="padding:10px;text-align:right;">${laborCost.toFixed(2)}</td><td style="padding:10px;text-align:right;">0.00</td><td style="padding:10px;text-align:right;">${laborCost.toFixed(2)}</td></tr>`;
+                content += `<tr><td>${SNO++}</td><td>1</td><td>Service / Labor Fee</td><td style="text-align:right;">${laborCost.toFixed(2)}</td></tr>`;
             }
             if (deliveryCost > 0) {
-                content += `<tr><td style="padding:10px;">${SNO++}</td><td style="padding:10px;">1</td><td style="padding:10px;">Delivery / Transport</td><td style="padding:10px;text-align:right;">${deliveryCost.toFixed(2)}</td><td style="padding:10px;text-align:right;">0.00</td><td style="padding:10px;text-align:right;">${deliveryCost.toFixed(2)}</td></tr>`;
+                content += `<tr><td>${SNO++}</td><td>1</td><td>Delivery Charge</td><td style="text-align:right;">${deliveryCost.toFixed(2)}</td></tr>`;
             }
-            
+
             tbody.innerHTML = content;
-            document.getElementById('pdfTotalItem').innerText = (SNO - 1);
             document.getElementById('pdfTotalAmt').innerText = total.toFixed(2);
             document.getElementById('pdfDeposit').innerText = dep.toFixed(2);
             document.getElementById('pdfFinalTotal').innerText = (total - dep).toFixed(2);
@@ -487,19 +323,7 @@
         };
 
         window.closeA4Preview = () => { document.getElementById('previewBackdrop').style.display = 'none'; document.getElementById('receiptModal').style.display = 'flex'; };
-        window.generatePDF = () => {
-            const opt = { margin: 0, filename: `Receipt_${currentCustData.ticketId}.pdf`, image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-            html2pdf().set(opt).from(document.getElementById('invoice-template')).save();
-        };
-
-        document.getElementById('newTicketForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const ticketId = `HF-${Math.floor(1000 + Math.random() * 9000)}`;
-            try {
-                await setDoc(doc(db, "tickets", ticketId), { name: document.getElementById('tName').value, phone: document.getElementById('tPhone').value, device: document.getElementById('tDevice').value, issue: document.getElementById('tIssue').value, agreedPrice: document.getElementById('tPrice').value || "0.00", status: "Sedang Diagnosting", createdAt: new Date().toISOString() });
-                document.getElementById('newTicketForm').reset(); document.getElementById('ticketModal').style.display = 'none';
-            } catch (e) { alert(e.message); }
-        };
+        window.generatePDF = () => { html2pdf().from(document.getElementById('invoice-template')).save(`Receipt_${currentCustData.ticketId}.pdf`); };
     </script>
 </body>
 </html>
