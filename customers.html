@@ -11,64 +11,65 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: radial-gradient(circle at top left, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
         
-        /* MOBILE MENU & OVERLAY */
+        /* MOBILE MENU SYSTEM */
         .menu-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 3000; background: var(--accent-blue); border: none; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2400; }
         .sidebar-overlay.active { display: block; }
 
         .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; z-index: 2500; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .company-info h2 { font-size: 1.2rem; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
-        .company-info p { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 10px; }
         .nav-menu li a { text-decoration: none; color: var(--text-muted); padding: 12px 16px; border-radius: 12px; display: block; transition: 0.3s; font-weight: 600; font-size: 0.9rem; }
         .nav-menu li a:hover, .nav-menu li a.active { background: rgba(59, 130, 246, 0.15); color: var(--text-main); border: 1px solid rgba(59, 130, 246, 0.3); }
         
-        .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; width: 100%; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .header h1 { font-size: 2rem; font-weight: 700; }
+        .main-content { flex: 1; padding: 2rem 3rem; overflow-y: auto; width: 100%; position: relative; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .header h1 { font-size: 1.8rem; font-weight: 700; }
 
-        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 1.5rem; margin-bottom: 2rem; }
         
-        .filter-section { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        .filter-section { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
         .search-box { flex: 1; min-width: 200px; }
-        .filter-box { width: 150px; }
-        
-        /* TABLE RESPONSIVE */
+        .filter-box { width: 140px; }
+
+        /* TABLE */
         .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
-        .glass-table { width: 100%; border-collapse: collapse; min-width: 900px; }
-        .glass-table th, .glass-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: top; }
-        .glass-table th { color: var(--text-muted); font-size: 0.9rem; }
+        .glass-table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        .glass-table th, .glass-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: top; }
         
-        .status-baru { color: #fbbf24; font-weight: bold; }
-        .status-sebutharga { color: #60a5fa; font-weight: bold; }
-        .status-batal { color: #f87171; font-weight: bold; text-decoration: line-through; }
-        .status-proceed { color: #34d399; font-weight: bold; }
+        /* STATUS COLORS */
+        .status-baru { color: #fbbf24; font-weight: bold; font-size: 0.8rem; }
+        .status-sebutharga { color: #60a5fa; font-weight: bold; font-size: 0.8rem; }
+        .status-proceed { color: #34d399; font-weight: bold; font-size: 0.8rem; }
+        .status-batal { color: #f87171; font-weight: bold; text-decoration: line-through; font-size: 0.8rem; }
 
-        /* ACTION BUTTONS */
-        .action-group { display: flex; flex-direction: column; gap: 5px; }
-        .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.8rem; font-weight: bold; text-align: center; }
+        /* ACTION GROUP - COMPACT FIX */
+        .action-group { display: flex; flex-direction: column; gap: 4px; width: 120px; }
+        .btn-action { background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); color: white; padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 0.75rem; font-weight: 700; text-align: center; text-decoration: none; width: 100%; }
         .btn-action:hover { background: var(--accent-blue); border-color: var(--accent-blue); }
-        .btn-proceed { background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #34d399; }
+        .btn-proceed { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #34d399; }
         .btn-proceed:hover { background: #10b981; color: white; }
-        .btn-cancel { background: rgba(248, 113, 113, 0.2); border-color: #f87171; color: #f87171; }
-        .btn-cancel:hover { background: #f87171; color: white; }
-        .btn-whatsapp { background: rgba(37, 211, 102, 0.2); border-color: #25D366; color: #25D366; }
+        .btn-whatsapp { background: rgba(37, 211, 102, 0.15); border-color: rgba(37, 211, 102, 0.3); color: #25D366; }
         .btn-whatsapp:hover { background: #25D366; color: white; }
+        .btn-cancel { border-color: rgba(248, 113, 113, 0.2); color: #f87171; }
+        
+        .btn-export { background: #10b981; color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
 
-        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; margin-bottom: 15px; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; }
+        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 10px 12px; border-radius: 10px; color: var(--text-main); outline: none; margin-bottom: 12px; font-size: 0.9rem; }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; }
 
-        /* A4 PREVIEW */
+        /* PRINT PREVIEW */
         #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 4000; overflow-y: auto; padding: 40px 20px; justify-content: center; }
-        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; position: relative; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; position: relative; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); font-family: 'Plus Jakarta Sans', Arial, sans-serif; }
 
         @media (max-width: 900px) {
             .menu-toggle { display: block; }
             body { flex-direction: column; }
             .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; }
             .sidebar.active { left: 0; }
-            .main-content { padding: 1rem; padding-top: 5rem; }
-            .header { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .main-content { padding: 1rem; padding-top: 4.5rem; }
+            .header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .header h1 { font-size: 1.5rem; }
             .filter-section { flex-direction: column; align-items: stretch; }
             .filter-box { width: 100%; }
         }
@@ -96,30 +97,30 @@
     <main class="main-content">
         <header class="header">
             <h1>Leads & Quotations</h1>
-            <button class="btn-action" style="padding:12px 20px;" onclick="document.getElementById('custModal').style.display='flex'">+ Manual Lead</button>
+            <button class="btn-action" style="padding:10px 18px; width: auto;" onclick="document.getElementById('custModal').style.display='flex'">+ Manual Lead</button>
         </header>
 
         <div class="glass-panel">
             <div class="filter-section">
                 <input type="text" id="searchInput" class="glass-input search-box" placeholder="Search name or phone..." style="margin-bottom:0;">
                 <select id="statusFilter" class="glass-input filter-box" style="margin-bottom:0; background-color: #172033;">
-                    <option value="All">All Statuses</option>
+                    <option value="All">Statuses</option>
                     <option value="Baru">New</option>
                     <option value="Sebut Harga">Quoted</option>
                     <option value="Proceed">Proceeded</option>
                     <option value="Batal">Cancelled</option>
                 </select>
-                <button onclick="exportCSV()" class="btn-export" style="background:#10b981; color:white; border:none; padding:12px 20px; border-radius:10px; cursor:pointer; font-weight:bold;">📥 Export CSV</button>
+                <button onclick="exportCSV()" class="btn-export">📥 CSV</button>
             </div>
 
             <div class="table-responsive">
                 <table class="glass-table">
                     <thead>
                         <tr>
-                            <th width="15%">Date</th>
-                            <th width="25%">Customer Info</th>
-                            <th width="25%">Device & Issue</th>
-                            <th width="20%">Status</th>
+                            <th width="12%">Date</th>
+                            <th width="18%">Customer</th>
+                            <th width="20%">Device & Issue</th>
+                            <th width="15%">Status</th>
                             <th width="15%">Action</th>
                         </tr>
                     </thead>
@@ -134,118 +135,160 @@
     <div id="custModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center; padding: 20px;">
         <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
             <button onclick="document.getElementById('custModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 style="margin-bottom: 20px;">Manual Registration</h2>
+            <h2 style="margin-bottom: 15px;">Manual Lead</h2>
             <form id="newCustForm">
                 <input type="text" id="cName" class="glass-input" placeholder="Name" required>
                 <input type="tel" id="cPhone" class="glass-input" placeholder="Phone" required>
-                <input type="text" id="cDevice" class="glass-input" placeholder="Device" required>
-                <input type="text" id="cIssue" class="glass-input" placeholder="Issue" required>
+                <input type="text" id="cDevice" class="glass-input" placeholder="Device Model" required>
+                <input type="text" id="cIssue" class="glass-input" placeholder="Main Issue" required>
                 <button type="submit" class="btn-primary">Save Lead</button>
             </form>
         </div>
     </div>
 
-    <div id="quoteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center;">
+    <div id="quoteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center; padding: 20px;">
         <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
             <button onclick="document.getElementById('quoteModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 style="margin-bottom: 20px;">Quick Quote</h2>
+            <h2 style="margin-bottom: 15px;">Quick Quote</h2>
             <form id="updateQuoteForm">
-                <input type="hidden" id="qCustId"><input type="hidden" id="qCustPhone"><input type="hidden" id="qCustName"><input type="hidden" id="qCustDevice">
-                <input type="number" id="qPrice" class="glass-input" placeholder="Estimated Price (RM)" step="0.01" required>
-                <textarea id="qRemarks" class="glass-input" placeholder="Parts / Service Details" required></textarea>
+                <input type="hidden" id="qCustId">
+                <input type="number" id="qPrice" class="glass-input" placeholder="Price (RM)" step="0.01" required>
+                <textarea id="qRemarks" class="glass-input" placeholder="Details" required></textarea>
                 <button type="submit" class="btn-primary">Save Quote</button>
             </form>
+        </div>
+    </div>
+
+    <div id="previewBackdrop">
+        <div style="position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 4001;">
+            <button onclick="closeA4Preview()" class="btn-action" style="background:#f87171; width: auto; padding: 8px 15px;">❌ Close</button>
+            <button onclick="generatePDF()" class="btn-action" style="background:#10b981; width: auto; padding: 8px 15px;">📄 Download</button>
+        </div>
+        <div id="invoice-template">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 60px; height: 60px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">LOGO</div>
+                    <div style="font-weight: 800; font-size: 24px; color: #000;">HA-FIX TECH</div>
+                </div>
+                <div style="text-align: right; font-size: 11px;">
+                    <strong>HA-FIX TECH & REPAIR</strong><br>SSM: 202503246898 (003772792-K)<br>Terengganu, Malaysia
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                <div style="width: 45%; font-size: 13px;">
+                    <p><strong>Prepared For:</strong></p>
+                    <p id="pdfName"></p><p id="pdfPhone"></p>
+                </div>
+                <div style="width: 45%; text-align: right;">
+                    <h2 style="font-size: 24px; font-weight: 800; margin:0;">QUOTATION</h2>
+                    <p>Date: <span id="pdfDate"></span></p>
+                </div>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 30px; border-top: 2px solid #000;">
+                <thead><tr><th style="padding:10px;text-align:left;">Description</th><th style="padding:10px;text-align:right;">Total (RM)</th></tr></thead>
+                <tbody id="pdfTableBody" style="border-top: 1px solid #000; border-bottom: 2px solid #000;"></tbody>
+            </table>
+            <div style="text-align: right;"><h3 id="pdfTotalFinal" style="font-size: 16px;">Total: RM 0.00</h3></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs", authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com", projectId: "ha-fix-tech-repair-8d27f", storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app", messagingSenderId: "630965976099", appId: "1:630965976099:web:9ff830cd7f5f624b060596", measurementId: "G-KJRGT6LQ43" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
-        // MOBILE SIDEBAR
+        // MENU SYSTEM
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('overlay');
         function toggleMenu() { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); menuBtn.innerText = sidebar.classList.contains('active') ? '✕ CLOSE' : '☰ MENU'; }
-        menuBtn.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', toggleMenu);
+        menuBtn.addEventListener('click', toggleMenu); overlay.addEventListener('click', toggleMenu);
 
         onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
         window.logoutAdmin = () => signOut(auth).then(() => window.location.replace("login.html"));
 
-        let allCustomers = [];
-        onSnapshot(query(collection(db, "customers"), orderBy("createdAt", "desc")), (snapshot) => {
-            allCustomers = []; snapshot.forEach((doc) => { allCustomers.push({ id: doc.id, ...doc.data() }); });
-            renderTable();
-        });
-
-        function renderTable() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
+        onSnapshot(query(collection(db, "customers"), orderBy("createdAt", "desc")), (snap) => {
             const tbody = document.getElementById('customersTableBody');
-            tbody.innerHTML = ""; 
-            const filteredData = allCustomers.filter(cust => {
-                return ((cust.name && cust.name.toLowerCase().includes(searchTerm)) || (cust.phone && cust.phone.includes(searchTerm))) && 
-                       (statusFilter === "All" ? true : (cust.status || "Baru") === statusFilter);
-            });
-            
-            filteredData.forEach(data => {
-                const dbStatus = data.status || "Baru";
+            tbody.innerHTML = "";
+            snap.forEach(docSnap => {
+                const d = docSnap.data();
+                const id = docSnap.id;
+                const dbStatus = d.status || "Baru";
                 const displayStatus = dbStatus === "Sebut Harga" ? "Quoted" : dbStatus === "Baru" ? "New" : dbStatus === "Proceed" ? "Proceeded" : "Cancelled";
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${new Date(data.createdAt).toLocaleDateString('en-MY')}</td>
-                    <td><strong style="color:var(--accent-blue);">${data.name}</strong><br><small>${data.phone}</small></td>
-                    <td><strong>${data.device}</strong><br><small>${data.issue}</small></td>
+                    <td style="font-size: 0.75rem;">${new Date(d.createdAt).toLocaleDateString('en-MY')}</td>
+                    <td><strong>${d.name}</strong><br><small>${d.phone}</small></td>
+                    <td><strong>${d.device}</strong><br><small>${d.issue}</small></td>
                     <td><span class="status-${dbStatus.toLowerCase().replace(' ', '')}">${displayStatus}</span></td>
                     <td>
                         <div class="action-group">
-                            <button class="btn-action" onclick="window.location.href='customer-details.html?id=${data.id}'">🔍 Details</button>
-                            ${(dbStatus==='Baru' || dbStatus==='Sebut Harga') ? `<button class="btn-action" onclick="openQuoteModal('${data.id}','${data.quotePrice||''}','${data.partsList||''}','${data.phone}','${data.name}','${data.device}')">💰 Quote</button>` : ''}
-                            ${(dbStatus==='Baru' || dbStatus==='Sebut Harga') ? `<button class="btn-action btn-proceed" onclick="proceedToRepair('${data.id}','${data.name}','${data.phone}','${data.device}','${data.issue}','${data.quotePrice||0}')">✅ Proceed</button>` : ''}
-                            ${(dbStatus!=='Proceed' && dbStatus!=='Batal') ? `<button class="btn-action btn-cancel" onclick="cancelLead('${data.id}')">❌ Cancel</button>` : ''}
-                            ${dbStatus==='Batal' ? `<button class="btn-action btn-cancel" onclick="deleteCustomer('${data.id}')">🗑️ Delete</button>` : ''}
+                            <button class="btn-action" onclick="window.location.href='customer-details.html?id=${id}'">🔍 Details</button>
+                            ${(dbStatus==='Baru' || dbStatus==='Sebut Harga') ? `<button class="btn-action" onclick="openQuoteModal('${id}','${d.quotePrice||''}','${d.partsList||''}')">💰 Quote</button>` : ''}
+                            <button class="btn-action" onclick="preparePrint('${id}')">📄 Print</button>
+                            <button class="btn-action btn-whatsapp" onclick="sendQuoteWhatsApp('${d.phone}', '${d.name}', '${d.device}', '${d.quotePrice||0}', '${d.partsList||''}')">💬 WA</button>
+                            ${(dbStatus!=='Proceed' && dbStatus!=='Batal') ? `<button class="btn-action btn-proceed" onclick="proceedToRepair('${id}','${d.name}','${d.phone}','${d.device}','${d.issue}','${d.quotePrice||0}')">✅ Proceed</button>` : ''}
+                            ${(dbStatus!=='Proceed' && dbStatus!=='Batal') ? `<button class="btn-action btn-cancel" onclick="cancelLead('${id}')">❌ Cancel</button>` : ''}
                         </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-        }
-        document.getElementById('searchInput').addEventListener('input', renderTable);
-        document.getElementById('statusFilter').addEventListener('change', renderTable);
+        });
 
-        // LOGIC PROCEED TO REPAIR (HANTAR KE SERVICES)
-        window.proceedToRepair = async (id, name, phone, device, issue, price) => {
-            if(confirm(`Send ${name} to Active Repairs?`)) {
-                const ticketId = `HF-${Math.floor(1000 + Math.random() * 9000)}`;
-                try {
-                    await setDoc(doc(db, "tickets", ticketId), { name, phone, device, issue, agreedPrice: price, status: "Menunggu Alat Ganti", createdAt: new Date().toISOString() });
-                    await updateDoc(doc(db, "customers", id), { status: "Proceed", ticketId });
-                    alert("Success! Check Active Repairs.");
-                } catch (e) { alert(e.message); }
+        // PRINT LOGIC
+        let currentPrintData = {};
+        window.preparePrint = async (id) => {
+            const docSnap = await getDoc(doc(db, "customers", id));
+            if(docSnap.exists()){
+                const d = docSnap.data(); currentPrintData = { id, ...d };
+                document.getElementById('pdfName').innerText = d.name;
+                document.getElementById('pdfPhone').innerText = d.phone;
+                document.getElementById('pdfDate').innerText = new Date().toLocaleDateString('en-MY');
+                const total = parseFloat(d.quotePrice || 0);
+                document.getElementById('pdfTableBody').innerHTML = `<tr><td style="padding:10px;">Repair: ${d.device}<br><small>${d.partsList || ''}</small></td><td style="padding:10px;text-align:right;">${total.toFixed(2)}</td></tr>`;
+                document.getElementById('pdfTotalFinal').innerText = `Total: RM ${total.toFixed(2)}`;
+                document.getElementById('previewBackdrop').style.display = 'flex';
+                document.getElementById('invoice-template').style.display = 'block';
             }
         };
 
-        window.openQuoteModal = (id, price, remarks, phone, name, device) => {
-            document.getElementById('qCustId').value = id; document.getElementById('qCustPhone').value = phone; document.getElementById('qCustName').value = name; document.getElementById('qCustDevice').value = device;
-            document.getElementById('qPrice').value = price; document.getElementById('qRemarks').value = remarks;
+        window.closeA4Preview = () => { document.getElementById('previewBackdrop').style.display = 'none'; };
+        window.generatePDF = () => { html2pdf().from(document.getElementById('invoice-template')).save(`Quotation_${currentPrintData.name}.pdf`); };
+
+        window.openQuoteModal = (id, price, remarks) => {
+            document.getElementById('qCustId').value = id;
+            document.getElementById('qPrice').value = price;
+            document.getElementById('qRemarks').value = remarks;
             document.getElementById('quoteModal').style.display = 'flex';
         };
 
         document.getElementById('updateQuoteForm').onsubmit = async (e) => {
             e.preventDefault();
-            const id = document.getElementById('qCustId').value;
-            await updateDoc(doc(db, "customers", id), { quotePrice: document.getElementById('qPrice').value, partsList: document.getElementById('qRemarks').value, status: "Sebut Harga" });
+            await updateDoc(doc(db, "customers", document.getElementById('qCustId').value), { quotePrice: document.getElementById('qPrice').value, partsList: document.getElementById('qRemarks').value, status: "Sebut Harga" });
             document.getElementById('quoteModal').style.display = 'none';
         };
 
-        window.cancelLead = async (id) => { if(confirm("Cancel lead?")) await updateDoc(doc(db, "customers", id), { status: "Batal" }); };
-        window.deleteCustomer = async (id) => { if(confirm("Delete permanently?")) await deleteDoc(doc(db, "customers", id)); };
+        window.proceedToRepair = async (id, name, phone, device, issue, price) => {
+            if(confirm("Send to Repairs?")) {
+                const tId = `HF-${Math.floor(1000 + Math.random()*9000)}`;
+                await setDoc(doc(db, "tickets", tId), { name, phone, device, issue, agreedPrice: price, status: "Menunggu Alat Ganti", createdAt: new Date().toISOString() });
+                await updateDoc(doc(db, "customers", id), { status: "Proceed", ticketId: tId });
+            }
+        };
+
+        window.sendQuoteWhatsApp = (phone, name, device, price, remarks) => {
+            let cleanPhone = phone.replace(/\D/g, ''); if(cleanPhone.startsWith('0')) cleanPhone = '60' + cleanPhone.substring(1);
+            const msg = `Hi ${name}. Quote for ${device}: RM ${price}.\nItems: ${remarks}`;
+            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
+        window.cancelLead = async (id) => { if(confirm("Cancel?")) await updateDoc(doc(db, "customers", id), { status: "Batal" }); };
+
         document.getElementById('newCustForm').onsubmit = async (e) => {
             e.preventDefault();
             await addDoc(collection(db, "customers"), { name: document.getElementById('cName').value, phone: document.getElementById('cPhone').value, device: document.getElementById('cDevice').value, issue: document.getElementById('cIssue').value, status: "Baru", createdAt: new Date().toISOString() });
