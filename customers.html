@@ -5,19 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leads & Quotes | HA-FIX Tech</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: radial-gradient(circle at top left, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
         
-        /* MOBILE MENU SYSTEM */
         .menu-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 3000; background: var(--accent-blue); border: none; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2400; }
         .sidebar-overlay.active { display: block; }
 
         .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; z-index: 2500; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .company-info h2 { font-size: 1.2rem; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+        .company-info p { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 10px; }
         .nav-menu li a { text-decoration: none; color: var(--text-muted); padding: 12px 16px; border-radius: 12px; display: block; transition: 0.3s; font-weight: 600; font-size: 0.9rem; }
         .nav-menu li a:hover, .nav-menu li a.active { background: rgba(59, 130, 246, 0.15); color: var(--text-main); border: 1px solid rgba(59, 130, 246, 0.3); }
@@ -32,18 +31,15 @@
         .search-box { flex: 1; min-width: 200px; }
         .filter-box { width: 140px; }
 
-        /* TABLE */
         .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
         .glass-table { width: 100%; border-collapse: collapse; min-width: 1000px; }
         .glass-table th, .glass-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: top; }
         
-        /* STATUS COLORS */
         .status-baru { color: #fbbf24; font-weight: bold; font-size: 0.8rem; }
         .status-sebutharga { color: #60a5fa; font-weight: bold; font-size: 0.8rem; }
         .status-proceed { color: #34d399; font-weight: bold; font-size: 0.8rem; }
         .status-batal { color: #f87171; font-weight: bold; text-decoration: line-through; font-size: 0.8rem; }
 
-        /* ACTION GROUP - COMPACT FIX */
         .action-group { display: flex; flex-direction: column; gap: 4px; width: 120px; }
         .btn-action { background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); color: white; padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 0.75rem; font-weight: 700; text-align: center; text-decoration: none; width: 100%; }
         .btn-action:hover { background: var(--accent-blue); border-color: var(--accent-blue); }
@@ -52,15 +48,10 @@
         .btn-whatsapp { background: rgba(37, 211, 102, 0.15); border-color: rgba(37, 211, 102, 0.3); color: #25D366; }
         .btn-whatsapp:hover { background: #25D366; color: white; }
         .btn-cancel { border-color: rgba(248, 113, 113, 0.2); color: #f87171; }
-        
         .btn-export { background: #10b981; color: white; border: none; padding: 10px 18px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
 
         .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 10px 12px; border-radius: 10px; color: var(--text-main); outline: none; margin-bottom: 12px; font-size: 0.9rem; }
         .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; }
-
-        /* PRINT PREVIEW */
-        #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 4000; overflow-y: auto; padding: 40px 20px; justify-content: center; }
-        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; position: relative; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); font-family: 'Plus Jakarta Sans', Arial, sans-serif; }
 
         @media (max-width: 900px) {
             .menu-toggle { display: block; }
@@ -159,45 +150,28 @@
         </div>
     </div>
 
-    <div id="previewBackdrop">
-        <div style="position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 4001;">
-            <button onclick="closeA4Preview()" class="btn-action" style="background:#f87171; width: auto; padding: 8px 15px;">❌ Close</button>
-            <button onclick="generatePDF()" class="btn-action" style="background:#10b981; width: auto; padding: 8px 15px;">📄 Download</button>
-        </div>
-        <div id="invoice-template">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 60px; height: 60px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">LOGO</div>
-                    <div style="font-weight: 800; font-size: 24px; color: #000;">HA-FIX TECH</div>
-                </div>
-                <div style="text-align: right; font-size: 11px;">
-                    <strong>HA-FIX TECH & REPAIR</strong><br>SSM: 202503246898 (003772792-K)<br>Terengganu, Malaysia
-                </div>
+    <div id="printSelectionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center; padding: 20px;">
+        <div class="glass-panel" style="width: 100%; max-width: 350px; position: relative; text-align: center;">
+            <button onclick="document.getElementById('printSelectionModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <h2 style="margin-bottom: 20px;">Select Document</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Which document would you like to print?</p>
+            
+            <input type="hidden" id="printCustId">
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-primary" style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: white;" onclick="generateDoc('QUOTATION')">📄 Print Quotation</button>
+                <button class="btn-primary" style="background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; color: white;" onclick="generateDoc('INVOICE')">📄 Print Invoice</button>
+                <button class="btn-primary" style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: white;" onclick="generateDoc('RECEIPT')">📄 Print Receipt</button>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-                <div style="width: 45%; font-size: 13px;">
-                    <p><strong>Prepared For:</strong></p>
-                    <p id="pdfName"></p><p id="pdfPhone"></p>
-                </div>
-                <div style="width: 45%; text-align: right;">
-                    <h2 style="font-size: 24px; font-weight: 800; margin:0;">QUOTATION</h2>
-                    <p>Date: <span id="pdfDate"></span></p>
-                </div>
-            </div>
-            <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 30px; border-top: 2px solid #000;">
-                <thead><tr><th style="padding:10px;text-align:left;">Description</th><th style="padding:10px;text-align:right;">Total (RM)</th></tr></thead>
-                <tbody id="pdfTableBody" style="border-top: 1px solid #000; border-bottom: 2px solid #000;"></tbody>
-            </table>
-            <div style="text-align: right;"><h3 id="pdfTotalFinal" style="font-size: 16px;">Total: RM 0.00</h3></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, addDoc, updateDoc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs", authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com", projectId: "ha-fix-tech-repair-8d27f", storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app", messagingSenderId: "630965976099", appId: "1:630965976099:web:9ff830cd7f5f624b060596", measurementId: "G-KJRGT6LQ43" };
+        const firebaseConfig = { apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs", authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com", projectId: "ha-fix-tech-repair-8d27f", storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app", messagingSenderId: "630965976099", appId: "1:630965976099:web:9ff830cd7f5f624b060596" };
         const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
         // MENU SYSTEM
@@ -229,7 +203,7 @@
                         <div class="action-group">
                             <button class="btn-action" onclick="window.location.href='customer-details.html?id=${id}'">🔍 Details</button>
                             ${(dbStatus==='Baru' || dbStatus==='Sebut Harga') ? `<button class="btn-action" onclick="openQuoteModal('${id}','${d.quotePrice||''}','${d.partsList||''}')">💰 Quote</button>` : ''}
-                            <button class="btn-action" onclick="preparePrint('${id}')">📄 Print</button>
+                            <button class="btn-action" onclick="openPrintModal('${id}')">📄 Print Doc</button>
                             <button class="btn-action btn-whatsapp" onclick="sendQuoteWhatsApp('${d.phone}', '${d.name}', '${d.device}', '${d.quotePrice||0}', '${d.partsList||''}')">💬 WA</button>
                             ${(dbStatus!=='Proceed' && dbStatus!=='Batal') ? `<button class="btn-action btn-proceed" onclick="proceedToRepair('${id}','${d.name}','${d.phone}','${d.device}','${d.issue}','${d.quotePrice||0}')">✅ Proceed</button>` : ''}
                             ${(dbStatus!=='Proceed' && dbStatus!=='Batal') ? `<button class="btn-action btn-cancel" onclick="cancelLead('${id}')">❌ Cancel</button>` : ''}
@@ -240,26 +214,19 @@
             });
         });
 
-        // PRINT LOGIC
-        let currentPrintData = {};
-        window.preparePrint = async (id) => {
-            const docSnap = await getDoc(doc(db, "customers", id));
-            if(docSnap.exists()){
-                const d = docSnap.data(); currentPrintData = { id, ...d };
-                document.getElementById('pdfName').innerText = d.name;
-                document.getElementById('pdfPhone').innerText = d.phone;
-                document.getElementById('pdfDate').innerText = new Date().toLocaleDateString('en-MY');
-                const total = parseFloat(d.quotePrice || 0);
-                document.getElementById('pdfTableBody').innerHTML = `<tr><td style="padding:10px;">Repair: ${d.device}<br><small>${d.partsList || ''}</small></td><td style="padding:10px;text-align:right;">${total.toFixed(2)}</td></tr>`;
-                document.getElementById('pdfTotalFinal').innerText = `Total: RM ${total.toFixed(2)}`;
-                document.getElementById('previewBackdrop').style.display = 'flex';
-                document.getElementById('invoice-template').style.display = 'block';
-            }
+        // LOGIK PRINT BARU (PANGGIL SEPARATE PAGE)
+        window.openPrintModal = (id) => {
+            document.getElementById('printCustId').value = id;
+            document.getElementById('printSelectionModal').style.display = 'flex';
         };
 
-        window.closeA4Preview = () => { document.getElementById('previewBackdrop').style.display = 'none'; };
-        window.generatePDF = () => { html2pdf().from(document.getElementById('invoice-template')).save(`Quotation_${currentPrintData.name}.pdf`); };
+        window.generateDoc = (docType) => {
+            const id = document.getElementById('printCustId').value;
+            window.open(`print-receipt.html?id=${id}&doc=${docType}`, '_blank');
+            document.getElementById('printSelectionModal').style.display = 'none';
+        };
 
+        // LAIN-LAIN FUNGSI KEKAL SAMA
         window.openQuoteModal = (id, price, remarks) => {
             document.getElementById('qCustId').value = id;
             document.getElementById('qPrice').value = price;

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Document | HA-FIX Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', Arial, sans-serif; background: #f1f5f9; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .no-print { position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 1000; }
+        .btn { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-close { background: #ef4444; }
+        .a4-wrapper { background: #ffffff; width: 210mm; min-height: 297mm; padding: 15mm 20mm; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; color: #000000; }
+        .doc-title { font-size: 24px; font-weight: 800; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: 1px; }
+        .company-name { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; }
+        .text-sm { font-size: 11px; color: #334155; line-height: 1.5; }
+        .text-base { font-size: 12px; line-height: 1.6; }
+        .text-bold { font-weight: 700; }
+        .table-items { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 30px; }
+        .table-items th { padding: 10px 5px; text-align: left; border-top: 1.5px solid #000; border-bottom: 1.5px solid #000; }
+        .table-items td { padding: 10px 5px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        @media print { body { background: none; padding: 0; } .no-print { display: none !important; } .a4-wrapper { box-shadow: none; width: 100%; padding: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="no-print">
+        <button class="btn btn-close" onclick="window.close()">Close</button>
+        <button class="btn" onclick="window.print()">🖨️ Print Document</button>
+    </div>
+
+    <div class="a4-wrapper" id="invoice-template">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 35px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="width: 55px; height: 55px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #64748b; border-radius: 6px; font-weight: 700;">LOGO</div>
+                <div class="company-name">HA-FIX TECH</div>
+            </div>
+            <div class="text-sm" style="text-align: right;">
+                <strong style="font-size: 12px; color: #000;">HA-FIX TECH & REPAIR</strong><br>
+                SSM: 202503246898 (003772792-K)<br>
+                10697-G, Jalan Masjid Kg Bukit Kandis,<br>
+                21200 Kuala Nerus, Terengganu, Malaysia
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+            <div class="text-base" style="width: 45%;">
+                <p style="margin: 0 0 5px 0;" class="text-bold">Prepared For:</p>
+                <p style="margin: 0;" id="pdfName">Loading...</p>
+                <p style="margin: 0;">Phone: <span id="pdfPhone">--</span></p>
+            </div>
+            <div style="width: 45%; text-align: right;">
+                <h2 id="pdfDocTitle" class="doc-title">RECEIPT</h2>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                    <span class="text-bold">Ref No:</span> <span id="pdfTicket">--</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                    <span class="text-bold">Date:</span> <span id="pdfDate">--</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                    <span class="text-bold">Time:</span> <span id="pdfTime">--</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                    <span class="text-bold">Payment Mode:</span> <span id="pdfMethod">Cash / Online</span>
+                </div>
+            </div>
+        </div>
+        
+        <table class="table-items">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">SNO</th>
+                    <th style="width: 5%;">Qty</th>
+                    <th style="width: 45%;">Description</th>
+                    <th style="text-align: right; width: 15%;">Unit (MYR)</th>
+                    <th style="text-align: right; width: 15%;">Tax (MYR)</th>
+                    <th style="text-align: right; width: 15%;">Total (MYR)</th>
+                </tr>
+            </thead>
+            <tbody id="pdfTableBody">
+                </tbody>
+        </table>
+        
+        <div style="display: flex; justify-content: space-between; font-size: 12px;">
+            <div style="width: 50%;">
+                <p style="margin: 0 0 15px 0;" class="text-bold">Total Item: <span id="pdfTotalItem" style="font-weight: 400;">1</span></p>
+                <div style="border: 1px solid #cbd5e1; padding: 12px; background: #fafafa; border-radius: 4px;">
+                    <p style="margin: 0 0 4px 0;" class="text-bold">Remark:</p>
+                    <p id="pdfRemark" style="margin: 0; font-size: 11px; color: #475569; line-height: 1.4;">
+                        This document serves as proof of transaction. Please retain it for any warranty claims.
+                    </p>
+                </div>
+            </div>
+            
+            <div style="width: 40%;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                    <span>Total Amt (MYR)</span> <span id="pdfTotalAmt">0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #475569; border-bottom: 1px dotted #cbd5e1; padding-bottom: 5px;">
+                    <span>Deposit Paid</span> <span id="pdfDeposit">0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1.5px solid #000; padding-bottom: 8px;">
+                    <span style="font-weight: 800; font-size: 15px;">Balance Due</span> 
+                    <span id="pdfFinalTotal" style="font-weight: 800; font-size: 15px;">0.00</span>
+                </div>
+                <div style="text-align: right; font-size: 11px; color: #475569;">
+                    <p style="margin: 0 0 2px 0;">Payments Status:</p>
+                    <p style="margin: 0; font-weight: bold; color: #000;" id="pdfStatus">UNPAID</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: absolute; bottom: 15mm; left: 20mm; right: 20mm; font-size: 10px; color: #475569; line-height: 1.5; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+            <p style="margin: 0 0 4px 0; font-weight: 700; color: #0f172a;">Transaction Terms & Conditions:</p>
+            1) Warranty period is 30 days from the date of device collection.<br>
+            2) Warranty covers only parts replaced and services detailed above.<br>
+            3) Warranty void if device shows signs of abuse, liquid damage, or third-party disassembly.<br>
+            4) Amendments to the 'Customer' details will not be allowed after the date of transaction.<br>
+            5) Prices in this document are final once agreed. No returns, no refunds.
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs",
+            authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com",
+            projectId: "ha-fix-tech-repair-8d27f",
+            storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app",
+            messagingSenderId: "630965976099",
+            appId: "1:630965976099:web:9ff830cd7f5f624b060596"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app); 
+        const db = getFirestore(app);
+
+        // AMBIL PARAMETER DARI URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const custId = urlParams.get('id');
+        const docType = urlParams.get('doc') || 'RECEIPT';
+
+        // SET TAJUK & REMARK
+        document.getElementById('pdfDocTitle').innerText = docType;
+        if(docType === 'QUOTATION') {
+            document.getElementById('pdfRemark').innerText = "This document is valid for 7 days from the date of issue. Please present this to our staff for confirmation or deposit matters.";
+        } else {
+            document.getElementById('pdfRemark').innerText = "This document serves as proof of transaction. Please retain it for any warranty claims.";
+        }
+
+        // FORMAT MASA
+        const now = new Date();
+        document.getElementById('pdfDate').innerText = now.toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' });
+        document.getElementById('pdfTime').innerText = now.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit' });
+
+        // FETCH DATA DARI FIREBASE
+        async function loadData() {
+            if(!custId) { 
+                document.getElementById('pdfName').innerText = "Ralat: Tiada ID"; 
+                return; 
+            }
+
+            try {
+                const docRef = doc(db, "customers", custId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    document.getElementById('pdfName').innerText = data.name || "Unknown";
+                    document.getElementById('pdfPhone').innerText = data.phone || "Unknown";
+                    document.getElementById('pdfTicket').innerText = data.ticketId || ("REF-" + custId.substring(0,5).toUpperCase());
+                    
+                    const partsTotal = parseFloat(data.partsTotal || data.quotePrice || 0);
+                    const laborTotal = parseFloat(data.serviceCharge || 0);
+                    const finalTotal = partsTotal + laborTotal;
+                    const deposit = parseFloat(data.deposit || 0);
+                    const balance = finalTotal - deposit;
+
+                    let itemLain = data.partsList || data.issue || "General Repair Service";
+                    
+                    document.getElementById('pdfTableBody').innerHTML = `
+                        <tr>
+                            <td>1</td>
+                            <td>1</td>
+                            <td><strong>${data.device || 'Device'}</strong><br><span style="color:#475569; font-size:10px; white-space: pre-line;">${itemLain}</span></td>
+                            <td style="text-align: right;">${finalTotal.toFixed(2)}</td>
+                            <td style="text-align: right;">0.00</td>
+                            <td style="text-align: right;">${finalTotal.toFixed(2)}</td>
+                        </tr>
+                    `;
+
+                    document.getElementById('pdfTotalAmt').innerText = finalTotal.toFixed(2);
+                    document.getElementById('pdfDeposit').innerText = deposit.toFixed(2);
+                    document.getElementById('pdfFinalTotal').innerText = balance.toFixed(2);
+                    
+                    // --- LOGIK STATUS BAYARAN BARU ---
+                    if (docType === 'QUOTATION') {
+                        // Kalau dokumen jenis QUOTATION
+                        document.getElementById('pdfStatus').innerText = "WAITING CONFIRMATION";
+                        document.getElementById('pdfStatus').style.color = "#3b82f6"; // Warna Biru
+                    } else {
+                        // Kalau dokumen jenis INVOICE atau RECEIPT
+                        if(data.isPaid || balance <= 0) {
+                            document.getElementById('pdfStatus').innerText = "PAID IN FULL";
+                            document.getElementById('pdfStatus').style.color = "#16a34a"; // Hijau
+                        } else if (deposit > 0) {
+                            document.getElementById('pdfStatus').innerText = "PARTIAL PAYMENT";
+                            document.getElementById('pdfStatus').style.color = "#d97706"; // Oren
+                        } else {
+                            document.getElementById('pdfStatus').innerText = "UNPAID";
+                            document.getElementById('pdfStatus').style.color = "#dc2626"; // Merah
+                        }
+                    }
+
+                } else {
+                    document.getElementById('pdfName').innerText = "Data Pelanggan Tak Dijumpai";
+                }
+            } catch (error) {
+                console.error("Ralat:", error);
+                document.getElementById('pdfName').innerText = "Ralat menarik data";
+            }
+        }
+
+        // KITA PASTIKAN BOS LOGIN DULU SEBELUM TARIK DATA
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loadData(); 
+            } else {
+                alert("Sila log masuk ke sistem HA-FIX Tech terlebih dahulu.");
+                document.getElementById('pdfName').innerText = "Sila Login";
+            }
+        });
+    </script>
+</body>
+</html>
