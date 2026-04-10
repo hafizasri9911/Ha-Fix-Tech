@@ -14,14 +14,20 @@
         .blob.blue { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--accent-blue); }
         .blob.purple { bottom: -10%; right: -10%; width: 300px; height: 300px; background: var(--accent-purple); }
         
-        .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; z-index: 10; }
+        /* SIDEBAR SYSTEM */
+        .sidebar { width: 260px; background: var(--glass-bg); backdrop-filter: blur(16px); border-right: 1px solid var(--glass-border); padding: 2rem; display: flex; flex-direction: column; gap: 2rem; z-index: 2500; transition: 0.4s; }
         .company-info h2 { font-size: 1.2rem; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
         .company-info p { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
         .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 10px; }
         .nav-menu li a { text-decoration: none; color: var(--text-muted); padding: 12px 16px; border-radius: 12px; display: block; transition: 0.3s; font-weight: 600; font-size: 0.9rem; }
         .nav-menu li a:hover, .nav-menu li a.active { background: rgba(59, 130, 246, 0.15); color: var(--text-main); border: 1px solid rgba(59, 130, 246, 0.3); }
         
-        .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; z-index: 10; }
+        /* MOBILE UI ELEMENTS */
+        .menu-toggle { display: none; position: fixed; top: 15px; left: 15px; z-index: 3000; background: var(--accent-blue); border: none; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2400; }
+        .sidebar-overlay.active { display: block; }
+
+        .main-content { flex: 1; padding: 3rem; overflow-y: auto; position: relative; width: 100%; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .header h1 { font-size: 2rem; font-weight: 700; }
         
@@ -35,31 +41,46 @@
         .stat-value { font-size: 2rem; font-weight: 800; }
         .text-green { color: var(--success); }
         .text-red { color: var(--danger); }
-        .text-blue { color: #93c5fd; }
 
         .filter-section { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
         .search-box { flex: 1; min-width: 200px; }
         .filter-box { width: 150px; }
         
-        .glass-table { width: 100%; border-collapse: collapse; }
+        /* RESPONSIVE TABLE */
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
+        .glass-table { width: 100%; border-collapse: collapse; min-width: 800px; }
         .glass-table th, .glass-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
         .glass-table th { color: var(--text-muted); font-size: 0.9rem; }
         
         .badge-income { background: rgba(52, 211, 153, 0.1); color: var(--success); padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; border: 1px solid rgba(52, 211, 153, 0.3); }
         .badge-expense { background: rgba(248, 113, 113, 0.1); color: var(--danger); padding: 5px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; border: 1px solid rgba(248, 113, 113, 0.3); }
 
-        .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 8px 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 0.85rem; font-weight: bold; text-align: center; }
+        .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 10px 18px; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 0.85rem; font-weight: bold; text-align: center; }
         .btn-action:hover { background: var(--accent-blue); border-color: var(--accent-blue); }
-        .btn-delete { background: rgba(248, 113, 113, 0.1); color: #f87171; border-color: rgba(248, 113, 113, 0.3); padding: 6px 12px; border-radius: 8px; font-size: 0.8rem;}
+        .btn-delete { background: rgba(248, 113, 113, 0.1); color: #f87171; border-color: rgba(248, 113, 113, 0.3); padding: 8px 12px; border-radius: 8px; font-size: 0.8rem;}
         .btn-delete:hover { background: #f87171; color: white; }
 
         .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; transition: 0.3s; margin-bottom: 15px; font-size: 0.95rem; }
         .glass-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.1); }
-        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; font-size: 1rem;}
-        .btn-primary:hover { box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 14px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%; font-size: 1rem;}
+
+        @media (max-width: 900px) {
+            .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; }
+            .sidebar.active { left: 0; }
+            .menu-toggle { display: block; }
+            .main-content { padding: 1.5rem; padding-top: 5rem; }
+            .header { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .filter-box { width: 100%; }
+            .stat-value { font-size: 1.6rem; }
+            .glass-panel { padding: 1.2rem; }
+        }
     </style>
 </head>
 <body>
+    <button class="menu-toggle" id="menuBtn">☰ MENU</button>
+    <div class="sidebar-overlay" id="overlay"></div>
+
     <div class="blob blue"></div>
     <div class="blob purple"></div>
 
@@ -100,9 +121,7 @@
         </div>
 
         <div class="glass-panel">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2 style="margin: 0;">Transaction History</h2>
-            </div>
+            <h2 style="margin-bottom: 1.5rem;">Transaction History</h2>
             
             <div class="filter-section">
                 <input type="text" id="searchInput" class="glass-input search-box" placeholder="Search description..." style="margin-bottom:0;">
@@ -115,35 +134,37 @@
                 
                 <select id="monthFilter" class="glass-input filter-box" style="margin-bottom:0; background-color: #172033; cursor: pointer;">
                     <option value="All">All Time</option>
-                    </select>
+                </select>
             </div>
 
-            <table class="glass-table">
-                <thead>
-                    <tr>
-                        <th width="15%">Date</th>
-                        <th width="35%">Description</th>
-                        <th width="15%">Category</th>
-                        <th width="15%">Type</th>
-                        <th width="15%" style="text-align: right;">Amount (RM)</th>
-                        <th width="5%" style="text-align: center;">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="trxTableBody">
-                    <tr><td colspan="6" style="text-align:center;">Loading data...</td></tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th width="15%">Date</th>
+                            <th width="35%">Description</th>
+                            <th width="15%">Category</th>
+                            <th width="15%">Type</th>
+                            <th width="15%" style="text-align: right;">Amount (RM)</th>
+                            <th width="5%" style="text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trxTableBody">
+                        <tr><td colspan="6" style="text-align:center;">Loading data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 
-    <div id="trxModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center;">
-        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative;">
+    <div id="trxModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center; padding: 20px;">
+        <div class="glass-panel" style="width: 100%; max-width: 450px; position: relative; max-height: 90vh; overflow-y: auto;">
             <button onclick="document.getElementById('trxModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
-            <h2 style="margin-bottom: 20px;">Add New Transaction</h2>
+            <h2 style="margin-bottom: 20px;">New Transaction</h2>
             
             <form id="newTrxForm">
                 <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Transaction Type</label>
-                <select id="tType" class="glass-input" required style="background-color: #172033; cursor: pointer; font-weight: bold;">
+                <select id="tType" class="glass-input" required style="background-color: #172033;">
                     <option value="Income">🟢 Income (Money In)</option>
                     <option value="Expense">🔴 Expense (Money Out)</option>
                 </select>
@@ -152,22 +173,16 @@
                 <input type="number" id="tAmount" class="glass-input" step="0.01" placeholder="0.00" required style="font-size: 1.2rem; font-weight: bold;">
 
                 <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Category</label>
-                <input type="text" id="tCategory" class="glass-input" list="catList" placeholder="E.g., Repair Sales, Spare Parts, Utilities..." required>
+                <input type="text" id="tCategory" class="glass-input" list="catList" placeholder="E.g., Repair Sales..." required>
                 <datalist id="catList">
-                    <option value="Repair Sales">
-                    <option value="Accessories Sales">
-                    <option value="Spare Parts Purchase">
-                    <option value="Utilities & Bills">
-                    <option value="Shop Rent">
-                    <option value="Staff Salary">
-                    <option value="Marketing / Ads">
+                    <option value="Repair Sales"><option value="Accessories Sales"><option value="Spare Parts Purchase"><option value="Utilities & Bills"><option value="Shop Rent"><option value="Staff Salary"><option value="Marketing / Ads">
                 </datalist>
 
-                <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Description / Notes</label>
-                <input type="text" id="tDesc" class="glass-input" placeholder="E.g., Screen replacement for iPhone 11..." required>
+                <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Description</label>
+                <input type="text" id="tDesc" class="glass-input" required>
 
                 <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Date</label>
-                <input type="date" id="tDate" class="glass-input" required style="cursor: pointer;">
+                <input type="date" id="tDate" class="glass-input" required>
 
                 <button type="submit" id="saveTrxBtn" class="btn-primary">Save Transaction</button>
             </form>
@@ -175,70 +190,45 @@
     </div>
 
     <script type="module">
+        // MENU TOGGLE LOGIC
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('overlay');
+        function toggleMenu() { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); menuBtn.innerText = sidebar.classList.contains('active') ? '✕ CLOSE' : '☰ MENU'; }
+        menuBtn.addEventListener('click', toggleMenu); overlay.addEventListener('click', toggleMenu);
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-        // Konfigurasi Database HA-FIX Tech
-        const firebaseConfig = {
-            apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs",
-            authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com",
-            projectId: "ha-fix-tech-repair-8d27f",
-            storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app",
-            messagingSenderId: "630965976099",
-            appId: "1:630965976099:web:9ff830cd7f5f624b060596",
-            measurementId: "G-KJRGT6LQ43"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const firebaseConfig = { apiKey: "AIzaSyDglejBPoHxyhK9t74UCmY90aAs3iaeNSs", authDomain: "ha-fix-tech-repair-8d27f.firebaseapp.com", projectId: "ha-fix-tech-repair-8d27f", storageBucket: "ha-fix-tech-repair-8d27f.firebasestorage.app", messagingSenderId: "630965976099", appId: "1:630965976099:web:9ff830cd7f5f624b060596", measurementId: "G-KJRGT6LQ43" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
         onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
-        window.logoutAdmin = function() {
-            if(confirm("Logout from the system?")) signOut(auth).then(() => window.location.replace("login.html"));
-        };
+        window.logoutAdmin = function() { if(confirm("Logout?")) signOut(auth).then(() => window.location.replace("login.html")); };
 
-        // Set default date for today in the form
         document.getElementById('tDate').valueAsDate = new Date();
-
         let allTransactions = [];
         const tbody = document.getElementById('trxTableBody');
 
-        // Fetch Data from 'transactions' collection
         onSnapshot(query(collection(db, "transactions"), orderBy("date", "desc")), (snapshot) => {
-            allTransactions = [];
-            const monthsSet = new Set();
-            
+            allTransactions = []; const monthsSet = new Set();
             snapshot.forEach((doc) => { 
-                const data = doc.data();
-                allTransactions.push({ id: doc.id, ...data }); 
-                
-                // Extract Month-Year for filter (e.g., "2026-04")
-                if(data.date) {
-                    const monthYear = data.date.substring(0, 7);
-                    monthsSet.add(monthYear);
-                }
+                const data = doc.data(); allTransactions.push({ id: doc.id, ...data }); 
+                if(data.date) monthsSet.add(data.date.substring(0, 7));
             });
-            
-            populateMonthFilter(monthsSet);
-            renderTable();
+            populateMonthFilter(monthsSet); renderTable();
         });
 
         function populateMonthFilter(monthsSet) {
             const monthFilter = document.getElementById('monthFilter');
             const currentSelection = monthFilter.value;
-            
             monthFilter.innerHTML = '<option value="All">All Time</option>';
-            
-            const sortedMonths = Array.from(monthsSet).sort().reverse();
-            
-            sortedMonths.forEach(my => {
+            Array.from(monthsSet).sort().reverse().forEach(my => {
                 const dateObj = new Date(my + "-01");
                 const monthName = dateObj.toLocaleString('default', { month: 'long', year: 'numeric' });
                 monthFilter.innerHTML += `<option value="${my}">${monthName}</option>`;
             });
-            
             if(monthsSet.has(currentSelection)) monthFilter.value = currentSelection;
         }
 
@@ -246,36 +236,25 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const typeFilter = document.getElementById('typeFilter').value;
             const monthFilter = document.getElementById('monthFilter').value;
-            
-            tbody.innerHTML = ""; 
-            
-            let totalIn = 0;
-            let totalOut = 0;
+            tbody.innerHTML = ""; let totalIn = 0, totalOut = 0;
 
             const filteredData = allTransactions.filter(trx => {
-                const matchSearch = (trx.desc && trx.desc.toLowerCase().includes(searchTerm)) || 
-                                    (trx.category && trx.category.toLowerCase().includes(searchTerm));
+                const matchSearch = (trx.desc && trx.desc.toLowerCase().includes(searchTerm)) || (trx.category && trx.category.toLowerCase().includes(searchTerm));
                 const matchType = typeFilter === "All" ? true : trx.type === typeFilter;
                 const matchMonth = monthFilter === "All" ? true : (trx.date && trx.date.startsWith(monthFilter));
-                
                 return matchSearch && matchType && matchMonth;
             });
 
             if (filteredData.length === 0) { 
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">No transactions found.</td></tr>`; 
-                updateSummary(0, 0);
-                return; 
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No records.</td></tr>`; 
+                updateSummary(0, 0); return; 
             }
 
             filteredData.forEach(data => {
-                // Calculate Totals based on filtered data
                 const amt = parseFloat(data.amount) || 0;
-                if(data.type === "Income") totalIn += amt;
-                if(data.type === "Expense") totalOut += amt;
-
+                if(data.type === "Income") totalIn += amt; else totalOut += amt;
                 const d = new Date(data.date);
                 const dateStr = d.toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' });
-                
                 const badgeClass = data.type === "Income" ? "badge-income" : "badge-expense";
                 const amountColor = data.type === "Income" ? "var(--success)" : "var(--danger)";
                 const sign = data.type === "Income" ? "+" : "-";
@@ -287,42 +266,29 @@
                     <td style="font-size: 0.85rem; color: #93c5fd;">${data.category}</td>
                     <td><span class="${badgeClass}">${data.type}</span></td>
                     <td style="text-align: right; font-weight: bold; color: ${amountColor}; font-size: 1.1rem;">${sign} ${amt.toFixed(2)}</td>
-                    <td style="text-align: center;">
-                        <button class="btn-delete" onclick="deleteTrx('${data.id}')" title="Delete">🗑️</button>
-                    </td>
+                    <td style="text-align: center;"><button class="btn-delete" onclick="deleteTrx('${data.id}')">🗑️</button></td>
                 `;
                 tbody.appendChild(tr);
             });
-            
             updateSummary(totalIn, totalOut);
         }
 
         function updateSummary(inc, exp) {
             const net = inc - exp;
-            
             document.getElementById('totalIncome').innerText = "RM " + inc.toFixed(2);
             document.getElementById('totalExpense').innerText = "RM " + exp.toFixed(2);
-            
             const netEl = document.getElementById('netProfit');
             netEl.innerText = "RM " + net.toFixed(2);
-            
-            // Adjust color based on profit/loss
-            if(net > 0) netEl.style.color = "var(--success)";
-            else if(net < 0) netEl.style.color = "var(--danger)";
-            else netEl.style.color = "white";
+            netEl.style.color = net > 0 ? "var(--success)" : net < 0 ? "var(--danger)" : "white";
         }
 
         document.getElementById('searchInput').addEventListener('input', renderTable);
         document.getElementById('typeFilter').addEventListener('change', renderTable);
         document.getElementById('monthFilter').addEventListener('change', renderTable);
 
-        // Add Transaction
         document.getElementById('newTrxForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const saveBtn = document.getElementById('saveTrxBtn');
-            saveBtn.innerText = "Saving..."; 
-            saveBtn.style.opacity = "0.7";
-            
+            const saveBtn = document.getElementById('saveTrxBtn'); saveBtn.innerText = "Saving...";
             try {
                 await addDoc(collection(db, "transactions"), {
                     type: document.getElementById('tType').value,
@@ -332,22 +298,17 @@
                     date: document.getElementById('tDate').value,
                     createdAt: new Date().toISOString()
                 });
-                
                 document.getElementById('newTrxForm').reset();
-                document.getElementById('tDate').valueAsDate = new Date(); // reset date to today
+                document.getElementById('tDate').valueAsDate = new Date();
                 document.getElementById('trxModal').style.display = 'none'; 
-            } catch (error) { 
-                alert("Error saving transaction: " + error.message); 
-            } finally { 
-                saveBtn.innerText = "Save Transaction"; 
-                saveBtn.style.opacity = "1"; 
-            }
+            } catch (error) { alert("Error: " + error.message); } 
+            finally { saveBtn.innerText = "Save Transaction"; }
         });
 
         window.deleteTrx = async function(id) {
-            if(confirm("Are you sure you want to permanently delete this transaction? This action will affect your summary calculations.")) {
+            if(confirm("Delete this transaction?")) {
                 try { await deleteDoc(doc(db, "transactions", id)); } 
-                catch (error) { alert("Error deleting: " + error.message); }
+                catch (error) { alert("Error: " + error.message); }
             }
         };
     </script>
