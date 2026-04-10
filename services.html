@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Active Repairs | HA-FIX Tech</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -35,23 +34,25 @@
         .glass-table th, .glass-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: top; }
         .glass-table th { color: var(--text-muted); font-size: 0.9rem; }
         
-        .status { padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; }
+        .status { padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; display: inline-block; }
         .status.waiting { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); }
         .status.repairing { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.5); }
         .status.done { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5); }
+        .status.cancelled { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.5); text-decoration: line-through; }
         
-        .action-group { display: flex; flex-direction: column; gap: 5px; }
+        .action-group { display: flex; flex-direction: column; gap: 5px; width: 120px; }
         .btn-action { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 0.8rem; font-weight: bold; text-align: center; }
         .btn-action:hover:not(:disabled) { background: var(--accent-blue); border-color: var(--accent-blue); }
         .btn-action:disabled { opacity: 0.3; cursor: not-allowed; }
         .btn-pay { background: rgba(52, 211, 153, 0.2); border-color: #34d399; color: #34d399; }
+        .btn-pay:hover:not(:disabled) { background: #34d399; color: white; }
         .btn-profile { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #fcd34d; }
+        .btn-profile:hover { background: #f59e0b; color: white; }
         
-        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; transition: 0.3s; margin-bottom: 15px; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; }
-
-        #previewBackdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 4000; overflow-y: auto; padding: 40px 20px; justify-content: center; }
-        #invoice-template { display: none; width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #ffffff; color: #000000; position: relative; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; transition: 0.3s; margin-bottom: 15px; font-size: 0.9rem; }
+        .glass-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.1); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
 
         @media (max-width: 900px) {
             .menu-toggle { display: block; }
@@ -94,12 +95,12 @@
                 <table class="glass-table">
                     <thead>
                         <tr>
-                            <th width="10%">Ticket</th>
+                            <th width="15%">Ticket</th>
                             <th width="20%">Customer</th>
                             <th width="25%">Device & Issue</th>
                             <th width="15%">Balance (RM)</th>
                             <th width="15%">Status</th>
-                            <th width="15%">Action</th>
+                            <th width="10%">Action</th>
                         </tr>
                     </thead>
                     <tbody id="ticketsTableBody">
@@ -129,72 +130,60 @@
         </div>
     </div>
 
-    <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center; overflow-y: auto;">
-        <div class="glass-panel" style="width: 100%; max-width: 600px; position: relative; margin: 20px auto;">
+    <div id="receiptModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3100; justify-content: center; align-items: center; overflow-y: auto; padding: 20px;">
+        <div class="glass-panel" style="width: 100%; max-width: 600px; position: relative; margin: auto; max-height: 90vh; overflow-y: auto;">
             <button onclick="document.getElementById('receiptModal').style.display='none'" style="position: absolute; right: 20px; top: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
             <h2 style="margin-bottom: 20px; color: var(--accent-purple);">Generate Official Document</h2>
+            
             <form id="generateReceiptForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px;">
+                <input type="hidden" id="rCustId">
+                
                 <div style="grid-column: span 2;">
                     <label style="font-size: 0.85rem; color: #93c5fd;">Document Type:</label>
                     <select id="docType" class="glass-input" style="background-color: #172033; color: white;">
-                        <option value="OFFICIAL RECEIPT">Official Receipt</option>
+                        <option value="RECEIPT">Official Receipt</option>
                         <option value="INVOICE">Invoice</option>
                     </select>
                 </div>
-                <div style="grid-column: span 2;"><label style="font-size: 0.85rem; color: var(--text-muted);">Parts/Service Items:</label><textarea id="rPartsList" class="glass-input" rows="4"></textarea></div>
-                <div><label>Parts Cost (RM):</label><input type="number" id="rPartsCost" class="glass-input" step="0.01"></div>
-                <div><label>Labor (RM):</label><input type="number" id="rLaborCost" class="glass-input" step="0.01"></div>
-                <div><label>Delivery (RM):</label><input type="number" id="rDeliveryCost" class="glass-input" step="0.01"></div>
-                <div><label>Deposit Paid (RM):</label><input type="number" id="rDeposit" class="glass-input" step="0.01"></div>
+                
                 <div style="grid-column: span 2;">
-                    <label>Payment Method:</label>
+                    <label style="font-size: 0.85rem; color: var(--text-muted);">Parts/Service Items:</label>
+                    <textarea id="rPartsList" class="glass-input" rows="3" placeholder="Contoh: LCD Replacement - RM 150"></textarea>
+                </div>
+                
+                <div>
+                    <label style="font-size: 0.85rem; color: var(--text-muted);">Parts Cost (RM):</label>
+                    <input type="number" id="rPartsCost" class="glass-input" step="0.01">
+                </div>
+                
+                <div>
+                    <label style="font-size: 0.85rem; color: var(--text-muted);">Labor (RM):</label>
+                    <input type="number" id="rLaborCost" class="glass-input" step="0.01">
+                </div>
+                
+                <div>
+                    <label style="font-size: 0.85rem; color: var(--text-muted);">Delivery (RM):</label>
+                    <input type="number" id="rDeliveryCost" class="glass-input" step="0.01">
+                </div>
+                
+                <div>
+                    <label style="font-size: 0.85rem; color: var(--text-muted);">Deposit Paid (RM):</label>
+                    <input type="number" id="rDeposit" class="glass-input" step="0.01">
+                </div>
+                
+                <div style="grid-column: span 2;">
+                    <label style="font-size: 0.85rem; color: var(--text-muted);">Payment Method:</label>
                     <select id="rPaymentMethod" class="glass-input" style="background-color: #172033; color: white;">
-                        <option value="Cash">Cash</option><option value="QR Pay">QR Pay</option><option value="Online Transfer">Online Transfer</option>
+                        <option value="Cash">Cash</option>
+                        <option value="QR Pay">QR Pay</option>
+                        <option value="Online Transfer">Online Transfer</option>
                     </select>
                 </div>
-                <div style="grid-column: span 2;"><button type="button" onclick="openA4Preview()" class="btn-primary">🔍 View A4 Preview</button></div>
+                
+                <div style="grid-column: span 2;">
+                    <button type="button" onclick="saveAndPrintDoc()" class="btn-primary">📄 Print / Generate PDF</button>
+                </div>
             </form>
-        </div>
-    </div>
-
-    <div id="previewBackdrop">
-        <div style="position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 4001;">
-            <button onclick="closeA4Preview()" class="btn-action" style="background: #f87171;">❌ Close</button>
-            <button onclick="generatePDF()" class="btn-action" style="background: #10b981;">📄 Download</button>
-        </div>
-        <div id="invoice-template">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 65px; height: 65px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #64748b; border-radius: 6px; font-weight: 700;">LOGO</div>
-                    <div style="font-weight: 800; font-size: 28px; color: #000;">HA-FIX TECH</div>
-                </div>
-                <div style="text-align: right; font-size: 12px; line-height: 1.5;">
-                    <strong style="font-size: 13px;">HA-FIX TECH & REPAIR</strong><br>SSM: 202503246898 (003772792-K)<br>Kuala Nerus, Terengganu
-                </div>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 40px;">
-                <div style="width: 45%; font-size: 14px;"><p style="font-weight: 700;">Prepared For:</p><p id="pdfName"></p><p id="pdfPhone"></p></div>
-                <div style="width: 45%; text-align: right;"><h2 id="pdfDocTitle" style="font-size: 32px; font-weight: 800; margin-bottom:10px;">RECEIPT</h2><p>Ref: <strong id="pdfTicket"></strong></p><p>Date: <span id="pdfDate"></span></p></div>
-            </div>
-            <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 30px; border-top: 2px solid #000;">
-                <thead><tr><th style="padding:10px;text-align:left;width:10%;">SNO</th><th style="padding:10px;text-align:left;width:10%;">Qty</th><th style="padding:10px;text-align:left;width:50%;">Description</th><th style="padding:10px;text-align:right;width:30%;">Total (RM)</th></tr></thead>
-                <tbody id="pdfTableBody" style="border-top: 1px solid #000; border-bottom: 2px solid #000;"></tbody>
-            </table>
-            <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                <div style="width: 50%; border: 1px solid #cbd5e1; padding: 15px; font-size: 12px;"><strong>Remark:</strong> Keep for warranty claims.</div>
-                <div style="width: 40%; text-align: right;">
-                    <p>Total Amt: RM <span id="pdfTotalAmt"></span></p><p>Deposit: RM <span id="pdfDeposit"></span></p>
-                    <h3 style="border-top: 1px solid #000; padding-top: 10px;">Balance Due: RM <span id="pdfFinalTotal"></span></h3>
-                </div>
-            </div>
-            <div style="font-size: 10.5px; line-height: 1.6; border-top: 1px dotted #ccc; padding-top: 20px; margin-top: 20px;">
-                <strong>Terms & Conditions:</strong><br>
-                1) All services and spare parts come with a 30-day warranty from the date of collection.<br>
-                2) Warranty voids if signs of physical damage, liquid damage, or third-party disassembly found.<br>
-                3) Cash refunds are not available for any parts or services. All sales final.<br>
-                4) Please retain this original receipt for any warranty claims or collection.<br>
-                5) HA-FIX Tech is not liable for data loss during repair. Customers must backup before service.
-            </div>
         </div>
     </div>
 
@@ -215,6 +204,7 @@
         onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
         window.logoutAdmin = () => signOut(auth).then(() => window.location.replace("login.html"));
 
+        // RENDER JADUAL
         onSnapshot(query(collection(db, "tickets"), orderBy("createdAt", "desc")), (snapshot) => {
             const tbody = document.getElementById('ticketsTableBody');
             tbody.innerHTML = "";
@@ -248,8 +238,8 @@
                             <div class="action-group">
                                 <button class="btn-action btn-profile" onclick="window.location.href='customer-details.html?id=${custDocId}'">🔍 Details</button>
                                 <button class="btn-action" onclick="openStatusModal('${ticketId}', '${data.status}')">🔄 Status</button>
-                                ${!isPaid ? `<button class="btn-action btn-pay" onclick="confirmPayment('${custDocId}', '${balance}', '${ticketId}')">💰 Confirm Pay</button>` : `<span style="color:#34d399; font-weight:bold; text-align:center;">✅ Paid</span>`}
-                                <button class="btn-action" id="print-btn-${ticketId}" ${!isPaid ? 'disabled' : ''} onclick="confirmReceiptData('${ticketId}')">📄 Print</button>
+                                ${!isPaid ? `<button class="btn-action btn-pay" onclick="confirmPayment('${custDocId}', '${balance}', '${ticketId}')">💰 Pay</button>` : `<span style="color:#34d399; font-weight:bold; text-align:center;">✅ Paid</span>`}
+                                <button class="btn-action" id="print-btn-${ticketId}" ${!isPaid ? 'disabled' : ''} onclick="openReceiptModal('${ticketId}')">📄 Print</button>
                             </div>
                         </td>
                     `;
@@ -257,6 +247,7 @@
             });
         });
 
+        // FUNGSI BAYARAN & STATUS
         window.confirmPayment = async (custId, balance, ticketId) => {
             if(confirm(`Receive RM ${balance}?`)) {
                 await updateDoc(doc(db, "customers", custId), { isPaid: true });
@@ -267,63 +258,46 @@
         window.openStatusModal = (id, status) => { document.getElementById('sTicketId').value = id; document.getElementById('sStatus').value = status; document.getElementById('statusModal').style.display = 'flex'; };
         document.getElementById('updateStatusForm').onsubmit = async (e) => { e.preventDefault(); await updateDoc(doc(db, "tickets", document.getElementById('sTicketId').value), { status: document.getElementById('sStatus').value }); document.getElementById('statusModal').style.display = 'none'; };
 
-        // FIX BUG SYNC KOSONG
-        let currentCustData = {};
-        window.confirmReceiptData = async (ticketId) => {
+        // FUNGSI BUKA MODAL RESIT
+        window.openReceiptModal = async (ticketId) => {
             const q = query(collection(db, "customers"), where("ticketId", "==", ticketId));
             const snap = await getDocs(q);
             if(!snap.empty) {
                 const d = snap.docs[0].data(); 
-                currentCustData = d;
-                // SYNC BALIK DATA DARI CUSTOMER DETAILS KE MODAL
+                const custId = snap.docs[0].id;
+                
+                document.getElementById('rCustId').value = custId;
                 document.getElementById('rPartsList').value = d.partsList || "";
                 document.getElementById('rPartsCost').value = d.partsTotal || 0;
                 document.getElementById('rLaborCost').value = d.serviceCharge || 0;
                 document.getElementById('rDeliveryCost').value = d.deliveryCharge || 0;
                 document.getElementById('rDeposit').value = d.deposit || 0;
+                
                 document.getElementById('receiptModal').style.display = 'flex';
             }
         };
 
-        window.openA4Preview = () => {
-            const partsCost = parseFloat(document.getElementById('rPartsCost').value) || 0;
-            const laborCost = parseFloat(document.getElementById('rLaborCost').value) || 0;
-            const deliveryCost = parseFloat(document.getElementById('rDeliveryCost').value) || 0;
-            const dep = parseFloat(document.getElementById('rDeposit').value) || 0;
-            const total = partsCost + laborCost + deliveryCost;
+        // FUNGSI SIMPAN & PANGGIL PRINT-RECEIPT.HTML
+        window.saveAndPrintDoc = async () => {
+            const custId = document.getElementById('rCustId').value;
+            const docType = document.getElementById('docType').value;
             
-            document.getElementById('pdfDocTitle').innerText = document.getElementById('docType').value;
-            document.getElementById('pdfName').innerText = currentCustData.name;
-            document.getElementById('pdfPhone').innerText = currentCustData.phone;
-            document.getElementById('pdfTicket').innerText = currentCustData.ticketId;
-            document.getElementById('pdfDate').innerText = new Date().toLocaleDateString('en-MY');
+            // Simpan data terbaru ke dalam database dulu
+            await updateDoc(doc(db, "customers", custId), {
+                partsList: document.getElementById('rPartsList').value,
+                partsTotal: document.getElementById('rPartsCost').value,
+                serviceCharge: document.getElementById('rLaborCost').value,
+                deliveryCharge: document.getElementById('rDeliveryCost').value,
+                deposit: document.getElementById('rDeposit').value,
+                paymentMethod: document.getElementById('rPaymentMethod').value
+            });
             
-            const tbody = document.getElementById('pdfTableBody');
-            const partsListTxt = document.getElementById('rPartsList').value.replace(/\n/g, '<br>');
-            
-            let content = ""; let SNO = 1;
-            if (partsCost > 0 || partsListTxt !== "") {
-                content += `<tr><td>${SNO++}</td><td>1</td><td><b>Device Repair: ${currentCustData.device}</b><br><small>${partsListTxt}</small></td><td style="text-align:right;">${partsCost.toFixed(2)}</td></tr>`;
-            }
-            if (laborCost > 0) {
-                content += `<tr><td>${SNO++}</td><td>1</td><td>Service / Labor Fee</td><td style="text-align:right;">${laborCost.toFixed(2)}</td></tr>`;
-            }
-            if (deliveryCost > 0) {
-                content += `<tr><td>${SNO++}</td><td>1</td><td>Delivery Charge</td><td style="text-align:right;">${deliveryCost.toFixed(2)}</td></tr>`;
-            }
-
-            tbody.innerHTML = content;
-            document.getElementById('pdfTotalAmt').innerText = total.toFixed(2);
-            document.getElementById('pdfDeposit').innerText = dep.toFixed(2);
-            document.getElementById('pdfFinalTotal').innerText = (total - dep).toFixed(2);
-            
+            // Tutup Modal
             document.getElementById('receiptModal').style.display = 'none';
-            document.getElementById('previewBackdrop').style.display = 'flex';
-            document.getElementById('invoice-template').style.display = 'block';
+            
+            // Buka tab baru dan hantar ID & Jenis Dokumen ke print-receipt.html
+            window.open(`print-receipt.html?id=${custId}&doc=${docType}`, '_blank');
         };
-
-        window.closeA4Preview = () => { document.getElementById('previewBackdrop').style.display = 'none'; document.getElementById('receiptModal').style.display = 'flex'; };
-        window.generatePDF = () => { html2pdf().from(document.getElementById('invoice-template')).save(`Receipt_${currentCustData.ticketId}.pdf`); };
     </script>
 </body>
 </html>
