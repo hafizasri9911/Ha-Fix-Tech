@@ -4,45 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HA-FIX Tech & Repair | Expert Device Repair</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --bg-color: #0b1121; --glass-bg: rgba(25, 33, 60, 0.4); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #ffffff; --text-muted: #94a3b8; --accent-blue: #3b82f6; --accent-purple: #8b5cf6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* HIDDEN OLEH DEFAULT UNTUK ANIMASI MUNCUL */
+        [data-animate] { opacity: 0; transform: translateY(20px); }
+
         body { background: radial-gradient(circle at top right, #172033, var(--bg-color)); color: var(--text-main); min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
-        .blob { position: absolute; filter: blur(120px); z-index: -1; opacity: 0.5; }
-        .blob.blue { top: 0; left: 0; width: 600px; height: 600px; background: var(--accent-blue); }
-        .blob.purple { bottom: 20%; right: 0; width: 500px; height: 500px; background: var(--accent-purple); }
+        
+        /* ANIMASI BLOBS BERGERAK PERLAHAN (AWAN) */
+        @keyframes blobFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(50px, -30px) scale(1.1); } }
+        
+        .blob { position: absolute; filter: blur(120px); z-index: -1; opacity: 0.4; pointer-events: none; }
+        .blob.blue { top: 0; left: 0; width: 600px; height: 600px; background: var(--accent-blue); animation: blobFloat 15s ease-in-out infinite; }
+        .blob.purple { bottom: 20%; right: 0; width: 500px; height: 500px; background: var(--accent-purple); animation: blobFloat 18s ease-in-out infinite alternate; }
         
         /* Navbar */
-        .navbar { position: fixed; top: 0; width: 100%; padding: 20px 50px; background: rgba(11, 17, 33, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-        .logo { font-size: 1.5rem; font-weight: 700; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
-        .nav-links { display: flex; gap: 30px; align-items: center; }
-        .nav-links a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s; }
-        .nav-links a:hover, .nav-links a.active { color: var(--accent-blue); }
-        .lang-switcher { display: flex; gap: 5px; background: var(--glass-bg); padding: 4px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        .navbar { position: fixed; top: 0; width: 100%; padding: 20px 5%; background: rgba(11, 17, 33, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; z-index: 1000; animation: fadeInDown 0.8s ease forwards; }
+        
+        .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-img { height: 40px; mix-blend-mode: screen; border-radius: 8px; } 
+        .logo-text { font-size: 1.5rem; font-weight: 800; background: -webkit-linear-gradient(left, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .nav-links { display: flex; gap: 30px; align-items: center; transition: 0.3s; }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.3s; position: relative; }
+        .nav-links a:not(.btn-primary)::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--accent-blue); transition: 0.3s; }
+        .nav-links a:not(.btn-primary):hover::after { width: 100%; }
+        
+        .lang-switcher { display: flex; gap: 5px; background: var(--glass-bg); padding: 4px; border-radius: 20px; border: 1px solid var(--glass-border); transition: 0.3s; }
+        .lang-switcher:hover { border-color: rgba(59, 130, 246, 0.5); transform: scale(1.05); }
         .lang-btn { background: transparent; color: var(--text-main); border: none; padding: 5px 12px; border-radius: 15px; cursor: pointer; font-weight: 600; transition: 0.3s; opacity: 0.5; font-size: 0.8rem;}
         .lang-btn.active { background: var(--accent-blue); opacity: 1; }
 
-        /* Hero */
-        .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 150px 50px 100px; text-align: center; max-width: 900px; margin: 0 auto; }
-        .hero h1 { font-size: 3.5rem; line-height: 1.2; margin-bottom: 20px; }
-        .hero h1 span { color: var(--accent-blue); }
-        .hero p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 40px; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; padding: 15px 35px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: 0.3s; display: inline-block; border: none; cursor: pointer; }
-        .btn-primary:hover { box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5); transform: translateY(-3px); }
+        .mobile-toggle { display: none; background: transparent; border: none; color: white; font-size: 1.8rem; cursor: pointer; }
 
-        footer { background: rgba(0,0,0,0.3); border-top: 1px solid var(--glass-border); padding: 50px; text-align: center; margin-top: auto; }
+        /* Hero */
+        .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 150px 5% 100px; text-align: center; max-width: 900px; margin: 0 auto; }
+        .hero h1 { font-size: 3.8rem; line-height: 1.1; margin-bottom: 25px; font-weight: 800; }
+        .hero h1 span { color: var(--accent-blue); text-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        .hero p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 45px; max-width: 700px; }
+        
+        /* TOMBOL UTAMA DENGAN EFEK DENYUT (PULSE) */
+        @keyframes glowPulse { 0% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); } 50% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.7); } 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); } }
+
+        .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: white; padding: 16px 38px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: 0.3s; display: inline-block; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .btn-primary:hover { box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5); transform: translateY(-3px) scale(1.02); }
+        .btn-primary.pulse-cta { animation: glowPulse 2.5s infinite; }
+
+        .btn-outline { border: 2px solid var(--accent-blue); background: transparent; color: white; padding: 14px 33px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: 0.3s; display: inline-block; }
+        .btn-outline:hover { background: rgba(59, 130, 246, 0.1); border-color: #93c5fd; }
+        
+        .hero-buttons { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+
+        /* Footer */
+        footer { background: rgba(0,0,0,0.3); border-top: 1px solid var(--glass-border); padding: 50px 5%; text-align: center; margin-top: auto; animation: fadeInUp 0.8s ease forwards; animation-delay: 1.2s; opacity: 0; }
         .footer-info { color: var(--text-muted); line-height: 1.8; font-size: 0.95rem; }
+
+        /* Floating WhatsApp Button */
+        .float-wa { position: fixed; bottom: 30px; right: 30px; background-color: #25d366; color: #FFF; border-radius: 50px; text-align: center; font-size: 30px; box-shadow: 0px 4px 15px rgba(37, 211, 102, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; width: 65px; height: 65px; text-decoration: none; transition: 0.3s; }
+        .float-wa:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0px 6px 20px rgba(37, 211, 102, 0.6); }
+
+        /* KEYFRAMES UNTUK ENTRY ANIMATION */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* MENCETUSKAN ANIMASI BILA PAGE LOAD */
+        .animate-loaded [data-animate="fadeInUp"] { animation: fadeInUp 0.8s ease forwards; }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .mobile-toggle { display: block; }
+            .nav-links { position: absolute; top: 100%; left: -100%; width: 100%; background: rgba(11, 17, 33, 0.98); backdrop-filter: blur(20px); flex-direction: column; padding: 40px 0; border-bottom: 1px solid var(--glass-border); align-items: center; gap: 25px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+            .nav-links.active { left: 0; }
+            .hero { padding: 130px 5% 80px; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.1rem; }
+            .blob.blue { width: 300px; height: 300px; filter: blur(80px); }
+            .float-wa { width: 55px; height: 55px; bottom: 20px; right: 20px; font-size: 25px; }
+        }
     </style>
 </head>
-<body>
+<body onload="document.body.classList.add('animate-loaded')">
     <div class="blob blue"></div>
     <div class="blob purple"></div>
 
     <nav class="navbar">
-        <a href="index.html" class="logo">HA-FIX TECH</a>
-        <div class="nav-links">
-            <a href="book-repair.html" class="btn-primary">Tempah Repair Sekarang</a>
+        <a href="index.html" class="logo-container">
+            <span class="logo-text">HA-FIX TECH</span>
+        </a>
+        
+        <button class="mobile-toggle" onclick="toggleMobileMenu()">☰</button>
+        
+        <div class="nav-links" id="navLinks">
+            <a href="book-repair.html" class="btn-primary" style="padding: 11px 22px; font-size: 0.9rem;">Tempah Repair Sekarang</a>
             <a href="index.html" class="active lang" data-en="Home" data-ms="Utama">Home</a>
             <a href="our-services.html" class="lang" data-en="Services" data-ms="Servis">Services</a>
             <a href="track-repair.html" class="lang" data-en="Track Repair" data-ms="Semak Status">Track Repair</a>
@@ -55,13 +111,17 @@
     </nav>
 
     <header class="hero">
-        <h1 class="lang" data-en="Your Trusted Device Repair Expert in Kuala Terengganu" data-ms="Pakar Pembaikan Peranti Anda di Kuala Terengganu">
+        <h1 class="lang" data-animate="fadeInUp" style="animation-delay: 0.3s;" data-en="Your Trusted Device Repair Expert in Kuala Terengganu" data-ms="Pakar Pembaikan Peranti Anda di Kuala Terengganu">
             Your Trusted Device Repair Expert in <span>Kuala Terengganu</span>
         </h1>
-        <p class="lang" data-en="We provide professional repair services for smartphones, laptops, and PCs, along with high-quality parts and accessories." data-ms="Kami menyediakan perkhidmatan membaiki telefon pintar, komputer riba, dan PC yang profesional, beserta jualan alat ganti berkualiti tinggi.">
+        <p class="lang" data-animate="fadeInUp" style="animation-delay: 0.6s;" data-en="We provide professional repair services for smartphones, laptops, and PCs, along with high-quality parts and accessories." data-ms="Kami menyediakan perkhidmatan membaiki telefon pintar, komputer riba, dan PC yang profesional, beserta jualan alat ganti berkualiti tinggi.">
             We provide professional repair services for smartphones, laptops, and PCs, along with high-quality parts and accessories.
         </p>
-        <a href="track-repair.html" class="btn-primary lang" data-en="Check Device Status" data-ms="Semak Status Peranti">Check Device Status</a>
+        
+        <div class="hero-buttons" data-animate="fadeInUp" style="animation-delay: 0.9s;">
+            <a href="track-repair.html" class="btn-primary pulse-cta lang" data-en="Check Device Status" data-ms="Semak Status Peranti">Check Device Status</a>
+            <a href="https://wa.me/60123456789" target="_blank" class="btn-outline lang" data-en="WhatsApp Us" data-ms="WhatsApp Kami">WhatsApp Us</a>
+        </div>
     </header>
 
     <footer>
@@ -72,12 +132,26 @@
         </div>
     </footer>
 
+    <a href="https://wa.me/60123456789" class="float-wa" target="_blank" title="WhatsApp Kami">
+        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+        </svg>
+    </a>
+
     <script>
         function setLanguage(lang) {
             const elements = document.querySelectorAll('.lang');
             elements.forEach(el => { if(el.getAttribute(`data-${lang}`)) el.innerText = el.getAttribute(`data-${lang}`); });
             document.getElementById('btn-en').classList.remove('active'); document.getElementById('btn-ms').classList.remove('active');
             document.getElementById(`btn-${lang}`).classList.add('active');
+        }
+
+        function toggleMobileMenu() {
+            const nav = document.getElementById('navLinks');
+            nav.classList.toggle('active');
+            // Tukar simbol hamburger jadi 'X'
+            const toggleBtn = document.querySelector('.mobile-toggle');
+            toggleBtn.innerText = nav.classList.contains('active') ? '✕' : '☰';
         }
     </script>
 </body>

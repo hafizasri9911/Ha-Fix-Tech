@@ -48,6 +48,8 @@
         .btn-pay:hover:not(:disabled) { background: #34d399; color: white; }
         .btn-profile { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #fcd34d; }
         .btn-profile:hover { background: #f59e0b; color: white; }
+        .btn-whatsapp { background: rgba(37, 211, 102, 0.15); border-color: rgba(37, 211, 102, 0.3); color: #25D366; }
+        .btn-whatsapp:hover { background: #25D366; color: white; }
         
         .glass-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; color: var(--text-main); outline: none; transition: 0.3s; margin-bottom: 15px; font-size: 0.9rem; }
         .glass-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.1); }
@@ -204,7 +206,6 @@
         onAuthStateChanged(auth, (user) => { if (!user) window.location.replace("login.html"); });
         window.logoutAdmin = () => signOut(auth).then(() => window.location.replace("login.html"));
 
-        // RENDER JADUAL
         onSnapshot(query(collection(db, "tickets"), orderBy("createdAt", "desc")), (snapshot) => {
             const tbody = document.getElementById('ticketsTableBody');
             tbody.innerHTML = "";
@@ -239,6 +240,7 @@
                                 <button class="btn-action btn-profile" onclick="window.location.href='customer-details.html?id=${custDocId}'">🔍 Details</button>
                                 <button class="btn-action" onclick="openStatusModal('${ticketId}', '${data.status}')">🔄 Status</button>
                                 ${!isPaid ? `<button class="btn-action btn-pay" onclick="confirmPayment('${custDocId}', '${balance}', '${ticketId}')">💰 Pay</button>` : `<span style="color:#34d399; font-weight:bold; text-align:center;">✅ Paid</span>`}
+                                <button class="btn-action btn-whatsapp" onclick="sendReadyWhatsApp('${data.phone}', '${data.name}', '${data.device}', '${balance}', '${ticketId}', '${data.status}')">💬 WA</button>
                                 <button class="btn-action" id="print-btn-${ticketId}" ${!isPaid ? 'disabled' : ''} onclick="openReceiptModal('${ticketId}')">📄 Print</button>
                             </div>
                         </td>
@@ -247,7 +249,28 @@
             });
         });
 
-        // FUNGSI BAYARAN & STATUS
+        // FUNGSI WHATSAPP NOTIFICATION
+        window.sendReadyWhatsApp = (phone, name, device, balance, ticketId, status) => {
+            let cleanPhone = phone.replace(/\D/g, ''); 
+            if(cleanPhone.startsWith('0')) cleanPhone = '60' + cleanPhone.substring(1);
+            
+            let msg = `Hai ${name} 👋\n\nIni adalah kemaskini dari *HA-FIX Tech* untuk peranti *${device}* (Tiket: #${ticketId}).\n\n`;
+            
+            if (status === "Siap") {
+                msg += `Berita baik! Peranti anda *TELAH SIAP* dibaiki dan sedia untuk diambil di kedai kami. 🎉\n\n`;
+                if (parseFloat(balance) > 0) {
+                    msg += `Baki bayaran: *RM ${parseFloat(balance).toFixed(2)}*\n\n`;
+                } else {
+                    msg += `Baki bayaran: *RM 0.00 (Telah Dibayar)*\n\n`;
+                }
+            } else {
+                msg += `Status terkini: *${status}*\n\n`;
+            }
+            msg += `Terima kasih support HA-FIX Tech! 😎`;
+            
+            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
         window.confirmPayment = async (custId, balance, ticketId) => {
             if(confirm(`Receive RM ${balance}?`)) {
                 await updateDoc(doc(db, "customers", custId), { isPaid: true });
@@ -258,7 +281,6 @@
         window.openStatusModal = (id, status) => { document.getElementById('sTicketId').value = id; document.getElementById('sStatus').value = status; document.getElementById('statusModal').style.display = 'flex'; };
         document.getElementById('updateStatusForm').onsubmit = async (e) => { e.preventDefault(); await updateDoc(doc(db, "tickets", document.getElementById('sTicketId').value), { status: document.getElementById('sStatus').value }); document.getElementById('statusModal').style.display = 'none'; };
 
-        // FUNGSI BUKA MODAL RESIT
         window.openReceiptModal = async (ticketId) => {
             const q = query(collection(db, "customers"), where("ticketId", "==", ticketId));
             const snap = await getDocs(q);
@@ -277,12 +299,10 @@
             }
         };
 
-        // FUNGSI SIMPAN & PANGGIL PRINT-RECEIPT.HTML
         window.saveAndPrintDoc = async () => {
             const custId = document.getElementById('rCustId').value;
             const docType = document.getElementById('docType').value;
             
-            // Simpan data terbaru ke dalam database dulu
             await updateDoc(doc(db, "customers", custId), {
                 partsList: document.getElementById('rPartsList').value,
                 partsTotal: document.getElementById('rPartsCost').value,
@@ -292,10 +312,7 @@
                 paymentMethod: document.getElementById('rPaymentMethod').value
             });
             
-            // Tutup Modal
             document.getElementById('receiptModal').style.display = 'none';
-            
-            // Buka tab baru dan hantar ID & Jenis Dokumen ke print-receipt.html
             window.open(`print-receipt.html?id=${custId}&doc=${docType}`, '_blank');
         };
     </script>
